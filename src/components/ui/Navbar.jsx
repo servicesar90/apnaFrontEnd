@@ -1,12 +1,16 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ChevronDown } from "lucide-react";
-import CandidateLoginModal from "../modals/CandidateLoginModal";
+import CandidateLoginModal from "../modals/loginModals/CandidateLoginModal";
+import OtpModal from "../modals/loginModals/OtpModal";
 
 export default function Navbar() {
   const [isJobsOpen, setIsJobsOpen] = useState(false);
   const [isCareerOpen, setIsCareerOpen] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
+  const [mobile, setMobile]= useState("");
+  const [showOtp, setShowOtp] = useState(false);
+
   const navigate= useNavigate();
 
   const handleEmployerLogin = () => {
@@ -148,9 +152,18 @@ export default function Navbar() {
       </nav>
 
       {showLoginModal && <CandidateLoginModal
-        
-        onClose={() => setShowLoginModal(false)}
+        mobile= {mobile}
+        setMobile={setMobile}
+        onClose={() => {
+          setShowLoginModal(false)
+          setShowOtp(true)
+        }
+        }
       />}
+
+      {showOtp && <OtpModal mobile={mobile} onClose={()=>setShowOtp(false)}/>}
+
+
       
     </>
   );

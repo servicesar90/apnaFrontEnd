@@ -2,21 +2,20 @@ import React, { useEffect, useState } from "react";
 import { ExternalLink, Share2, Building2, Pencil, Plus, GraduationCap } from "lucide-react";
 import { Tooltip } from "@mui/material";
 import { employeeData } from "../../employeeData";
-import { Outlet, useNavigate } from "react-router-dom";
-import EditSalaryModal from "../modals/salaryModal";
-import EditEducationModal from "../modals/highestEducationModal";
-import EditSchoolMediumModal from "../modals/schoolMediumModal";
-import EditSkillsModal from "../modals/skillsModal";
-import EducationPreferenceModal from "../modals/furtherEducation";
-import EditCertificationModal from "../modals/certificationModal";
-import LanguageModal from "../modals/languageKnownModal";
-import EducationModal from "../modals/educationModal";
-import EditPreferredTitleModal from "../modals/preferredJobRoleModal";
-import EditLocationModal from "../modals/locationModal";
-import EditJobPreferencesModal from "../modals/jobPreferenceModal";
-import EditExperienceYearModal from "../modals/experienceYear";
-import EditExperienceModal from "../modals/experienceModal";
-import EditBasicDetailsModal from "../modals/basicDetailModal";
+import EditSalaryModal from "../modals/profileUpdateModals/salaryModal";
+import EditEducationModal from "../modals/profileUpdateModals/highestEducationModal";
+import EditSchoolMediumModal from "../modals/profileUpdateModals/schoolMediumModal";
+import EditSkillsModal from "../modals/profileUpdateModals/skillsModal";
+import EducationPreferenceModal from "../modals/profileUpdateModals/furtherEducation";
+import EditCertificationModal from "../modals/profileUpdateModals/certificationModal";
+import LanguageModal from "../modals/profileUpdateModals/languageKnownModal";
+import EducationModal from "../modals/profileUpdateModals/educationModal";
+import EditPreferredTitleModal from "../modals/profileUpdateModals/preferredJobRoleModal";
+import EditLocationModal from "../modals/profileUpdateModals/locationModal";
+import EditJobPreferencesModal from "../modals/profileUpdateModals/jobPreferenceModal";
+import EditExperienceYearModal from "../modals/profileUpdateModals/experienceYear";
+import EditExperienceModal from "../modals/profileUpdateModals/experienceModal";
+import EditBasicDetailsModal from "../modals/profileUpdateModals/basicDetailModal";
 
 
 const ProfileOverviewCard = () => {

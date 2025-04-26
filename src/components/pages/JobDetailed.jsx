@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { jobs } from "../../employeeData";
-import AppliedModal from "../modals/AppliedModal";
+import AppliedModal from "../modals/jobsModal/AppliedModal";
 import { employeeData } from "../../employeeData";
 
 const JobDetails = () => {
@@ -135,20 +135,28 @@ const JobDetails = () => {
           </div>
 
           <div className="flex flex-wrap gap-2 mt-3">
-                
-                <span className="bg-gray-200 text-gray-600 px-2 py-1 rounded-full text-xs">
-                  {data?.workLocationType}
-                </span>
 
-                <span className="bg-gray-200 text-gray-600 px-2 py-1 rounded-full text-xs">
-                  {data?.jobType}
-                </span>
+            <span className="bg-gray-200 text-gray-600 px-2 py-1 rounded-full text-xs">
+              {data?.workLocationType}
+            </span>
 
-                <span className="bg-gray-200 text-gray-600 px-2 py-1 rounded-full text-xs">
-                  {data?.payType}
-                </span>
-        
-            </div>
+            <span className="bg-gray-200 text-gray-600 px-2 py-1 rounded-full text-xs">
+              {data?.jobType}
+            </span>
+
+            <span className="bg-gray-200 text-gray-600 px-2 py-1 rounded-full text-xs">
+              {data?.experience}
+            </span>
+
+            <span className="bg-gray-200 text-gray-600 px-2 py-1 rounded-full text-xs">
+              {data?.payType}
+            </span>
+
+            <span className="bg-gray-200 text-gray-600 px-2 py-1 rounded-full text-xs">
+              {data?.english}
+            </span>
+
+          </div>
 
           <div className="flex gap-4 mt-4">
             <button className="py-2 px-4 bg-gray-200 text-gray-700 font-medium rounded-md">
@@ -168,10 +176,11 @@ const JobDetails = () => {
           )}
 
           {data?.urgent && (
-            <div className="bg-blue-50 rounded-md p-4 space-y-2">
+            <div className="bg-blue-50 rounded-md p-4 space-y-2 flex justify-between flex-row">
               <div className="flex items-center gap-2 text-orange-600 font-medium">
                 Urgently hiring
               </div>
+              <div>{data?.walkIn === "yes" && <p>walk In</p>}</div>
               <div className="flex items-center gap-2 text-sm text-blue-700">
                 👥 {data?.applicants} applicants
               </div>
@@ -203,31 +212,31 @@ const JobDetails = () => {
           )}
 
 
-          <div className="space-y-2 mt-2">
+          <div className="space-y-2 mt-4">
             <h3 className="font-semibold text-gray-800">Job Role</h3>
             <div className="grid grid-cols-2 gap-y-2 text-sm text-gray-700">
               <p>
-                <strong>📍 Work location:</strong> {data?.workLocation}
+                <span className="font-semibold"> 📍 Work location: </span>{data?.location}
               </p>
               <p>
-                <strong>🏢 Department:</strong> {data?.department}
+                <span className="font-semibold">🏢 Department:</span> {data?.jobTitle}
               </p>
               <p>
-                <strong>🔧 Role:</strong> {data?.role}
+                <span className="font-semibold">🔧 Role:</span>{data?.jobTitle}
               </p>
               <p>
-                <strong>🕒 Employment type:</strong> {data?.employmentType}
+                <span className="font-semibold">🕒 Employment type:</span> {data?.jobType}
               </p>
               <p>
-                <strong>🌗 Shift:</strong> {data?.shift}
+                <span className="font-semibold">🌗 Shift:</span> {data?.nightShift ? <span>Night Shift</span> : <span>Day Shift</span>}
               </p>
             </div>
           </div>
 
 
-          {data?.walkIn && (
+          {data?.walkIn === "yes" && (
 
-            <div className="space-y-2 mt-2">
+            <div className="space-y-2 mt-4">
               <h3 className="font-semibold text-gray-800">WalkIn Details</h3>
               <div className="grid grid-cols-2 gap-y-2 text-sm text-gray-700">
                 <p>
@@ -235,7 +244,7 @@ const JobDetails = () => {
                   {data.walkIn}
                 </p>
                 <p>
-                  <strong>🏢 walkInAddress:</strong> {data.walkInAdddress}
+                  <strong>🏢 walkInAddress:</strong> {data.walkInAddress}
                 </p>
                 <p>
                   <strong>🔧 walkInEndDate:</strong> {data.walkInEndDate}
@@ -247,20 +256,30 @@ const JobDetails = () => {
                   <strong> walkInInstructions: </strong>{" "}
                   {data.walkInInstructions}
                 </p>
+
+              </div>
+            </div>
+
+          )}
+
+          {data?.otherRecruiterName &&
+            <div className="space-y-2 mt-4">
+              <h3 className="font-semibold text-gray-800">Contact</h3>
+              <div className="grid grid-cols-2 gap-y-2 text-sm text-gray-700">
                 <p>
                   <strong>contactPreference: </strong>{" "}
                   {data.contactPreference}
                 </p>
                 <p>
-                  <strong> otherRecruiterName: </strong>{" "}
+                  <strong> RecruiterName: </strong>{" "}
                   {data.otherRecruiterName}
                 </p>
                 <p>
-                  <strong> otherRecruiterNumber: </strong>{" "}
+                  <strong> RecruiterNumber: </strong>{" "}
                   {data.otherRecruiterNumber}
                 </p>
                 <p>
-                  <strong>🌗 otherRecruiterEmail:</strong>{" "}
+                  <strong>🌗 RecruiterEmail:</strong>{" "}
                   {data.otherRecruiterEmail}
                 </p>
                 <p>
@@ -272,7 +291,8 @@ const JobDetails = () => {
                 </p>
               </div>
             </div>
-          )}
+          }
+
 
           <div className="space-y-2 mt-4">
             <h3 className="font-semibold text-gray-800">Job Description</h3>

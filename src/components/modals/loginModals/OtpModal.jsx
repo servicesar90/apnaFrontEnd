@@ -1,53 +1,64 @@
 import { useEffect, useRef, useState } from "react";
 import { X, Pencil } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { employeeData } from "../../employeeData";
+import axios from "axios";
+import { handleOtp } from "../../../API/ApiFunctions";
 
 
-export default function OtpModal({ isOpen, onClose, mobile, loginClose }) {
-  const [otp, setOtp] = useState(["", "", "", ""]);
+export default function OtpModal({  onClose, mobile }) {
+  const [otp, setOtp] = useState("");
   const inputsRef = useRef([]);
-  const [showPresentOtp, setShowPrsentOtp]= useState(true);
+  const base_url = "https://production.careernest.online"
 
-  const navigate= useNavigate()
+
+  const navigate = useNavigate()
+
+
 
 
   useEffect(() => {
     inputsRef.current[0]?.focus();
   }, []);
 
-  
 
-  const handleChange = (value, index) => {
-    if (!/^\d*$/.test(value)) return;
 
-    const newOtp = [...otp];
-    newOtp[index] = value;
+  const handleChange = async (index, value) => {
+    if (!/^\d?$/.test(value)) return; // allow only a single digit
+
+    let updatedOtp = otp.split(""); // Convert to array for manipulation
+    updatedOtp[index] = value;       // Replace the char at the correct index
+
+    const newOtp = updatedOtp.join("");
     setOtp(newOtp);
 
-    
-
-    if (value && index < otp.length - 1) {
+    // Move focus to next input if a digit was entered
+    if (value && index < 3) {
       inputsRef.current[index + 1]?.focus();
     }
 
-    
+    // If OTP is 4 digits long, do something
+    if (newOtp.length === 4 ) {
+      
+      const response= await handleOtp({phone:mobile,role:"employee",otp:(newOtp).toString()})
+      console.log("response",response);
 
-    else if (index == otp.length-1){
-      const employeePresent= employeeData.filter((data)=>data.number===mobile);
-      localStorage.setItem("id", mobile);
-      if(employeePresent.length>0){
-
-        navigate("/jobs")
-      }else{
+      if(response){
+        if(response.data.user.profile){
+          
+          navigate("/jobs")
+        }else{
         
-        navigate("/profile");
-
+          navigate("/profile")
+        }
+        onClose()
+      }else{
+        setOtp("")
+        inputsRef.current[0]?.focus();
       }
-      setShowPrsentOtp(false);
-      loginClose()
+      
     }
   };
+
 
   const handleKeyDown = (e, index) => {
     if (e.key === "Backspace" && !otp[index] && index > 0) {
@@ -55,9 +66,7 @@ export default function OtpModal({ isOpen, onClose, mobile, loginClose }) {
     }
   };
 
- 
 
-  if(!isOpen || !showPresentOtp) return null;
 
 
   return (
@@ -76,18 +85,19 @@ export default function OtpModal({ isOpen, onClose, mobile, loginClose }) {
         </p>
 
         <div className="flex justify-between gap-2 mb-4">
-          {otp.map((digit, idx) => (
+          {[0, 1, 2, 3].map((idx) => (
             <input
               key={idx}
-              value={digit}
+              value={otp[idx] || ""} // display current digit or empty
               ref={(el) => (inputsRef.current[idx] = el)}
-              onChange={(e) => handleChange(e.target.value, idx)}
+              onChange={(e) => handleChange(idx, e.target.value)}
               onKeyDown={(e) => handleKeyDown(e, idx)}
               maxLength={1}
               className="w-12 h-12 border border-[#3C78D8] rounded-md text-center text-xl focus:outline-none text-[#666666]"
             />
           ))}
         </div>
+
 
         <div className="text-sm text-gray-500 text-center mb-2">00:30</div>
         <div className="text-center text-sm">

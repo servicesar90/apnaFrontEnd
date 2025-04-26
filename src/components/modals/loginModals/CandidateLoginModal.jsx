@@ -1,33 +1,33 @@
 import { useState } from "react";
-import OtpModal from "./OtpModal"; 
-import axios from 'axios' 
+import axios from 'axios'
+import { handlelogin } from "../../../API/ApiFunctions";
 
-export default function CandidateLoginModal({ onClose }) {
-  const [mobile, setMobile] = useState("");
+export default function CandidateLoginModal({ onClose, mobile, setMobile }) {
   const [countryCode, setCountryCode] = useState("+91");
-  const [showOtp, setShowOtp] = useState(false);
-  const [showPresentLogin, setShowPresentLogin]= useState(true);
-  const base_url = "https://production.careernest.online"
 
-  const handleChangeMobile = async(e) => {
-    const value = e.target.value.replace(/\D/g, ""); 
-    
+
+  const handleChangeMobile = async (e) => {
+    const value = e.target.value.replace(/\D/g, "");
+
     if (value.length <= 10) {
       setMobile(value);
-  
+
       if (value.length === 10) {
-        console.log("for check");
-        const response= await axios.post(`${base_url}/api/v1/auth/signup`,{phone:value,role:"employer"})
-        
-        // setMobile(value);
-        // setShowOtp(true); 
+        const response = await handlelogin({ phone: (value).toString(), role: "employee" });
+        console.log("response", response);
+        if (response.status == 200) {
+          setMobile(value);
+          onClose()
+        } else {
+          setMobile("")
+        }
       }
     }
   };
 
   const isValidMobile = /^\d{10}$/.test(mobile);
 
-  if(!showPresentLogin) return null;
+
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
@@ -70,18 +70,7 @@ export default function CandidateLoginModal({ onClose }) {
         </button>
       </div>
 
-      {showOtp && (
-        <OtpModal
-        isOpen={showOtp}
-          mobile={`${countryCode}-${mobile}`}
-          onClose={() => {
-            setShowOtp(false);
-            setMobile("");
-             // Reset for next time
-          }}
-          loginClose={()=>setShowPresentLogin(false)}
-        />
-      )}
+
     </div>
   );
 }

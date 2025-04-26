@@ -152,46 +152,31 @@ export default function ProfileModal() {
     };
 
     return (
-        <div className="flex min-h-screen bg-gray-100">
-            {/* Left Section */}
-            <div className="w-1/3 bg-blue-700 text-white p-6 flex flex-col justify-center items-center space-y-6">
-                <div className="bg-white text-blue-800 rounded-lg p-4 w-4/5">
-                    <h2 className="text-lg font-bold mb-2">Complete your profile!</h2>
-                    <ul className="list-disc ml-5 space-y-1 text-sm">
-                        <li>Personalised job matches</li>
-                        <li>Direct connect with HRs</li>
-                        <li>Latest updates on the job</li>
-                    </ul>
-                </div>
-                <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="Profile" className="w-24 h-24 rounded-full" />
-                <div className="text-xs mt-4 text-center">
-                    Trusted by over 2 lakhs+ companies
-                    <div className="flex gap-2 justify-center mt-2 opacity-50 text-[10px]">
-                        <span>Paytm</span> <span>Uber</span> <span>Grab</span> <span>Licious</span>
-                    </div>
-                </div>
-            </div>
+        <div className="flex w-full min-h-screen bg-gray-100">
 
             {/* Right Section */}
             {steps === 0 &&
-                <div className="w-2/3 p-8 bg-white overflow-y-auto">
+                <div className="w-full p-8 bg-white overflow-y-auto">
                     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                         <h2 className="text-xl font-semibold mb-4">Basic Details</h2>
 
                         {/* Name */}
                         <TextField
                             fullWidth
+                            size="small"
                             label="name"
                             variant="outlined"
                             {...register("name", { required: true })}
                             error={!!errors.name}
                             helperText={errors.name ? "Name is required" : ""}
+
                         />
 
                         {/* DOB */}
                         <div className="relative">
                             <TextField
                                 fullWidth
+                                size="small"
                                 label="Date Of Birth"
                                 type="date"
                                 {...register("dob", { required: true })}
@@ -199,10 +184,10 @@ export default function ProfileModal() {
                                 helperText={errors.dob ? "DOB is required" : ""}
                                 slotProps={{
                                     inputLabel: {
-                                      shrink: true,
+                                        shrink: true,
                                     },
-                                  }}
-                            
+                                }}
+
                             />
 
                         </div>
@@ -220,6 +205,7 @@ export default function ProfileModal() {
                         {/* Email */}
                         <TextField
                             fullWidth
+                            size="small"
                             label="Email Address (Optional)"
                             variant="outlined"
                             type="email"
@@ -263,6 +249,7 @@ export default function ProfileModal() {
                                     render={({ field }) => (
                                         <Select
                                             label="Years"
+                                            size="small"
                                             {...field}
                                             onChange={(e) => {
                                                 const value = e.target.value;
@@ -290,6 +277,7 @@ export default function ProfileModal() {
                                         <Select
                                             {...field}
                                             label="Months (Optional)"
+                                            size="small"
                                             onChange={(e) => {
                                                 const value = e.target.value;
                                                 field.onChange(value);        // update react-hook-form state
@@ -315,6 +303,7 @@ export default function ProfileModal() {
                                         <>
                                             <TextField
                                                 {...field}
+                                                size="small"
                                                 placeholder="Search your job role"
                                                 variant="outlined"
                                                 fullWidth
@@ -360,6 +349,7 @@ export default function ProfileModal() {
                                             <TextField
                                                 {...field}
                                                 placeholder="Search your job title"
+                                                size="small"
                                                 variant="outlined"
                                                 fullWidth
 
@@ -397,6 +387,7 @@ export default function ProfileModal() {
                                 {/* Company Name */}
                                 <TextField
                                     label="Company Name"
+                                    size="small"
                                     variant="outlined"
                                     fullWidth
                                     {...register('companyName')}
@@ -409,11 +400,25 @@ export default function ProfileModal() {
                                     render={({ field }) => (
                                         <TextField
                                             {...field}
+                                            size="small"
                                             label="Current Salary"
-                                            type="number"
                                             fullWidth
+                                            type="text" 
+                                            onChange={(e) => {
+                                                const value = e.target.value;
 
+                                                if (e.nativeEvent.inputType === "insertText") {
+                                                    if (/^\d*$/.test(value)) {
+                                                        field.onChange(value);
+                                                    }
+                                             
+                                                } else {
+                                                 
+                                                    field.onChange(value);
+                                                }
+                                            }}
                                         />
+
                                     )}
                                 />
 
