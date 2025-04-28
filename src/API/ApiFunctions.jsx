@@ -14,7 +14,7 @@ export const handleOtp = async (data)=>{
         const response= await axios.post(otpApi, data);
     
         localStorage.setItem("TokenId", response.data.token )
-        localStorage.setItem("User", response.data.user )
+        localStorage.setItem("User", JSON.stringify(response.data.user ))
       
     return response;
     }catch(err){

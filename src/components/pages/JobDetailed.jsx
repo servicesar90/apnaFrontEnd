@@ -13,11 +13,12 @@ const JobDetails = () => {
   const [employee, setEmployee] = useState(null);
   const [applied, setApplied] = useState(false);
 
+
   const { id } = useParams();
-  const userId = localStorage.getItem("id")
+  const user = JSON.stringify(localStorage.getItem("User"))
 
   useEffect(() => {
-    const employeData = employeeData.filter((employee) => employee.id === userId);
+    const employeData = employeeData.filter((employee) => employee.id === user.id);
     setEmployee(employeData[0])
   }, [])
 
@@ -187,7 +188,7 @@ const JobDetails = () => {
             </div>
           )}
 
-          {data?.joiningFeeAmount && (
+          {data?.joiningFee && (
             <div className="space-y-2 mt-4">
               <h3 className="font-semibold text-gray-800">Pay for job</h3>
               <div className="grid grid-cols-2 gap-y-2 text-sm text-gray-700">

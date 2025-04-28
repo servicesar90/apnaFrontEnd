@@ -17,7 +17,7 @@ import {
 const EducationModal = ({ open, onClose, education }) => {
     
   const [highestEducation, setHighestEducation] = useState(education[0].highestEducation || "Graduate");
-  const [collegeName, setCollegeName] = useState(education[0].collegeName || "");
+  const [collegeName, setCollegeName] = useState(education[0].instituteName || "");
   const [degree, setDegree] = useState(education[0].degree || "");
   const [specialisation, setSpecialisation] = useState(education[0].specialisation || "");
   const [educationType, setEducationType] = useState(education[0].educationType || "Full-time");
@@ -29,7 +29,7 @@ const EducationModal = ({ open, onClose, education }) => {
      
     const educationData = {
       highestEducation,
-      collegeName,
+      institueName,
       degree,
       specialisation,
       educationType,

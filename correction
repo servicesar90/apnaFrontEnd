@@ -1,0 +1,13 @@
+employeeExperience
+add description, industry,noticePeriod, employementType in the employee experience table
+ 
+Employee
+preferredEmployementTyps should be  preferredEmployementTypes
+add furtherEducation, certification, months, years,  preferredJobRoles, appliedJobs(array of job id), location: {currentLocation: "Ghaziabad", hometown: "Loni UP", preferredJobCity:["Delhi-NCR","Noida"] }, number
+
+education
+passingYear should be change with startDate and endDate, 
+add highestEducation, schoolMedium
+
+job 
+add urgent(boolean), companyName, joiningFeeAmount, walhInEndDate, walkInStartTime, notificationPreference, 

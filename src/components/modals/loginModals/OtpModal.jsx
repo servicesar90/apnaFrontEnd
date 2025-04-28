@@ -1,14 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 import { X, Pencil } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import { handleOtp } from "../../../API/ApiFunctions";
 
 
 export default function OtpModal({  onClose, mobile }) {
   const [otp, setOtp] = useState("");
   const inputsRef = useRef([]);
-  const base_url = "https://production.careernest.online"
+
 
 
   const navigate = useNavigate()

@@ -79,23 +79,22 @@ export default function ProfileModal() {
         formState: { errors },
     } = useForm({
         defaultValues: {
-            name: "",
-            dob: "",
-            gender: "",
-            email: "",
-            whatsappUpdates: "",
-            years: "",
-            months: "",
-            jobRoles: "",
-            jobTitle: '',
-            companyName: '',
-            currentSalary: '',
-            englishLevel: '',
+            fullName: null,
+            dob: null,
+            gender: null,
+            email: null,
+            whatsappUpdates: false,
+            years: null,
+            months: null,
+            experiences: (experienceYears !== 0 || experienceMonths !== 0)
+                ? [{ jobRole: null, jobTitle: null, currentSalary: null, companyName: null }]
+                : [],
+            englishProficiency: null,
             otherLanguages: [],
             preferredShifts: [],
             preferredWorkplace: [],
             preferredEmployementType: [],
-            resume: ""
+            resume: null
         }
     });
 
@@ -103,11 +102,11 @@ export default function ProfileModal() {
 
 
     const handleSelectedJobRoles = (value) => {
-        setValue('jobRoles', value);
+        setValue('experiences[0].jobRole', value);
     };
 
     const handleSelectedJobTitles = (value) => {
-        setValue('jobTitle', value);
+        setValue('experiences[0].jobTitle', value);
     };
 
 
@@ -126,15 +125,15 @@ export default function ProfileModal() {
     };
 
 
-    const currentSalary = watch('currentSalary');
+    // const currentSalary = watch('currentSalary');
 
-    const handleSelectSalary = (value) => {
-        setValue('currentSalary', value);
-    };
+    // const handleSelectSalary = (value) => {
+    //     setValue('currentSalary', value);
+    // };
 
-    const handleClearSalary = () => {
-        setValue('currentSalary', '');
-    };
+    // const handleClearSalary = () => {
+    //     setValue('currentSalary', '');
+    // };
 
     const handleFileChange = (e) => {
         const file = e.target.files[0];
@@ -164,9 +163,9 @@ export default function ProfileModal() {
                         <TextField
                             fullWidth
                             size="small"
-                            label="name"
+                            label="fullName"
                             variant="outlined"
-                            {...register("name", { required: true })}
+                            {...register("fullName", { required: true })}
                             error={!!errors.name}
                             helperText={errors.name ? "Name is required" : ""}
 
@@ -223,7 +222,7 @@ export default function ProfileModal() {
                         {/* Submit Button */}
                         <Button
                             variant="contained"
-                            onClick={() => setSteps((prev) => prev + 1)}
+                            onClick={handleSubmit(() => setSteps((prev) => prev + 1))}
                             fullWidth
                             className="!bg-green-600 hover:!bg-green-700 text-white font-bold"
                         >
@@ -251,6 +250,7 @@ export default function ProfileModal() {
                                             label="Years"
                                             size="small"
                                             {...field}
+                                            value={field.value || ""}
                                             onChange={(e) => {
                                                 const value = e.target.value;
                                                 field.onChange(value);        // update react-hook-form state
@@ -276,6 +276,7 @@ export default function ProfileModal() {
                                     render={({ field }) => (
                                         <Select
                                             {...field}
+                                            value={field.value || ""}
                                             label="Months (Optional)"
                                             size="small"
                                             onChange={(e) => {
@@ -297,23 +298,23 @@ export default function ProfileModal() {
                         {(experienceYears !== 0 || experienceMonths !== 0) &&
                             <>
                                 <Controller
-                                    name="jobRoles"
+                                    name="experiences[0].jobRole"
                                     control={control}
+                                    rules={{ required: "Job Role is required" }}
                                     render={({ field }) => (
-                                        <>
-                                            <TextField
-                                                {...field}
-                                                size="small"
-                                                placeholder="Search your job role"
-                                                variant="outlined"
-                                                fullWidth
-
-
-                                            />
-
-                                        </>
+                                        <TextField
+                                            {...field}
+                                            value={field.value ?? ""}
+                                            size="small"
+                                            placeholder="Search your job role"
+                                            variant="outlined"
+                                            fullWidth
+                                            error={!!errors.experiences?.[0]?.jobRole}
+                                            helperText={errors.experiences?.[0]?.jobRole ? errors.experiences?.[0]?.jobRole.message : ""}  // Display error message
+                                        />
                                     )}
                                 />
+
 
                                 {/* Suggested Roles */}
                                 <div>
@@ -342,16 +343,22 @@ export default function ProfileModal() {
                                 {/* Job Title */}
 
                                 <Controller
-                                    name="jobTitle"
+                                    name="experiences[0].jobTitle"
                                     control={control}
+                                    rules={{
+                                        required: "Job title is required",
+                                    }}
                                     render={({ field }) => (
                                         <>
                                             <TextField
                                                 {...field}
+                                                value={field.value ?? ""}
                                                 placeholder="Search your job title"
                                                 size="small"
                                                 variant="outlined"
                                                 fullWidth
+                                                error={!!errors.experiences?.[0]?.jobTitle}
+                                                helperText={errors.experiences?.[0]?.jobTitle ? errors.experiences?.[0]?.jobTitle.message : ""}  // Display error message
 
                                             />
 
@@ -390,40 +397,46 @@ export default function ProfileModal() {
                                     size="small"
                                     variant="outlined"
                                     fullWidth
-                                    {...register('companyName')}
+                                    {...register('experiences[0].companyName', { required: true })}
+                                    error={!!errors.experiences?.[0]?.companyName}
+                                    helperText={errors.experiences?.[0]?.companyName ? "Company Name is required" : ""}  // Display error message
+
                                 />
 
                                 {/* Current Salary */}
-                                <Controller
+                                {/* <Controller
                                     name="currentSalary"
                                     control={control}
-                                    render={({ field }) => (
-                                        <TextField
-                                            {...field}
-                                            size="small"
-                                            label="Current Salary"
-                                            fullWidth
-                                            type="text" 
-                                            onChange={(e) => {
-                                                const value = e.target.value;
+                                    render={({ field }) => ( */}
+                                <TextField
+                                    size="small"
+                                    label="Current Salary"
+                                    // Default to an empty string if null
+                                    fullWidth
+                                    type="number"
+                                    {...register('experiences[0].currentSalary', {
+                                        setValueAs: value => value === "" ? null : value  // Converts empty string to null
+                                    })}
+                                // onChange={(e) => {
+                                //     const value = e.target.value;
 
-                                                if (e.nativeEvent.inputType === "insertText") {
-                                                    if (/^\d*$/.test(value)) {
-                                                        field.onChange(value);
-                                                    }
-                                             
-                                                } else {
-                                                 
-                                                    field.onChange(value);
-                                                }
-                                            }}
-                                        />
+                                //     if (e.nativeEvent.inputType === "insertText") {
+                                //         if (/^\d*$/.test(value)) {
+                                //             field.onChange(value);
+                                //         }
 
-                                    )}
+                                //     } else {
+
+                                //         field.onChange(value);
+                                //     }
+                                // }}
                                 />
 
+                                {/* )}
+                                /> */}
+
                                 {/* Salary Range Options */}
-                                <Box className="space-y-2">
+                                {/* <Box className="space-y-2">
                                     <Typography className="text-sm font-medium">
                                         Select salary range
                                     </Typography>
@@ -438,7 +451,7 @@ export default function ProfileModal() {
                                             />
                                         ))}
                                     </Box>
-                                </Box>
+                                </Box> */}
 
                                 {/* Info Note */}
                                 <Box className="bg-blue-50 text-sm text-gray-700 p-3 rounded-md">
@@ -452,7 +465,7 @@ export default function ProfileModal() {
                         {/* Submit Button */}
                         <Button
                             variant="contained"
-                            onClick={() => setSteps((prev) => prev + 1)}
+                            onClick={handleSubmit(() => setSteps((prev) => prev + 1))}
                             fullWidth
                             className="!bg-green-400 hover:!bg-green-500 text-white font-bold"
                         >
@@ -474,33 +487,43 @@ export default function ProfileModal() {
                             English
                         </FormLabel>
                         <Controller
-                            name="englishLevel"
+                            name="englishProficiency"
                             control={control}
-                            render={({ field }) => (
-                                <RadioGroup {...field}>
-                                    {englishOptions.map((option) => (
-                                        <FormControlLabel
-                                            key={option.value}
-                                            value={option.value}
-                                            control={<Radio />}
-                                            label={
-                                                <Box>
-                                                    <Typography variant="body1" fontWeight={500}>
-                                                        {option.label}
-                                                    </Typography>
-                                                    {option.description && (
-                                                        <Typography variant="body2" color="text.secondary">
-                                                            {option.description}
+                            rules={{ required: "Proficiency is required" }}
+                            render={({ field, fieldState }) => (
+                                <>
+                                    <RadioGroup {...field}>
+                                        {englishOptions.map((option) => (
+                                            <FormControlLabel
+                                                key={option.value}
+                                                value={option.value}
+                                                control={<Radio />}
+                                                label={
+                                                    <Box>
+                                                        <Typography variant="body1" fontWeight={500}>
+                                                            {option.label}
                                                         </Typography>
-                                                    )}
-                                                </Box>
-                                            }
-                                            className="py-2"
-                                        />
-                                    ))}
-                                </RadioGroup>
+                                                        {option.description && (
+                                                            <Typography variant="body2" color="text.secondary">
+                                                                {option.description}
+                                                            </Typography>
+                                                        )}
+                                                    </Box>
+                                                }
+                                                className="py-2"
+                                            />
+                                        ))}
+                                    </RadioGroup>
+                                    {/* Display the error message */}
+                                    {fieldState?.error && (
+                                        <Typography color="error" variant="body2">
+                                            {fieldState?.error?.message}
+                                        </Typography>
+                                    )}
+                                </>
                             )}
                         />
+
                     </FormControl>
 
                     {/* Other Language */}
@@ -535,7 +558,7 @@ export default function ProfileModal() {
 
                     <Button
                         variant="contained"
-                        onClick={() => setSteps((prev) => prev + 1)}
+                        onClick={handleSubmit(() => setSteps((prev) => prev + 1))}
                         className="bg-green-600 hover:bg-green-700 w-full"
                     >
                         Next

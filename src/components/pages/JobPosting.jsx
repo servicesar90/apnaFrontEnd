@@ -1,16 +1,22 @@
 
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { jobs } from '../../employeeData';
+import { employeeData, jobs } from '../../employeeData';
 import JobCard from '../ui/jobCard';
 
 
 export default function JobPosting() {
 
-
+  const [employe, setEmployee] = useState(null)
   const navigate = useNavigate();
-  const user = localStorage.getItem("user");
+  const user = JSON.parse(localStorage.getItem("User"));
 
+
+  useEffect(()=>{
+    const id= user?.id;
+    const employee=employeeData.filter((data)=> data.id== id);
+    setEmployee(employee[0])
+  },[])
 
 
   return (
@@ -21,7 +27,7 @@ export default function JobPosting() {
           Filter
         </div>
         <div className="col-span-3 space-y-4">
-          {jobs.map((job)=>(<JobCard job={job} />))}
+          {jobs.map((job, index)=>(<JobCard key={index} job={job} />))}
         </div>
 
 
@@ -29,16 +35,16 @@ export default function JobPosting() {
           <div className="flex flex-col items-center text-center space-y-2">
             {/* Profile Picture */}
             <img
-              src={user?.image}
+              src={user?.imageURL}
               alt="Profile"
               className="w-20 h-20 rounded-full object-cover"
             />
 
             {/* Name and Title */}
             <div>
-              <h3 className="text-lg font-semibold text-gray-800">{user?.name}</h3>
-              <p className="text-sm text-gray-500">{user?.experience[0].jobTitle}</p>
-              <p className="text-sm text-gray-500">{user?.experience[0].companyName}</p>
+              <h3 className="text-lg font-semibold text-gray-800">{employe?.fullName}</h3>
+              <p className="text-sm text-gray-500">{employe?.experiences[0].jobTitle}</p>
+              <p className="text-sm text-gray-500">{employe?.experiences[0].companyName}</p>
             </div>
 
             {/* Update Profile Button */}

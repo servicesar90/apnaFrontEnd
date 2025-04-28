@@ -25,11 +25,15 @@ const ProfileOverviewCard = () => {
     const [experienceIndex, setExperienceIndex] = useState(null);
 
 
-    const id = localStorage.getItem("id");
+    const user = JSON.parse(localStorage.getItem("User"));
+
+
+
     useEffect(() => {
-        const employeData = employeeData.filter((employee) => employee.id === id);
+        const employeData = employeeData.filter((employee) => employee.id === user?.id);
         setEmployee(employeData[0])
-    }, [])
+    }, []);
+
     return (
         <>
             <div className="w-full p-6 bg-gray-100 flex justify-center flex-row gap-10">
@@ -57,7 +61,7 @@ const ProfileOverviewCard = () => {
                                         <ExternalLink size={14} className="text-blue-600" />
                                     </Tooltip>
                                 </div>
-                                <p className="text-sm text-gray-600">{employee?.experience[0].jobTitle} at {employee?.experience[0].companyName}</p>
+                                <p className="text-sm text-gray-600">{employee?.experiences[0].jobTitle} at {employee?.experiences[0].companyName}</p>
                                 <p className="text-sm text-gray-600">{employee?.location.currentLocation}</p>
                             </div>
                         </div>
@@ -85,7 +89,7 @@ const ProfileOverviewCard = () => {
                             </div>
                             <div>
                                 <span className="font-medium text-gray-600">Mobile number</span>
-                                <p>{employee?.number}</p>
+                                <p>{user?.phone}</p>
                             </div>
                             <div>
                                 <span className="font-medium text-gray-600">Date of birth</span>
@@ -125,7 +129,7 @@ const ProfileOverviewCard = () => {
 
 
                         {/* Work Experience Item 1 */}
-                        {employee?.experience.map((experienc, index) => (
+                        {employee?.experiences.map((experienc, index) => (
                             <div key={index} className="border rounded-lg p-4 space-y-2 relative">
                                 <button onClick={()=> {
                                     setModalName("editExperience")
@@ -140,7 +144,7 @@ const ProfileOverviewCard = () => {
                                 <p className="text-sm text-gray-600">{experienc.companyName}</p>
                                 <div className="text-sm text-gray-500 space-y-0.5">
                                     <p>
-                                        <span className="font-medium">JobRoles:</span> {experienc.jobRoles.map((role) => (<p>{role}</p>))}
+                                        <span className="font-medium">JobRoles:</span> {experienc.jobRole.map((role, index) => (<span key={index}>{role}</span>))}
                                     </p>
                                     <p>
                                         <span className="font-medium">Industry:</span> {experienc.industry}
@@ -150,10 +154,10 @@ const ProfileOverviewCard = () => {
                                     Creating project for the company
                                 </div>
                                 <div className="text-sm text-gray-700">
-                                    <span className="font-medium">Skills:</span> {experienc.skills.map((skill) => (<p>{skill}</p>))}
+                                    <span className="font-medium">Skills:</span> {experienc.skillsUsed.map((skill, index) => (<p key={index}>{skill}</p>))}
                                 </div>
                                 <div className="flex gap-2 text-xs text-gray-600 pt-1">
-                                    <span className="bg-gray-200 px-2 py-0.5 rounded-full">{experienc.startDate}- {employee?.experience[0].endDate ? <span>{employee?.experience[0].endDate}</span> : <span>present</span>}</span>
+                                    <span className="bg-gray-200 px-2 py-0.5 rounded-full">{experienc.startDate}- {employee?.experiences[0].endDate ? <span>{employee?.experiences[0].endDate}</span> : <span>present</span>}</span>
                                     <span className="bg-gray-200 px-2 py-0.5 rounded-full">{experienc.employementType}</span>
                                 </div>
                             </div>
@@ -173,7 +177,7 @@ const ProfileOverviewCard = () => {
 
                         <div onClick={() => setModalName("salary")} className="flex justify-between items-center text-sm text-gray-700">
                             <p className="font-medium">Current monthly salary:</p>
-                            <p className="text-gray-800"> {employee?.currentSalary}</p>
+                            <p className="text-gray-800"> {employee?.experiences[0].currentSalary}</p>
                         </div>
 
                     </div>
@@ -224,10 +228,10 @@ const ProfileOverviewCard = () => {
                                     {/* Card Content */}
                                     <div className="flex-1 space-y-1">
                                         <h3 className="text-sm font-semibold text-gray-800">
-                                            {edu.degree} {edu.specialisation}
+                                            {edu.degree} {edu.specialization}
                                         </h3>
                                         <p className="text-sm text-gray-600">
-                                            {edu.collegeName} -- {edu.highestEducation}
+                                            {edu.instituteName} -- {edu.highestEducation}
                                         </p>
                                         <div className="flex gap-2 pt-1">
                                             <span className="text-xs bg-gray-200 px-2 py-0.5 rounded-full text-gray-700">
@@ -260,7 +264,7 @@ const ProfileOverviewCard = () => {
 
                         {/* Skill Tags */}
                         <div className="flex flex-wrap gap-2">
-                            {employee?.experience[0].skills.map((skill, idx) => (
+                            {employee?.experiences[0].skillsUsed.map((skill, idx) => (
                                 <span
                                     key={idx}
                                     className="px-3 py-1 rounded-full bg-gray-100 text-sm text-gray-700 border border-gray-300"
@@ -376,7 +380,7 @@ const ProfileOverviewCard = () => {
 
                             <div className="flex flex-row gap-6">
                                 <ul className="flex flex-row gap-6">
-                                    {employee?.preferredEmployementType.map((role, index) => (
+                                    {employee?.preferredEmployementTypes.map((role, index) => (
                                         <li key={index} className="text-lg font-semibold text-sm text-gray-500">{role}</li>
                                     ))}
                                 </ul>
@@ -388,7 +392,7 @@ const ProfileOverviewCard = () => {
                                 </ul>
 
                                 <ul className="flex flex-row gap-6">
-                                    {employee?.preferredWorkplace.map((role, index) => (
+                                    {employee?.preferredLocationTypes.map((role, index) => (
                                         <li key={index} className="text-lg font-semibold text-sm text-gray-500">{role}</li>
                                     ))}
                                 </ul>
@@ -421,7 +425,7 @@ const ProfileOverviewCard = () => {
             }
 
             {modalName === "editExperience" &&
-            <EditExperienceModal Open={modalName === "editExperience"} close={()=> setModalName("")} data={employee?.experience[experienceIndex]?employee?.experience[experienceIndex]:null} />
+            <EditExperienceModal Open={modalName === "editExperience"} close={()=> setModalName("")} data={employee?.experiences[experienceIndex]?employee?.experiences[experienceIndex]:null} />
             }
 
         
@@ -444,7 +448,7 @@ const ProfileOverviewCard = () => {
             }
 
             {modalName === "skills" &&
-                <EditSkillsModal open={modalName === "skills"} onClose={() => setModalName("")} skill={employee?.experience[0].skills} />
+                <EditSkillsModal open={modalName === "skills"} onClose={() => setModalName("")} skill={employee?.experiences[0].skillsUsed} />
             }
 
             {modalName === "furtherEducation" &&
@@ -468,11 +472,11 @@ const ProfileOverviewCard = () => {
             }
 
             {modalName === "jobPreference" &&
-                <EditJobPreferencesModal open={modalName === "jobPreference"} onClose={() => setModalName("")} preferredEmployementType={employee?.preferredEmployementType} preferredShifts={employee?.preferredShifts} preferredWorkplace={employee?.preferredWorkplace} />
+                <EditJobPreferencesModal open={modalName === "jobPreference"} onClose={() => setModalName("")} preferredEmployementType={employee?.preferredEmployementTypes} preferredShifts={employee?.preferredShifts} preferredWorkplace={employee?.preferredLocationTypes} />
             }
 
             {modalName === "basicDetails" &&
-                <EditBasicDetailsModal open={modalName === "basicDetails"} onClose={() => setModalName("")} name={employee?.name} email={employee?.email} gender={employee?.gender} number={employee?.number} dob={employee?.dob} />
+                <EditBasicDetailsModal open={modalName === "basicDetails"} onClose={() => setModalName("")} fullName={employee?.fullName} email={employee?.email} gender={employee?.gender} number={employee?.number} dob={employee?.dob} />
             }
         </>
     );

@@ -4,15 +4,18 @@ import { useForm } from "react-hook-form";
 import { CalendarIcon, Lock } from "lucide-react";
 import { Input } from "@mui/material";
 
-const EditBasicDetailsModal = ({ open, onClose, name, gender, dob, email }) => {
+const EditBasicDetailsModal = ({ open, onClose, fullName, gender, dob, email }) => {
   const { register, handleSubmit, setValue, formState: { errors } } = useForm({
     defaultValues: {
-      name,
+      fullName,
       gender,
       dob,
       email,
     },
   });
+
+  const user= JSON.parse(localStorage.getItem("User"));
+
 
   const onSubmit = (data) => {
     console.log("Form Data:", data);
@@ -27,10 +30,11 @@ const EditBasicDetailsModal = ({ open, onClose, name, gender, dob, email }) => {
           <div className="space-y-2">
             <Typography variant="body2" className="text-sm">Name</Typography>
             <Input
-              {...register("name", { required: "Name is required" })}
+              {...register("fullName", { required: "Name is required" })} 
+            
               className="w-full p-2 border border-gray-300 rounded-md"
             />
-            {errors.name && <p className="text-red-500 text-xs">{errors.name.message}</p>}
+            {errors.fullName && <p className="text-red-500 text-xs">{errors.fullName.message}</p>}
           </div>
 
           {/* Gender Select */}
@@ -66,7 +70,7 @@ const EditBasicDetailsModal = ({ open, onClose, name, gender, dob, email }) => {
             <Typography variant="body2" className="text-sm">Mobile number</Typography>
             <div className="relative">
               <Input
-                value="+91-9540441958"
+                value={user?.phone}
                 disabled
                 className="w-full pr-10 bg-gray-100"
               />
