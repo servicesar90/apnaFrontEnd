@@ -1,5 +1,5 @@
 import axios from "axios";
-import { mobileApi, otpApi } from "./APIs";
+import { createEmpProfile, mobileApi, otpApi } from "./APIs";
 
 
 // data={ phone: "string", role: "string" }
@@ -21,5 +21,42 @@ export const handleOtp = async (data)=>{
         console.log("error response",err);
         alert("Login Unsucessfull")
         
+    }
+}
+
+export const createProfile = async (data)=>{
+    try {
+        const token = localStorage.getItem('TokenId')
+        console.log(`token ${token} data ${data}`);
+        const headers = {
+            Authorization: `Bearer ${token}`
+          };
+          
+          const response = await axios.post(createEmpProfile, data, {
+            headers
+          });
+
+          console.log(`response` , response);
+          
+        
+    } catch (error) {
+        console.log("Error from create Profile api",error);
+        
+        
+    }
+}
+
+export const getprofile = async ()=>{
+    try{
+        const token = localStorage.getItem('TokenId')
+        const headers = {
+            Authorization: `Bearer ${token}`
+          };
+        const response= await axios.get(createEmpProfile, {headers});
+      
+        return response;
+        
+    }catch(err){
+        console.log("Error from get Profile api",err)
     }
 }

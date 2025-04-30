@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { employeeData, jobs } from '../../employeeData';
 import JobCard from '../ui/jobCard';
+import { getprofile } from '../../API/ApiFunctions';
 
 
 export default function JobPosting() {
@@ -13,9 +14,16 @@ export default function JobPosting() {
 
 
   useEffect(()=>{
-    const id= user?.id;
-    const employee=employeeData.filter((data)=> data.id== id);
-    setEmployee(employee[0])
+ 
+    
+
+    const getData=async()=>{
+      const response=await getprofile();
+      setEmployee(response?.data.data)
+    }
+    
+    getData()
+
   },[])
 
 
@@ -43,8 +51,8 @@ export default function JobPosting() {
             {/* Name and Title */}
             <div>
               <h3 className="text-lg font-semibold text-gray-800">{employe?.fullName}</h3>
-              <p className="text-sm text-gray-500">{employe?.experiences[0].jobTitle}</p>
-              <p className="text-sm text-gray-500">{employe?.experiences[0].companyName}</p>
+              <p className="text-sm text-gray-500">{employe?.EmployeeExperiences[0].jobTitle}</p>
+              <p className="text-sm text-gray-500">{employe?.EmployeeExperiences[0].companyName}</p>
             </div>
 
             {/* Update Profile Button */}

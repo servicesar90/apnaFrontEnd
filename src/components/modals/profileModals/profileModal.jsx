@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { TextField, Button, LinearProgress, Typography, Box, Chip, RadioGroup, FormLabel, FormControlLabel, Radio, Checkbox, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 import { Calendar, Plus, X, UploadCloud } from "lucide-react";
+import { createProfile } from "../../../API/ApiFunctions";
 
 
 const suggestedRoles = [
@@ -147,7 +148,7 @@ export default function ProfileModal() {
 
 
     const onSubmit = (data) => {
-        console.log(data);
+        createProfile(data);
     };
 
     return (
@@ -640,7 +641,8 @@ export default function ProfileModal() {
 
                     <Button
                         variant="contained"
-                        onClick={() => setSteps((prev) => prev + 1)}
+                        type='submit'
+                        
                         className="bg-green-600 hover:bg-green-700 w-full"
                     >
                         Next
@@ -648,20 +650,18 @@ export default function ProfileModal() {
                 </form>
             )}
 
-            {steps === 4 &&
+            {/* {steps === 4 &&
                 <Box className="w-full max-w-xl p-6 bg-[#fdf6ff] rounded-lg shadow-sm">
                     <form onSubmit={handleSubmit(onSubmit)} className="p-6 max-w-xl space-y-6">
-                        {/* Heading */}
+                      
                         <Typography variant="h6" className="font-semibold mb-2">
                             Resume
                         </Typography>
 
-                        {/* Progress Bar */}
                         <Box className="mb-6">
                             <LinearProgress variant="determinate" value={75} />
                         </Box>
 
-                        {/* Main Content */}
                         <Typography variant="h5" className="font-bold mb-1 text-center">
                             Upload your resume!
                         </Typography>
@@ -675,7 +675,6 @@ export default function ProfileModal() {
                             </span>
                         </Box>
 
-                        {/* Upload Area */}
                         <Box className="flex flex-col items-center justify-center p-4 border-2 border-dashed border-blue-300 rounded-xl bg-white">
                             <UploadCloud className="w-10 h-10 text-blue-500 mb-2" />
                             <Typography className="text-sm text-gray-600 text-center">
@@ -693,7 +692,6 @@ export default function ProfileModal() {
                             </Button>
                         </Box>
 
-                        {/* Footer Info */}
                         <Box className="mt-6 space-y-2 text-sm text-gray-700">
                             <div className="flex items-start gap-2">
                                 <span className="text-green-600">✔</span>
@@ -715,7 +713,7 @@ export default function ProfileModal() {
 
                     </form>
                 </Box>
-            }
+            } */}
 
 
         </div>
