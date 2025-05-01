@@ -3,6 +3,7 @@ import { ExternalLink, Share2, Building2, Pencil, Plus, GraduationCap } from "lu
 import { Tooltip } from "@mui/material";
 import UpdateProfileModal from "../modals/profileUpdateModals/updateProfileModal";
 import { getprofile } from "../../API/ApiFunctions";
+import EditExperienceModal from "../modals/profileUpdateModals/experienceModal";
 
 
 
@@ -517,7 +518,7 @@ const ProfileOverviewCard = () => {
             )} */}
 
 
-
+{modalName === "editExperience" && <EditExperienceModal Open={modalName === "editExperience"} close={() => setModalName("")} data={employee?.EmployeeExperiences[experienceIndex]} />} 
 
             {modalName === "schoolMedium" && (
                 <UpdateProfileModal

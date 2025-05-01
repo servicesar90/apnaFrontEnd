@@ -1,7 +1,8 @@
 import { Dialog } from "@mui/material";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import EditJobRolesModal from "./suggestedroles";
+import DynamicModal from "./updateProfileModal";
+// import EditJobRolesModal from "../";
 
 
 const months = [
@@ -288,11 +289,12 @@ const EditExperienceModal = ({ data, Open, close }) => {
      
 
       {jobRolesModalOpen && (
-        <EditJobRolesModal
+        <DynamicModal
           open={jobRolesModalOpen}
           onClose={() => setJobRolesModalOpen(false)}
-          roles={data?.jobRoles}
-          setRoles={setValue}
+          fields={{jobroles: "default"}}
+          type={{jobRoles: "text"}}
+          suggestions={{jobRoles: []}}
         />
       )}
     </>
