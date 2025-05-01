@@ -73,18 +73,18 @@ const EditExperienceModal = ({ data, Open, close }) => {
 
   return (
     <>
-    <Dialog maxWidth="sm" fullWidth open={Open} onClose={close}>
+    <Dialog  className="rounded-3xl" maxWidth="sm" fullWidth open={Open} onClose={close}>
     
-        <div className="bg-white p-6 rounded shadow-lg w-full max-w-3xl overflow-y-auto max-h-[90vh]">
+        <div className="bg-white p-6 rounded-3xl shadow-lg w-full max-w-3xl overflow-y-auto max-h-[90vh]">
           <h2 className="text-xl font-bold mb-4">Edit Experience</h2>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             {/* Job Details */}
             <div>
-              <h1 className="text-xl font semibold mb-4"> Job Details</h1>
+              <h1 className="text-xl font-semibold mb-4"> Job Details</h1>
               <label className="block font-medium">Job Title</label>
               <input
                 {...register("jobTitle")}
-                className="w-full p-2 border rounded"
+                className="w-full p-2 border rounded-xl"
                 placeholder="Job Title"
               />
             </div>
@@ -96,13 +96,13 @@ const EditExperienceModal = ({ data, Open, close }) => {
                   
                   setJobRolesModalOpen(true);
                 }}
-                className="flex flex-wrap gap-2 mb-2 px-3 py-2 border border-gray-300 rounded cursor-pointer min-h-[40px]"
+                className="flex flex-wrap gap-2 mb-2 px-3 py-2 border border-gray-300 rounded-xl cursor-pointer min-h-[40px]"
               >
                 {jobRoles.length > 0 ? (
                   jobRoles.map((role, index) => (
                     <span
                       key={index}
-                      className="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm"
+                      className="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-2xl text-sm"
                     >
                       {role}
                     </span>
@@ -121,7 +121,7 @@ const EditExperienceModal = ({ data, Open, close }) => {
                 {...register("description")}
                 rows={4}
                 maxLength={4000}
-                className="w-full p-2 border rounded"
+                className="w-full p-2 border rounded-2xl"
                 placeholder="Describe your work..."
               />
             </div>
@@ -135,7 +135,7 @@ const EditExperienceModal = ({ data, Open, close }) => {
                   onKeyDown={(e) =>
                     e.key === "Enter" && (e.preventDefault(), addSkill())
                   }
-                  className="p-2 border rounded w-full"
+                  className="p-2 border rounded-xl w-full"
                   placeholder="Type a skill and press Enter"
                 />
                
@@ -144,7 +144,7 @@ const EditExperienceModal = ({ data, Open, close }) => {
                 {skills.map((skill) => (
                   <div
                     key={skill}
-                    className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm flex items-center gap-1"
+                    className="bg-blue-100 text-blue-800 px-3 py-1 rounded-xl text-sm flex items-center gap-1"
                   >
                     {skill}
                     <button
@@ -165,14 +165,14 @@ const EditExperienceModal = ({ data, Open, close }) => {
               <label className="block font-medium">Company Name</label>
               <input
                 {...register("companyName")}
-                className="w-full p-2 border rounded"
+                className="w-full p-2 border rounded-xl"
               />
             </div>
 
             {/* Industry */}
             <div>
               <label className="block font-medium mb-1">Industry</label>
-              <select {...register("industry")} className="w-full p-2 border rounded">
+              <select {...register("industry")} className="w-full p-2 border rounded-xl">
                 {industries.map((industry, index) => (
                   <option key={index} value={industry}>{industry}</option>
                 ))}
@@ -253,7 +253,7 @@ const EditExperienceModal = ({ data, Open, close }) => {
               <label className="block font-medium">Start Date</label>
               <div className="flex gap-2">
                 
-                <input className="p-2 border border-gray-300 rounded w-full" type="date" {...register("startDate")} onChange={(e)=>setValue("startDate",e.target.value)} />
+                <input className="p-2 border border-gray-300 rounded-xl w-full" type="date" {...register("startDate")} onChange={(e)=>setValue("startDate",e.target.value)} />
               </div>
             </div>
 
@@ -262,7 +262,7 @@ const EditExperienceModal = ({ data, Open, close }) => {
                 <label className="block font-medium">End Date</label>
                 <div className="flex gap-2">
                 
-                <input className="p-2 border border-gray-300 rounded w-full" type="date" {...register("endDate")} onChange={(e)=>setValue("endDate",e.target.value)} />
+                <input className="p-2 border border-gray-300 rounded-xl w-full" type="date" {...register("endDate")} onChange={(e)=>setValue("endDate",e.target.value)} />
               </div>
               </div>
             )}
@@ -271,13 +271,13 @@ const EditExperienceModal = ({ data, Open, close }) => {
               <button
                 type="button"
                 onClick={close}
-                className="px-4 py-2 border border-gray-300 rounded"
+                className="px-4 py-2 border border-gray-300 rounded-xl"
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                className="px-4 py-2 bg-blue-600 text-white rounded"
+                className="px-4 py-2 bg-blue-600 text-white rounded-xl"
               >
                 Save
               </button>

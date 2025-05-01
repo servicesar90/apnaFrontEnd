@@ -675,7 +675,7 @@ export default function ProfileModal() {
                             </span>
                         </Box>
 
-                        <Box className="flex flex-col items-center justify-center p-4 border-2 border-dashed border-blue-300 rounded-xl bg-white">
+                        <Box className="flex flex-col items-center justify-center p-4 border-2 border-dashed border-blue-300 rounded-xl bg-wte">
                             <UploadCloud className="w-10 h-10 text-blue-500 mb-2" />
                             <Typography className="text-sm text-gray-600 text-center">
                                 Upload <strong>.pdf</strong> or <strong>.docx</strong> file only

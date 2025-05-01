@@ -12,6 +12,14 @@ const ProfileOverviewCard = () => {
     const [employee, setEmployee] = useState(null);
     const [modalName, setModalName] = useState(null);
     const [experienceIndex, setExperienceIndex] = useState(null);
+    const [selectedEducation, setSelectedEducation] = useState(null);
+
+
+    const handleEditEducation = (edu) => {
+        setSelectedEducation(edu);
+        setModalName("education");
+      };
+    
 
     const user = JSON.parse(localStorage.getItem("User"));
     const getData = async () => {
@@ -21,6 +29,8 @@ const ProfileOverviewCard = () => {
 
     }
 
+    console.log(employee)
+
     useEffect(() => {
         
 
@@ -29,7 +39,7 @@ const ProfileOverviewCard = () => {
 
 
 
-    console.log(employee)
+    console.log(employee?.EmployeeEducations.length)
 
     return (
         <>
@@ -52,7 +62,7 @@ const ProfileOverviewCard = () => {
                                         rel="noopener noreferrer"
                                         className="underline"
                                     >
-                                        https://apna.co/aditya-j
+                                      https://apna.co/aditya-j
                                     </a>
                                     <Tooltip title="Open profile link">
                                         <ExternalLink size={14} className="text-blue-600" />
@@ -183,14 +193,16 @@ const ProfileOverviewCard = () => {
                         </div>
 
                     </div>
-
+{/* 
                     <div className="flex mt-6 items-center justify-between">
                         <h2 className="text-lg font-semibold text-gray-800">Education</h2>
                         <button className="text-green-600 text-sm font-medium hover:underline flex items-center gap-1">
                             <Plus size={14} /> Add
                         </button>
-                    </div>
+                    </div> */}
 
+                    
+{/* 
                     <div onClick={() => setModalName("highestEducation")} className="bg-white rounded-xl mt-4 p-4 shadow-md space-y-4 w-full">
 
                         <div className="flex justify-between items-center text-sm bg-gray-50 px-4 py-2 rounded-lg">
@@ -198,9 +210,9 @@ const ProfileOverviewCard = () => {
                             <p className="text-gray-900 font-medium">{employee?.EmployeeEducations[0]?.highestEducation}</p>
                         </div>
 
-                    </div>
+                    </div> */}
 
-
+{/* 
                     <div onClick={() => setModalName("schoolMedium")} className="bg-white rounded-xl mt-4 p-4 shadow-md space-y-4 w-full">
 
                         <div className="flex justify-between items-center text-sm bg-gray-50 px-4 py-2 rounded-lg">
@@ -208,88 +220,106 @@ const ProfileOverviewCard = () => {
                             <p className="text-gray-400 italic">{employee?.EmployeeEducations[0]?.schoolMedium}</p>
                         </div>
 
-                    </div>
+                    </div> */}
+ <div className="flex mt-6 items-center justify-between">
+        <h2 className="text-lg font-semibold text-gray-800">Education</h2>
+        <button
+          className="text-green-600 text-sm font-medium hover:underline flex items-center gap-1"
+          onClick={() => setModalName("education")}
+        >
+          <Plus size={14} /> Add
+        </button>
+      </div>
+      {employee?.EmployeeEducations.length > 0 ?
+      <div className="bg-black rounded-xl mt-4 p-4 shadow-md space-y-4 w-full">
+        {/* Education Section */}
 
-                    <div className="bg-white rounded-xl mt-4 p-4 shadow-md space-y-4 w-full">
-                        {/* Education Section */}
-                        <div className="space-y-3 pt-2">
+        
+         <div className="space-y-3 pt-2">
+         {/* Education Cards */}
+          { employee?.EmployeeEducations?.map((edu, idx) => (
+           <div key={idx} className="relative border rounded-xl p-4 bg-gray-50 flex gap-4">
+             {/* Timeline dot */}
+             <div className="flex flex-col items-center">
+               <GraduationCap className="text-gray-600 mt-1" size={20} />
+               <div className="h-full border-l border-dotted border-gray-400 mt-1" />
+             </div>
 
+                                 
+             {/* Card Content */}
+             <div className="flex-1 space-y-1">
+               <h3 className="text-sm font-semibold text-gray-800">
+                 {edu.degree} {edu.specialization}
+               </h3>
+               <p className="text-sm text-gray-600">
+                 {edu.instituteName} -- {edu.highestEducation}
+               </p>
+               <div className="flex gap-2 pt-1">
+                 <span className="text-xs bg-gray-200 px-2 py-0.5 rounded-full text-gray-700">
+                   Batch {edu.startDate} - {edu.endDate}
+                 </span>
+                 <span className="text-xs bg-gray-200 px-2 py-0.5 rounded-full text-gray-700">
+                   {edu.educationType}
+                 </span>
+               </div>
+             </div>
 
-                            {/* Education Cards */}
-                            {employee?.EmployeeEducations?.map((edu, idx) => (
-                                <div
-                                    key={idx}
-                                    className="relative border rounded-xl p-4 bg-gray-50 flex gap-4"
-                                >
-                                    {/* Timeline dot */}
-                                    <div className="flex flex-col items-center">
-                                        <GraduationCap className="text-gray-600 mt-1" size={20} />
-                                        <div className="h-full border-l border-dotted border-gray-400 mt-1" />
-                                    </div>
+             {/* Edit icon */}
+             <button
+               onClick={() => handleEditEducation(edu)}
+               className="absolute top-2 right-2 text-gray-500 hover:text-green-600"
+             >
+               <Pencil size={16} />
+             </button>
+           </div>
+         ))}
+       </div>
+       
+      </div>
+      :
+      <h1
+      onClick={() => setModalName("education")}
+      className="bg-white text-black shadow-md p-4 cursor-pointer hover:bg-gray-100"
+    >
+      No Education added
+    </h1>
+    
+      }
 
-                                    {/* Card Content */}
-                                    <div className="flex-1 space-y-1">
-                                        <h3 className="text-sm font-semibold text-gray-800">
-                                            {edu.degree} {edu.specialization}
-                                        </h3>
-                                        <p className="text-sm text-gray-600">
-                                            {edu.instituteName} -- {edu.highestEducation}
-                                        </p>
-                                        <div className="flex gap-2 pt-1">
-                                            <span className="text-xs bg-gray-200 px-2 py-0.5 rounded-full text-gray-700">
-                                                Batch {edu.startDate} - {edu.endDate}
-                                            </span>
-                                            <span className="text-xs bg-gray-200 px-2 py-0.5 rounded-full text-gray-700">
-                                                {edu.educationType}
-                                            </span>
-                                        </div>
-                                    </div>
+<div className="bg-white p-6 rounded-xl shadow-sm mt-4">
+  {/* Header */}
+  <div className="flex items-center justify-between mb-4">
+    <h3 className="text-lg font-semibold">Skills</h3>
+    <button
+      onClick={() => setModalName("skills")}
+      className="text-gray-500 hover:text-gray-700"
+    >
+      <Pencil size={18} />
+    </button>
+  </div>
 
-                                    {/* Edit icon */}
-                                    <button onClick={() => setModalName("education")} className="absolute top-2 right-2 text-gray-500 hover:text-green-600">
-                                        <Pencil size={16} />
-                                    </button>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
+  {/* Skill Tags */}
+  <div className="flex flex-wrap gap-2">
+    {employee?.EmployeeExperiences?.[0]?.skillsUsed?.length > 0 ? (
+      employee.EmployeeExperiences[0].skillsUsed.map((skill, idx) => (
+        <span
+          key={idx}
+          className="px-3 py-1 rounded-full bg-gray-100 text-sm text-gray-700 border border-gray-300"
+        >
+          {skill}
+        </span>
+      ))
+    ) : (
+      <p className="text-sm text-gray-400 italic">No skills listed yet.</p>
+    )}
+  </div>
 
+  {/* Footer Note */}
+  <p className="text-sm text-gray-500 mt-4 flex items-center gap-1">
+   
+  </p>
+</div>
 
-                    <div className="bg-white p-6 rounded-xl shadow-sm mt-4">
-                        {/* Header */}
-                        <div className="flex items-center justify-between mb-4">
-                            <h3 className="text-lg font-semibold">Skills</h3>
-                            <button onClick={() => setModalName("skills")} className="text-gray-500 hover:text-gray-700">
-                                <Pencil size={18} />
-                            </button>
-                        </div>
-
-                        {/* Skill Tags */}
-                        <div className="flex flex-wrap gap-2">
-                            {employee?.EmployeeExperiences[0].skillsUsed?.map((skill, idx) => (
-                                <span
-                                    key={idx}
-                                    className="px-3 py-1 rounded-full bg-gray-100 text-sm text-gray-700 border border-gray-300"
-                                >
-                                    {skill}
-                                </span>
-                            ))}
-                        </div>
-
-                        {/* Footer Note */}
-                        <p className="text-sm text-gray-500 mt-4 flex items-center gap-1">
-                            <span className="text-xl">ℹ️</span> Skills with the check mark have been verified by Apna
-                        </p>
-                    </div>
-
-                    <div className="bg-white rounded-xl mt-4 p-4 shadow-md space-y-4 w-full">
-
-                        <div onClick={() => setModalName("furtherEducation")} className="flex justify-between items-center text-sm bg-gray-50 px-4 py-2 rounded-lg">
-                            <p className="text-gray-700">Further Education Preferences</p>
-                            <p className="text-gray-400 italic">+ Add</p>
-                        </div>
-
-                    </div>
 
                     <div className="bg-white rounded-xl mt-4 p-4 shadow-md space-y-4 w-full">
 
@@ -429,38 +459,38 @@ const ProfileOverviewCard = () => {
                 </div>
             </div>
 
-
             {modalName === "skills" && (
-                <UpdateProfileModal
-                    open={modalName === "skills"}
-                    onClose={() => setModalName("")}
-                    fields={{
-                        skills: employee?.experiences[0].skillsUsed || [],
-                    }}
-                    type={{
-                        skills: "multi",
-                    }}
-                    suggestions={{
-                        skills: [
-                            "OOPS",
-                            "Java2D",
-                            "Content development",
-                            "Next.js",
-                            "Node",
-                            "Advanced java",
-                            "XPath",
-                            "Content Design",
-                            "XHTML",
-                            "Object-Oriented Design",
-                            "Front-end app development",
-                            "Java",
-                            "MongoDB",
-                            "HTML/CSS",
-                            "JavaScript",
-                        ],
-                    }}
-                />
-            )}
+  <UpdateProfileModal
+    open={modalName === "skills"}
+    onClose={() => setModalName("")}
+    fields={{
+      skills: employee?.EmployeeExperiences?.[0]?.skillsUsed || [],
+    }}
+    type={{
+      skills: "multi",
+    }}
+    suggestions={{
+      skills: [
+        "OOPS",
+        "Java2D",
+        "Content development",
+        "Next.js",
+        "Node",
+        "Advanced java",
+        "XPath",
+        "Content Design",
+        "XHTML",
+        "Object-Oriented Design",
+        "Front-end app development",
+        "Java",
+        "MongoDB",
+        "HTML/CSS",
+        "JavaScript",
+      ],
+    }}
+  />
+)}
+
 
             {/* {modalName === "editExperience" && (
                 <UpdateProfileModal
@@ -520,7 +550,7 @@ const ProfileOverviewCard = () => {
 
 {modalName === "editExperience" && <EditExperienceModal Open={modalName === "editExperience"} close={() => setModalName("")} data={employee?.EmployeeExperiences[experienceIndex]} />} 
 
-            {modalName === "schoolMedium" && (
+            {/* {modalName === "schoolMedium" && (
                 <UpdateProfileModal
                     open={modalName === "schoolMedium"}
                     onClose={() => setModalName("")}
@@ -546,7 +576,7 @@ const ProfileOverviewCard = () => {
                         ],
                     }}
                 />
-            )}
+            )} */}
 
 
             {modalName === "salary" && (
@@ -653,9 +683,9 @@ const ProfileOverviewCard = () => {
                     }}
                 />
             )}
-
-
-            {modalName === "highestEducation" && (
+ 
+{/* 
+           {modalName === "highestEducation" && (
                 <UpdateProfileModal
                     open={modalName === "highestEducation"}
                     onClose={() => setModalName("")}
@@ -669,7 +699,7 @@ const ProfileOverviewCard = () => {
                         highestEducation: ["Diploma", "ITI", "Graduate", "Post Graduate"]
                     }}
                 />
-            )}
+            )}  */}
 
             {modalName === "furtherEducation" && (
                 <UpdateProfileModal
@@ -731,14 +761,15 @@ const ProfileOverviewCard = () => {
                     open={modalName === "education"}
                     onClose={() => setModalName("")}
                     fields={{
-                        highestEducation: employee?.education[0]?.highestEducation || "Graduate",
-                        instituteName: employee?.education[0]?.instituteName || "",
-                        degree: employee?.education[0]?.degree || "",
-                        specialisation: employee?.education[0]?.specialisation || "",
-                        educationType: employee?.education[0]?.educationType || "Full-time",
-                        startDate: employee?.education[0]?.startDate || "",
-                        endDate: employee?.education[0]?.endDate || ""
-                    }}
+                        highestEducation: employee?.education?.[0]?.highestEducation || "Graduate",
+                        instituteName: employee?.education?.[0]?.instituteName || "",
+                        degree: employee?.education?.[0]?.degree || "",
+                        specialisation: employee?.education?.[0]?.specialisation || "",
+                        educationType: employee?.education?.[0]?.educationType || "Full-time",
+                        startDate: employee?.education?.[0]?.startDate || "",
+                        endDate: employee?.education?.[0]?.endDate || ""
+                      }}
+                      
                     type={{
                         highestEducation: "radio",
                         instituteName: "text",
