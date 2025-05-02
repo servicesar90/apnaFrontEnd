@@ -4,6 +4,9 @@ import { Tooltip } from "@mui/material";
 import UpdateProfileModal from "../modals/profileUpdateModals/updateProfileModal";
 import { getprofile } from "../../API/ApiFunctions";
 import EditExperienceModal from "../modals/profileUpdateModals/experienceModal";
+// import ProfileCard from "../modals/profileUpdateModals/ProfileCard";
+import { Mail, Phone, MapPin, Calendar, Briefcase, Timer } from 'lucide-react';
+import QuickLinks from "./Quicklinks";
 
 
 
@@ -12,7 +15,7 @@ const ProfileOverviewCard = () => {
     const [employee, setEmployee] = useState(null);
     const [modalName, setModalName] = useState(null);
     const [experienceIndex, setExperienceIndex] = useState(null);
-    const [selectedEducation, setSelectedEducation] = useState(null);
+    // const [selectedEducation, setSelectedEducation] = useState(null);
 
 
     const handleEditEducation = (edu) => {
@@ -43,84 +46,88 @@ const ProfileOverviewCard = () => {
 
     return (
         <>
-            <div className="w-full p-6 bg-gray-100 flex justify-center flex-row gap-10">
-                <div className="flex flex-col mt-0 ">
-                    <div className="bg-white rounded-xl p-4 m-4 shadow-md w-full max-w-md space-y-4">
-                        {/* Profile Header */}
-                        <div className="flex items-center space-x-4">
-                            <img
-                                src=""
-                                alt="Profile"
-                                className="w-20 h-20 rounded-full object-cover"
-                            />
-                            <div>
-                                <h2 className="text-lg font-semibold text-gray-900">{employee?.name}</h2>
-                                <div className="text-sm text-blue-600 flex items-center gap-1">
-                                    <a
-                                        href="https://apna.co/aditya-j"
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="underline"
-                                    >
-                                      https://apna.co/aditya-j
-                                    </a>
-                                    <Tooltip title="Open profile link">
-                                        <ExternalLink size={14} className="text-blue-600" />
-                                    </Tooltip>
-                                </div>
-                                <p className="text-sm text-gray-600">{employee?.
-                                    EmployeeExperiences[0].jobTitle} at {employee?.
-                                        EmployeeExperiences[0].companyName}</p>
-                                <p className="text-sm text-gray-600">{employee?.currentLocation}</p>
-                            </div>
-                        </div>
+            {/* <div className="w-full p-6 bg-red-500 flex justify-center flex-row gap-10"> */}
+            <div className="max-w-4xl mx-auto bg-white rounded-xl shadow p-6 flex flex-col gap-4">
+      <div className="flex items-center gap-4">
+        {/* Profile Image */}
+        <div className="relative w-20 h-20">
+          <img
+            src="/user.png"
+            alt="avatar"
+            className="rounded-full w-20 h-20"
+          />
+          <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 bg-blue-500 text-white text-xs px-2 py-0.5 rounded-full">
+            100%
+          </span>
+        </div>
 
-                        {/* Badge and Share */}
-                        <div className="flex items-center justify-between">
-                            <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full font-medium">
-                                LEVEL 1
-                            </span>
-                            <button className="flex items-center text-green-600 text-sm hover:underline">
-                                <Share2 size={16} className="mr-1" />
-                                Share profile
-                            </button>
-                        </div>
+        {/* Profile Info */}
+        <div className="flex-1">
+          <h2 className="text-lg font-semibold">Aditya jain</h2>
+          <p className="text-sm text-gray-600">Vertical Head Perm & RPO– Talent Acquisition and Recruitment</p>
+          <p className="text-sm text-gray-500">at Shan WebTech pvt.ltd</p>
+        </div>
 
-                    </div>
+        {/* Profile Updated */}
+        <div className="text-xs text-gray-400">Profile last updated · 24 aug,2024</div>
+      </div>
 
-                    <div className="bg-white rounded-xl p-4 m-4 shadow-md w-full max-w-md space-y-4">
+      {/* Divider */}
+      <hr />
 
-                        {/* Contact Info Grid */}
-                        <div className="grid grid-cols-2 gap-y-3 text-sm text-gray-700">
-                            <div>
-                                <span className="font-medium text-gray-600">Email ID</span>
-                                <p>{employee?.email}</p>
-                            </div>
-                            <div>
-                                <span className="font-medium text-gray-600">Mobile number</span>
-                                <p>{user?.phone}</p>
-                            </div>
-                            <div>
-                                <span className="font-medium text-gray-600">Date of birth</span>
-                                <p>{employee?.dob}</p>
-                            </div>
-                            <div>
-                                <span className="font-medium text-gray-600">Gender</span>
-                                <p>{employee?.gender}</p>
-                            </div>
-                            <div>
-                                <span className="font-medium text-gray-600">Current location</span>
-                                <p>{employee?.currentLocation}</p>
-                            </div>
-                            <div>
-                                <span className="font-medium text-gray-600">Hometown</span>
-                                <p>{employee?.hometown}</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+      {/* Details Grid */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-gray-700">
+        <div className="flex items-center gap-2">
+          <MapPin className="w-4 h-4 text-blue-500" />
+          <span>Uttar Pradesh, INDIA</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <Phone className="w-4 h-4 text-red-700" />
+          <span>7292003246</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <Calendar className="w-4 h-4 text-green-700" />
+          <span>3years</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <Mail className="w-4 h-4 text-yellow-500" />
+          <span>ppalaktuteja@gmail.com</span>
+        </div>
+        <div className="flex items-center gap-2">
+  <img src="/takeover.png" alt="Rupee" className="w-4 h-4" />
+  <span>₹ 19,55,000</span>
+</div>
 
-                <div className="flex flex-col">
+        <div className="flex items-center gap-2">
+          <Timer className="w-4 h-4 text-red-400 " />
+          <span>3 Months notice period</span>
+        </div>
+      </div>
+    </div>
+
+
+     
+<div>
+<div className="flex flex-col lg:flex-row w-full">
+  {/* Left side - Quick Links */}
+  <div className="w-full lg:w-1/3">
+    {/* Quick Links content */}
+  </div>
+
+  {/* Right side - Your div */}
+  <div className="flex flex-col w-full lg:w-2/3 justify-start">
+    {/* Your right-side content */}
+  </div>
+</div>
+
+<div className="flex flex-col lg:flex-row gap-6 w-full">
+  {/* Left: Quick Links */}
+  <div className="w-full lg:w-1/3">
+    <QuickLinks />
+  </div>
+ 
+
+                <div className="flex flex-col w-full lg:w-2/3 justify-start right-6 ">
 
                     <div className="flex items-center justify-between">
                         <h2 className="text-lg font-semibold text-gray-800">Work Experience</h2>
@@ -285,6 +292,7 @@ const ProfileOverviewCard = () => {
     </h1>
     
       }
+       </div>
 
 <div className="bg-white p-6 rounded-xl shadow-sm mt-4">
   {/* Header */}
@@ -318,6 +326,7 @@ const ProfileOverviewCard = () => {
   <p className="text-sm text-gray-500 mt-4 flex items-center gap-1">
    
   </p>
+</div>
 </div>
 
 
@@ -457,8 +466,8 @@ const ProfileOverviewCard = () => {
                     </div>
 
                 </div>
-            </div>
-
+             
+          
             {modalName === "skills" && (
   <UpdateProfileModal
     open={modalName === "skills"}
@@ -488,6 +497,10 @@ const ProfileOverviewCard = () => {
         "JavaScript",
       ],
     }}
+    metaData={{
+        title:"  Edit skills",
+        api:"somthing",}
+    }
   />
 )}
 
@@ -593,6 +606,11 @@ const ProfileOverviewCard = () => {
                         currentSalary:
                             "💡 Salary information is private, we use it only to show relevant jobs",
                     }}
+                    
+                    metaData={{
+                        title:"Edit Current Monthly Salary",
+                        api:"somthing",}
+                    } 
                 />
             )}
 
@@ -618,6 +636,10 @@ const ProfileOverviewCard = () => {
                     limits={{
                         preferredJobs: 5,
                     }}
+                    metaData={{
+                        title:"preferredJobs",
+                        api:"somthing",}
+                    }
                 />
             )}
 
@@ -637,7 +659,11 @@ const ProfileOverviewCard = () => {
                         hometown: "text",
                     }}
                     suggestions={{}} // optional: you can provide city name suggestions if needed
-                    limits={{ preferredJobCity: 3 }} // to enforce a max of 3 cities
+                    limits={{ preferredJobCity: 3 }} 
+                    metaData={{
+                        title:"location",
+                        api:"somthing",}
+                    }// to enforce a max of 3 cities
                 />
             )}
 
@@ -658,6 +684,10 @@ const ProfileOverviewCard = () => {
                         englishLevel: ["Basic", "Intermediate", "Advanced"],
                         language: ["Hindi", "Telugu", "Bengali"],
                     }}
+                    metaData={{
+                        title:"languageKnown",
+                        api:"somthing",}
+                    }
                 />
             )}
 
@@ -681,7 +711,16 @@ const ProfileOverviewCard = () => {
                         preferredWorkplace: ["Work from Office", "Work from Home", "Field Jobs"],
                         preferredShifts: ["Night Shift", "Day Shift"],
                     }}
+                    metaData={{
+                        title:"jobPreference",
+                        api:"somthing",}
+                    }
                 />
+
+                    
+                    
+              
+            
             )}
  
 {/* 
@@ -718,6 +757,11 @@ const ProfileOverviewCard = () => {
                             "Govt. Job Preparation"
                         ]
                     }}
+
+                    metaData={{
+                        title:"Further education preferences",
+                        api:"somthing",}
+                    }
                 />
             )}
 
@@ -734,7 +778,11 @@ const ProfileOverviewCard = () => {
                         years: "number",
                         months: "number"
                     }}
-                    suggestions={{}} // No suggestions needed for plain number input
+                    suggestions={{}}
+                    metaData={{
+                        title:"Year Experiance",
+                        api:"somthing",}
+                    } // No suggestions needed for plain number input
                 />
             )}
 
@@ -751,7 +799,13 @@ const ProfileOverviewCard = () => {
                         years: "number",
                         months: "number"
                     }}
-                    suggestions={{}} // No suggestions needed for plain number input
+                    suggestions={{}}
+
+                    metaData={{
+                        title:" Add Experiance Year",
+                        api:"somthing",}
+                    } 
+                     // No suggestions needed for plain number input
                 />
             )}
 
@@ -785,6 +839,12 @@ const ProfileOverviewCard = () => {
                         specialisation: ["Computer Science", "Commerce", "Arts", "Physics"],
                         educationType: ["Full-time", "Part-time", "Correspondence"]
                     }}
+
+                    
+                    metaData={{
+                        title:" Add Education",
+                        api:"somthing",}
+                    } 
                 />
             )}
 
@@ -801,6 +861,12 @@ const ProfileOverviewCard = () => {
                         certification: "text",
                     }}
                     suggestions={{}}
+
+                    
+                    metaData={{
+                        title:" Add Certification",
+                        api:"somthing",}
+                    } 
                 />
             )}
 
@@ -828,6 +894,11 @@ const ProfileOverviewCard = () => {
                     suggestions={{
                         gender: ["Male", "Female", "Other"]
                     }}
+                    
+                    metaData={{
+                        title:" Edit Basic Details",
+                        api:"somthing",}
+                    } 
                 />
             )}
 

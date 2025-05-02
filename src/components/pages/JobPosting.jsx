@@ -4,6 +4,11 @@ import { useNavigate } from 'react-router-dom';
 import { employeeData, jobs } from '../../employeeData';
 import JobCard from '../ui/jobCard';
 import { getprofile } from '../../API/ApiFunctions';
+import JobPortal from './JobFiltering';
+// const data ={[
+//   "dataposted","Distance","Salary","Work Mode","Work Type","Department", " Work Shift",
+// ]
+// }
 
 
 export default function JobPosting() {
@@ -31,13 +36,8 @@ export default function JobPosting() {
     <div className="min-h-screen bg-[#f5f5f6] p-4">
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
 
-        <div className="bg-white p-4 rounded-xl col-span-1 space-y-6">
-          Filter
-        </div>
-        <div className="col-span-3 space-y-4">
-          {jobs.map((job, index)=>(<JobCard key={index} job={job} />))}
-        </div>
-
+      
+       
 
         <div className="bg-white p-4 rounded-xl col-span-1 space-y-4 h-fit shadow-md">
           <div className="flex flex-col items-center text-center space-y-2">
@@ -62,6 +62,8 @@ export default function JobPosting() {
           </div>
         </div>
       </div>
+
+      <JobPortal/>
 
     </div>
   );

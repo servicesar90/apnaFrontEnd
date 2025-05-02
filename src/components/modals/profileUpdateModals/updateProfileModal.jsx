@@ -17,7 +17,7 @@ import {
   Box,
 } from "@mui/material";
 
-const DynamicModal = ({ open, onClose, fields, type, suggestions }) => {
+const DynamicModal = ({ open, onClose, fields, type, suggestions ,metaData }) => {
   const { register, handleSubmit, setValue, watch } = useForm({
     defaultValues: fields,
   });
@@ -56,7 +56,7 @@ const DynamicModal = ({ open, onClose, fields, type, suggestions }) => {
       }}
     >
       <DialogTitle className="text-xl font-semibold ">
-        Update Profile
+      {metaData?.title || "Modal"}
       </DialogTitle>
 
       <DialogContent>

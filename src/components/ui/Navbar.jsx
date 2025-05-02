@@ -47,10 +47,11 @@ export default function Navbar() {
 
   return (
     <>
-      <nav className="bg-white shadow p-4 flex justify-between items-center relative">
+      <nav className="bg-white shadow p-4 flex justify-between h-20 items-center relative">
         {/* Logo */}
         <Link to="/" className="text-xl font-bold text-black">
-          <img src="/UNIGROW LOGO (2) (1).png" style={{ width: "100px" }} alt="Logo" />
+        <img src="/Unigrow logo (4).png" className="w-[70px] h-[60px]" alt="Logo" />
+
         </Link>
 
         {/* Right Section (Mobile) */}
