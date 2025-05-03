@@ -7,6 +7,7 @@ import EditExperienceModal from "../modals/profileUpdateModals/experienceModal";
 // import ProfileCard from "../modals/profileUpdateModals/ProfileCard";
 import { Mail, Phone, MapPin, Calendar, Briefcase, Timer } from 'lucide-react';
 import QuickLinks from "./Quicklinks";
+import { employeeData } from "../../employeeData";
 
 
 
@@ -47,70 +48,81 @@ const ProfileOverviewCard = () => {
     return (
         <>
             {/* <div className="w-full p-6 bg-red-500 flex justify-center flex-row gap-10"> */}
-            <div className="max-w-4xl mx-auto bg-white rounded-xl shadow p-6 flex flex-col gap-4">
-      <div className="flex items-center gap-4">
-        {/* Profile Image */}
-        <div className="relative w-20 h-20">
-          <img
-            src="/user.png"
-            alt="avatar"
-            className="rounded-full w-20 h-20"
-          />
-          <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 bg-blue-500 text-white text-xs px-2 py-0.5 rounded-full">
-            100%
-          </span>
-        </div>
+            <div className="flex flex-col w-full max-w-4xl mx-auto p-4 space-y-4 bg-white rounded-xl shadow-md">
+  {/* Profile Header */}
+  <div className="flex items-center gap-4">
+    {/* Profile Image */}
+    <div className="relative w-20 h-20">
+      <img
+        src={employee?.profileImage || "/user.png"}
+        alt="avatar"
+        className="rounded-full w-20 h-20 object-cover"
+      />
+      <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 bg-blue-500 text-white text-xs px-2 py-0.5 rounded-full">
+        100%
+      </span>
+    </div>
 
-        {/* Profile Info */}
-        <div className="flex-1">
-          <h2 className="text-lg font-semibold">Aditya jain</h2>
-          <p className="text-sm text-gray-600">Vertical Head Perm & RPO– Talent Acquisition and Recruitment</p>
-          <p className="text-sm text-gray-500">at Shan WebTech pvt.ltd</p>
-        </div>
+    {/* Profile Info */}
+    <div className="flex flex-col  ">
+    <div className="flex-1 ">
+      <h2 className="text-lg font-semibold">{employee?.fullName}</h2>
+      <p className="text-sm text-gray-600">
+        {employee?.EmployeeExperiences[0]?.jobTitle}
+      </p>
+      <p className="text-sm text-gray-500">
+        at  {employee?.EmployeeExperiences[0]?.companyName}
+      </p>
+    </div>
+   
 
-        {/* Profile Updated */}
-        <div className="text-xs text-gray-400">Profile last updated · 24 aug,2024</div>
-      </div>
+    {/* Last Updated */}
+    <div className="text-xs text-gray-400   hidden lg:block">
+      Profile last updated · {employee?.lastUpdated || "N/A"}
+    </div>
+  </div>
+  </div>
 
-      {/* Divider */}
-      <hr />
+  {/* Divider */}
+  <hr />
 
-      {/* Details Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-gray-700">
-        <div className="flex items-center gap-2">
-          <MapPin className="w-4 h-4 text-blue-500" />
-          <span>Uttar Pradesh, INDIA</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <Phone className="w-4 h-4 text-red-700" />
-          <span>7292003246</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <Calendar className="w-4 h-4 text-green-700" />
-          <span>3years</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <Mail className="w-4 h-4 text-yellow-500" />
-          <span>ppalaktuteja@gmail.com</span>
-        </div>
-        <div className="flex items-center gap-2">
-  <img src="/takeover.png" alt="Rupee" className="w-4 h-4" />
-  <span>₹ 19,55,000</span>
+  {/* Details Grid */}
+  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-gray-700">
+    <div className="flex items-center gap-2">
+      <MapPin className="w-4 h-4 text-blue-500" />
+      <span>{employee?.currentLocation || "Location unavailable"}</span>
+    </div>
+    <div className="flex items-center gap-2">
+      <Phone className="w-4 h-4 text-red-700" />
+      <span>{user?.phone || "N/A"}</span>
+    </div>
+    <div className="flex items-center gap-2">
+      <Calendar className="w-4 h-4 text-green-700" />
+      <span>{employee?.EmployeeExperiences[0]?.experience || "Experience not provided"}</span>
+    </div>
+    <div className="flex items-center gap-2">
+      <Mail className="w-4 h-4 text-yellow-500" />
+      <span>{employee?.email || "No email"}</span>
+    </div>
+    <div className="flex items-center gap-2">
+      <img src="/takeover.png" alt="Rupee" className="w-4 h-4" />
+      <span>{employee?.EmployeeExperiences[0]?.currentSalary ? `₹ ${employee.EmployeeExperiences[0].currentSalary}` : "Salary not shared"}</span>
+    </div>
+    <div className="flex items-center gap-2">
+      <Timer className="w-4 h-4 text-red-400" />
+      <span>{employee?.noticePeriod || "No notice period info"}</span>
+    </div>
+  </div>
 </div>
 
-        <div className="flex items-center gap-2">
-          <Timer className="w-4 h-4 text-red-400 " />
-          <span>3 Months notice period</span>
-        </div>
-      </div>
-    </div>
+
 
 
      
 <div>
 <div className="flex flex-col lg:flex-row w-full">
   {/* Left side - Quick Links */}
-  <div className="w-full lg:w-1/3">
+  <div className="w-full hidden sm:block lg:w-1/3">
     {/* Quick Links content */}
   </div>
 
@@ -127,10 +139,13 @@ const ProfileOverviewCard = () => {
   </div>
  
 
-                <div className="flex flex-col w-full lg:w-2/3 justify-start right-6 ">
+  <div className="flex flex-col w-full lg:w-2/3 mt-10  justify-start right-6 pr-6">
 
-                    <div className="flex items-center justify-between">
-                        <h2 className="text-lg font-semibold text-gray-800">Work Experience</h2>
+
+
+
+                    <div className="flex items-center mr-4 justify-between">
+                        <h2 className="text-lg  px-8 mt-10  bg-white font-semibold text-gray-800">Work Experience</h2>
                         <button onClick={() => {
                             setModalName("editExperience")
                             setExperienceIndex(null);
@@ -140,7 +155,7 @@ const ProfileOverviewCard = () => {
                     </div>
 
 
-                    <div className="bg-white rounded-xl p-4 shadow-md w-full space-y-4">
+                    <div className="bg-white mt-4 rounded-xl  p-4  shadow-md w-full space-y-4">
                         {/* Header */}
 
 
@@ -229,7 +244,7 @@ const ProfileOverviewCard = () => {
 
                     </div> */}
  <div className="flex mt-6 items-center justify-between">
-        <h2 className="text-lg font-semibold text-gray-800">Education</h2>
+        <h2 className="text-lg px-4  font-semibold text-gray-800">Education</h2>
         <button
           className="text-green-600 text-sm font-medium hover:underline flex items-center gap-1"
           onClick={() => setModalName("education")}
@@ -293,11 +308,13 @@ const ProfileOverviewCard = () => {
     
       }
        </div>
-
-<div className="bg-white p-6 rounded-xl shadow-sm mt-4">
+       </div>
+   
+       <div className=" w-full sm:w-2/3 ml-auto pr-3 sm:pr-6">
+<div className="bg-white p-2 rounded-xl flex-col shadow-sm mt-4">
   {/* Header */}
   <div className="flex items-center justify-between mb-4">
-    <h3 className="text-lg font-semibold">Skills</h3>
+    <h3 className="text-lg font-semibold ml-4">Skills</h3>
     <button
       onClick={() => setModalName("skills")}
       className="text-gray-500 hover:text-gray-700"
@@ -307,7 +324,7 @@ const ProfileOverviewCard = () => {
   </div>
 
   {/* Skill Tags */}
-  <div className="flex flex-wrap gap-2">
+  <div className="flex flex-wrap flex-col  gap-2">
     {employee?.EmployeeExperiences?.[0]?.skillsUsed?.length > 0 ? (
       employee.EmployeeExperiences[0].skillsUsed.map((skill, idx) => (
         <span
@@ -318,7 +335,7 @@ const ProfileOverviewCard = () => {
         </span>
       ))
     ) : (
-      <p className="text-sm text-gray-400 italic">No skills listed yet.</p>
+      <p className="text-sm px-8 text-gray-400 italic">No skills listed yet.</p>
     )}
   </div>
 
@@ -327,7 +344,7 @@ const ProfileOverviewCard = () => {
    
   </p>
 </div>
-</div>
+
 
 
                     <div className="bg-white rounded-xl mt-4 p-4 shadow-md space-y-4 w-full">
@@ -385,8 +402,8 @@ const ProfileOverviewCard = () => {
 
 
                     <div className="flex items-left flex-col justify-left">
-                        <h2 className="text-lg font-semibold text-gray-800">Other details</h2>
-                        <h2 className="text-lg font-semibold text-sm text-gray-500">Only Visible to HRs</h2>
+                        <h2 className="text-lg px-8 font-semibold text-gray-800">Other details</h2>
+                        <h2 className="text-lg font-semibold px-8 text-sm text-gray-500">Only Visible to HRs</h2>
                     </div>
 
                     <div className="bg-white rounded-xl mt-4 p-4 shadow-md space-y-4 w-full">
@@ -416,6 +433,7 @@ const ProfileOverviewCard = () => {
                         </div>
 
                     </div>
+                  
 
                     <div onClick={() => setModalName("jobPreference")} className="bg-white rounded-xl mt-4 p-4 shadow-md space-y-4 w-full">
 
@@ -448,23 +466,26 @@ const ProfileOverviewCard = () => {
                             </div>
                         </div>
 
-                    </div>
+                
 
                     <div onClick={() => setModalName("basicDetails")} className="bg-white rounded-xl mt-4 p-4 shadow-md space-y-4 w-full">
 
                         <div className="flex justify-center items-left flex-col text-sm bg-gray-50 px-4 py-2 rounded-lg">
                             <p className="text-gray-800 font-semibold text-lg">Basic Details</p>
-                            <div className="flex flex-row gap-6">
+                            <div className="flex flex-row gap-6 flex-wrap">
+
                                 <h2 className="text-lg font-semibold text-sm text-gray-500">{employee?.name}</h2>
                                 <h2 className="text-lg font-semibold text-sm text-gray-500">{employee?.email}</h2>
                                 <h2 className="text-lg font-semibold text-sm text-gray-500">{employee?.number}</h2>
                                 <h2 className="text-lg font-semibold text-sm text-gray-500">{employee?.gender}</h2>
-                                <h2 className="text-lg font-semibold text-sm text-gray-500">{employee?.dob}</h2>
+                                <h2 className=" font-semibold text-sm text-gray-500">{employee?.dob}</h2>
                             </div>
                         </div>
 
                     </div>
+                    </div>
 
+                </div>
                 </div>
              
           

@@ -4,15 +4,15 @@ import { jobs } from "../../employeeData";
 
 
 const tabIcons = {
-  "For You": "/icons/heart.svg",
-  "High Salary": "/icons/money.svg",
-  "Nearby": "/icons/map-pin.svg",
-  "New Jobs": "/icons/briefcase.svg",
+  "For You": "/icon-park-twotone_more-app.png",
+  "High Salary": "/Vector.png",
+  "Nearby": "/material-symbols_explore-nearby.png",
+  "New Jobs": "/fluent_form-new-20-filled.png",
 };
 
 
 const Card = ({ children, className }) => (
-  <div className={`bg-white rounded-lg shadow border p-4 ${className || ""}`}>
+  <div className={`bg-white rounded--3xl shadow border p-4 ${className || ""}`}>
     {children}
   </div>
 );
@@ -23,7 +23,7 @@ const CardContent = ({ children, className }) => (
 
 
 const JobCard = ({ title, company, location, salary, tags = [], interview }) => (
-  <Card className="mb-4 border-orange-300">
+  <Card className="mb-4 rounded-3xl shadow-lg border-orange-300">
     <CardContent className="p-4">
       <div className="text-orange-500 font-semibold">Urgently hiring</div>
       <div className="text-xl font-bold mt-2">{title || "Untitled Job"}</div>
@@ -212,19 +212,22 @@ const ToggleTabs = ({ selectedTab, setSelectedTab }) => {
     <div className="flex gap-2 p-4">
       {tabs.map((tab) => (
         <button
-          key={tab}
-          className={`px-4 py-2 rounded-3xl ${
-            selectedTab === tab
-              ? "bg-blue-600 text-white"
-              : "border border-gray-300 text-gray-700"
-          }`}
-          onClick={() => setSelectedTab(tab)}
-          
-        >
-
-<img src={tabIcons[tab]} alt={tab} className="w-4 h-4" />
-          {tab}
-        </button>
+        key={tab}
+        onClick={() => setSelectedTab(tab)}
+        className={`px-4 py-2 rounded-3xl flex items-center gap-2 ${
+          selectedTab === tab
+            ? "bg-[#4294FF33] text-black"
+            : "border border-gray-300 text-gray-700"
+        }`}
+      >
+        <img
+          src={tabIcons[tab]}
+          alt={tab}
+          className="w-6 h-6 rounded-3xl object-cover"
+        />
+        <span className="text-sm font-semibold">{tab}</span>
+      </button>
+      
       ))}
     </div>
   );
