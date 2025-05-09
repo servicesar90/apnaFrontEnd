@@ -5,24 +5,51 @@ import {
   Outlet,
 } from "react-router-dom";
 
-import Home from "../views/Home";
 import NotFound from "../views/NotFound";
 import Navbar from "../components/ui/Navbar";
 import Footer from "../components/ui/Footer";
-import JobPosting from "../components/pages/JobPosting";
 import JobDetails from "../components/pages/JobDetailed";
 import ProfileOverviewCard from "../components/pages/updateProfile";
 import ProfileFill from "../components/pages/profileFill";
-import ProtectedRoute from "./RouteProtection";
+import { ProtectDirectRedirecting, ProtectedRoute, ProtectProfileCreation } from "./RouteProtection";
+import LandingPage from "../views/home";
+import { useEffect } from "react";
+import { useState } from "react";
+import { getprofile } from "../API/ApiFunctions";
+import JobPortal from "../components/pages/JobFiltering";
+import HomePageCandidateProfile from "../components/pages/updateProfile2";
 
-// Layout for Navbar + Footer + Pages inside
-const Layout = () => (
+
+const Layout = () => {
+
+  const [employee, setEmployee]= useState(null);
+  
+  useEffect(()=>{
+ 
+    const getData=async()=>{
+      const response=await getprofile();
+      if(response){
+        setEmployee(response?.data.data)
+   
+      }
+      
+    }
+    
+    getData()
+
+  },[]);
+
+
+
+
+return (
   <>
-    <Navbar />
-    <Outlet />
+    <Navbar profile={employee} />
+    <Outlet context={employee}/>
     <Footer />
   </>
-);
+)
+};
 
 // Main Routes
 const AppRoutes = () => {
@@ -31,14 +58,17 @@ const AppRoutes = () => {
       <Routes>
         <Route path="/" element={<Layout />}>
           {/* Public Route */}
-          <Route index element={<Home />} />
+          <Route index element={<LandingPage />} />
 
           {/* Protected Routes */}
           <Route
             path="profile"
             element={
               <ProtectedRoute>
-                <ProfileFill />
+                <ProtectProfileCreation>
+                  <ProfileFill />
+                </ProtectProfileCreation>
+
               </ProtectedRoute>
             }
           />
@@ -46,7 +76,10 @@ const AppRoutes = () => {
             path="jobs"
             element={
               <ProtectedRoute>
-                <JobPosting />
+                <ProtectDirectRedirecting>
+                  <JobPortal />
+                </ProtectDirectRedirecting>
+
               </ProtectedRoute>
             }
           />
@@ -54,7 +87,10 @@ const AppRoutes = () => {
             path="jobs/:id"
             element={
               <ProtectedRoute>
-                <JobDetails />
+                <ProtectDirectRedirecting>
+                  <JobDetails />
+                </ProtectDirectRedirecting>
+
               </ProtectedRoute>
             }
           />
@@ -62,11 +98,18 @@ const AppRoutes = () => {
             path="updateProfile"
             element={
               <ProtectedRoute>
-                <ProfileOverviewCard />
+                <ProtectDirectRedirecting>
+                  <ProfileOverviewCard />
+                </ProtectDirectRedirecting>
+
               </ProtectedRoute>
             }
           />
+
+<Route path="homeppp" element={<HomePageCandidateProfile />} /> 
         </Route>
+
+      
 
         {/* 404 Page */}
         <Route path="*" element={<NotFound />} />

@@ -4,16 +4,11 @@ import { useNavigate } from "react-router-dom";
 import { handleOtp } from "../../../API/ApiFunctions";
 
 
-export default function OtpModal({  onClose, mobile }) {
+export default function OtpModal({  onClose, mobile, onSubmit }) {
   const [otp, setOtp] = useState("");
   const inputsRef = useRef([]);
 
-
-
   const navigate = useNavigate()
-
-
-
 
   useEffect(() => {
     inputsRef.current[0]?.focus();
@@ -43,7 +38,7 @@ export default function OtpModal({  onClose, mobile }) {
 
       if(response){
         if(response.data.user.profile){
-          
+          onSubmit()
           navigate("/jobs")
         }else{
         

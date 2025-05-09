@@ -1,8 +1,8 @@
-import React, { useState } from "react";
-import { jobs } from "../../employeeData";
-
-
-
+import React, { use, useState } from "react";
+import { useEffect } from "react";
+import { getJobs } from "../../API/ApiFunctions";
+import JobCard from "../ui/jobCard";
+import Sidebar from "../ui/sidebar";
 const tabIcons = {
   "For You": "/icon-park-twotone_more-app.png",
   "High Salary": "/Vector.png",
@@ -11,200 +11,6 @@ const tabIcons = {
 };
 
 
-const Card = ({ children, className }) => (
-  <div className={`bg-white rounded--3xl shadow border p-4 ${className || ""}`}>
-    {children}
-  </div>
-);
-
-const CardContent = ({ children, className }) => (
-  <div className={className}>{children}</div>
-);
-
-
-const JobCard = ({ title, company, location, salary, tags = [], interview }) => (
-  <Card className="mb-4 rounded-3xl shadow-lg border-orange-300">
-    <CardContent className="p-4">
-      <div className="text-orange-500 font-semibold">Urgently hiring</div>
-      <div className="text-xl font-bold mt-2">{title || "Untitled Job"}</div>
-      <div className="text-sm text-gray-600">{company}</div>
-      <div className="text-sm text-gray-600">📍 {location}</div>
-      <div className="text-sm text-gray-800 font-medium">{salary}</div>
-      <div className="flex flex-wrap gap-2 mt-2">
-        {tags.map((tag, i) => (
-          <span key={i} className="bg-gray-200 text-xs px-2 py-1 rounded">
-            {tag}
-          </span>
-        ))}
-      </div>
-      {interview && <div className="text-blue-500 mt-2">📅 Walk-in interview</div>}
-    </CardContent>
-  </Card>
-);
-
-
-const Sidebar = ({ filters, setFilters, salary, setSalary }) => {
-  const updateFilter = (key, value) => {
-    setFilters((prev) => ({ ...prev, [key]: value }));
-  };
-
-  return (
-    <div className="w-full md:w-1/4 p-4">
-      <h2 className="font-bold text-lg mb-2"
-      
-      onClick={() => setIsOpen(!isOpen)} >Filters</h2>
-
-      <div className="mb-4">
-        <h3 className="font-semibold">Date posted</h3>
-        {["All", "Last 24 hours", "Last 3 days", "Last 7 days"].map((option) => (
-          <div key={option}>
-            <label className="inline-flex items-center mt-1">
-              <input
-                type="radio"
-                className="form-radio"
-                name="datePosted"
-                checked={filters.datePosted === option}
-                onChange={() => updateFilter("datePosted", option)}
-              />
-              <span className="ml-2">{option}</span>
-            </label>
-          </div>
-        ))}
-      </div>
-
-
-      <div className="mb-4">
-        <h3 className="font-semibold">Work Mode</h3>
-        {["work from Home", "Work from Office", "Work from Fields"].map((option) => (
-          <div key={option}>
-            <label className="inline-flex items-center mt-1">
-              <input
-                type="radio"
-                className="form-radio"
-                name="datePosted"
-                checked={filters.datePosted === option}
-                onChange={() => updateFilter("datePosted", option)}
-              />
-              <span className="ml-2">{option}</span>
-            </label>
-          </div>
-        ))}
-      </div>
-
-     
-      <div className="mb-4">
-        <h3 className="font-semibold">Work Type</h3>
-        {["Full time", "Part Time", "Internship"].map((option) => (
-          <div key={option}>
-            <label className="inline-flex items-center mt-1">
-              <input
-                type="radio"
-                className="form-radio"
-                name="datePosted"
-                checked={filters.datePosted === option}
-                onChange={() => updateFilter("datePosted", option)}
-              />
-              <span className="ml-2">{option}</span>
-            </label>
-          </div>
-        ))}
-      </div>
-
-     
-      <div className="mb-4">
-        <h3 className="font-semibold">Work Shift</h3>
-        {["Day Shift", "Night Shift "].map((option) => (
-          <div key={option}>
-            <label className="inline-flex items-center mt-1">
-              <input
-                type="radio"
-                className="form-radio"
-                name="datePosted"
-                checked={filters.datePosted === option}
-                onChange={() => updateFilter("datePosted", option)}
-              />
-              <span className="ml-2">{option}</span>
-            </label>
-          </div>
-        ))}
-      </div>
-
-     
-      <div className="mb-4">
-        <h3 className="font-semibold">Department</h3>
-        {["Advertising / Communication", "Aviation & Aerospace", "Consulting", "Data Science & Analytics"].map((option) => (
-          <div key={option}>
-            <label className="inline-flex items-center mt-1">
-              <input
-                type="radio"
-                className="form-radio"
-                name="datePosted"
-                checked={filters.datePosted === option}
-                onChange={() => updateFilter("datePosted", option)}
-              />
-              <span className="ml-2">{option}</span>
-            </label>
-          </div>
-        ))}
-      </div>
-
-      <div className="mb-4">
-        <h3 className="font-semibold">Sort By</h3>
-        {["Relevant", "Salary - High to low", "Date posted - New to Old"].map((option) => (
-          <div key={option}>
-            <label className="inline-flex items-center mt-1">
-              <input
-                type="radio"
-                className="form-radio"
-                name="datePosted"
-                checked={filters.datePosted === option}
-                onChange={() => updateFilter("datePosted", option)}
-              />
-              <span className="ml-2">{option}</span>
-            </label>
-          </div>
-        ))}
-      </div>
-
-     
-
-     
-      <div className="mb-4">
-        <h3 className="font-semibold">Distance</h3>
-        {["All", "Within 5 km", "Within 10 km", "Within 20 km", "Within 50 km"].map((option) => (
-          <div key={option}>
-            <label className="inline-flex items-center mt-1">
-              <input
-                type="radio"
-                className="form-radio"
-                name="distance"
-                checked={filters.distance === option}
-                onChange={() => updateFilter("distance", option)}
-              />
-              <span className="ml-2">{option}</span>
-            </label>
-          </div>
-        ))}
-      </div>
-
-   
-      <div className="mb-4">
-        <h3 className="font-semibold mb-2">Salary</h3>
-        <input
-          type="range"
-          min="30000"
-          max="150000"
-          step="5000"
-          value={salary}
-          onChange={(e) => setSalary(e.target.value)}
-          className="w-full"
-        />
-        <p className="mt-1 text-sm text-gray-700">Up to ₹{salary}</p>
-      </div>
-    </div>
-  );
-};
-
 
 const ToggleTabs = ({ selectedTab, setSelectedTab }) => {
   const tabs = ["For You", "High Salary", "Nearby", "New Jobs"];
@@ -212,22 +18,21 @@ const ToggleTabs = ({ selectedTab, setSelectedTab }) => {
     <div className="flex gap-2 p-4">
       {tabs.map((tab) => (
         <button
-        key={tab}
-        onClick={() => setSelectedTab(tab)}
-        className={`px-4 py-2 rounded-3xl flex items-center gap-2 ${
-          selectedTab === tab
+          key={tab}
+          onClick={() => setSelectedTab(tab)}
+          className={`px-4 py-2 rounded-3xl flex items-center gap-2 ${selectedTab === tab
             ? "bg-[#4294FF33] text-black"
             : "border border-gray-300 text-gray-700"
-        }`}
-      >
-        <img
-          src={tabIcons[tab]}
-          alt={tab}
-          className="w-6 h-6 rounded-3xl object-cover"
-        />
-        <span className="text-sm font-semibold">{tab}</span>
-      </button>
-      
+            }`}
+        >
+          <img
+            src={tabIcons[tab]}
+            alt={tab}
+            className="w-6 h-6 rounded-3xl object-cover"
+          />
+          <span className="text-sm font-semibold">{tab}</span>
+        </button>
+
       ))}
     </div>
   );
@@ -236,29 +41,100 @@ const ToggleTabs = ({ selectedTab, setSelectedTab }) => {
 export default function JobPortal() {
   const [filters, setFilters] = useState({ datePosted: "All", distance: "All" });
   const [selectedTab, setSelectedTab] = useState("For You");
-  const [salary, setSalary] = useState(75000); 
+  const [salary, setSalary] = useState(75000);
+  const [isOpen, setIsOpen] = useState(true);
+  const [showfilters, setShowfilters] =useState(false);
+  const [jobs, setJobs] = useState(null);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(max-width: 768px)");
+
+    const handleResize = (e) => {
+      if (e.matches) {
+        setIsOpen(false); // Close if screen is small
+      } else {
+        setIsOpen(true)
+      }
+    };
+
+    // Initial check
+    if (mediaQuery.matches) {
+      setIsOpen(false);
+    }
+
+    // Listen for screen size changes
+    mediaQuery.addEventListener("change", handleResize);
+
+    return () => {
+      mediaQuery.removeEventListener("change", handleResize);
+    };
+  }, []);
+
+  useEffect(()=>{
+    const getJobsData= async()=>{
+      const response= await getJobs();
+      if(response){
+        setJobs(response.data.data)
+      }
+    }
+
+    getJobsData()
+  },[])
+
+  console.log(jobs)
+
+
   return (
-    <div className="flex flex-col md:flex-row min-h-screen bg-gray-50">
-      <Sidebar filters={filters} setFilters={setFilters} salary={salary} setSalary={setSalary} />
-      <div className="w-full md:w-3/4 p-4">
-        <h1 className="text-2xl font-bold mb-4">
-          Showing {jobs.length} jobs based on your profile
-        </h1>
-        <ToggleTabs selectedTab={selectedTab} setSelectedTab={setSelectedTab} />
-        <div className="mt-4">
-          {jobs.map((job, i) => (
-            <JobCard
-              key={i}
-              title={job.title || job.jobTitle}
-              company={job.company || job.companyName}
-              location={job.location}
-              salary={job.salary || `₹${job.minimumSalary} - ₹${job.maximumSalary}`}
-              tags={job.tags || job.perks || []}
-              interview={job.walkIn === "yes"}
-            />
-          ))}
+    <>
+    {isOpen?
+      <div className="flex flex-row min-h-screen bg-gray-50">
+        <div className="flex flex-col mt-4 w-1/3 max-w-[250px]">
+        <h2 className="font-bold text-lg ml-4">Filters</h2>
+        <Sidebar filters={filters} setFilters={setFilters} salary={salary} setSalary={setSalary} />
         </div>
+           
+        <div className="w-full md:w-3/4 p-4">
+          <h1 className="text-2xl font-bold mb-4">
+            Showing {jobs?.length} jobs based on your profile
+          </h1>
+          <ToggleTabs selectedTab={selectedTab} setSelectedTab={setSelectedTab} />
+          <div className="mt-4">
+            {jobs?.map((job, i) => (
+              <JobCard
+                key={i}
+                job={job}
+              />
+            ))}
+          </div>
+        </div>
+      </div>:
+    <div className="flex flex-col items-start min-h-screen bg-gray-50">
+      <button className="m-4 mb-0 border px-4 py-2 rounded-[10px] bg-white font-bold text-lg" onClick={()=>setShowfilters(!showfilters)}>Filters</button>
+
+      {showfilters && (
+        <div className="absolute bg-white mt-20 max-w-[250px] rounded-[10px] max-h-[100vh] overflow-scroll">
+          <Sidebar filters={filters} setFilters={setFilters} salary={salary} setSalary={setSalary} />
       </div>
-    </div>
+      )}
+  <div className="w-full md:w-3/4 p-4">
+          <h1 className="text-2xl font-bold mb-4">
+            Showing {jobs?.length} jobs based on your profile
+          </h1>
+          <ToggleTabs selectedTab={selectedTab} setSelectedTab={setSelectedTab} />
+          <div className="mt-4">
+            {jobs?.map((job, i) => (
+              <JobCard
+                key={i}
+                job={job}
+              />
+            ))}
+          </div>
+        </div>
+
+      </div>}
+      
+      
+    </>
+
   );
 }

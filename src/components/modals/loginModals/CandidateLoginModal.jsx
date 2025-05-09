@@ -1,9 +1,8 @@
 import { useState } from "react";
 import { handlelogin } from "../../../API/ApiFunctions";
 
-export default function CandidateLoginModal({ onClose, mobile, setMobile }) {
+export default function CandidateLoginModal({ onClose, mobile, setMobile, onSubmit }) {
   const [countryCode, setCountryCode] = useState("+91");
-
 
   const handleChangeMobile = async (e) => {
     const value = e.target.value.replace(/\D/g, "");
@@ -13,12 +12,14 @@ export default function CandidateLoginModal({ onClose, mobile, setMobile }) {
 
       if (value.length === 10) {
         const response = await handlelogin({ phone: (value).toString(), role: "employee" });
-        console.log("response", response);
-        if (response.status == 200) {
+       
+        if (response) {
           setMobile(value);
-          onClose()
+          onSubmit()
         } else {
-          setMobile("")
+          setMobile("");
+          alert("error in logging in please try again in some time")
+   
         }
       }
     }

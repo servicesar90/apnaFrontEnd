@@ -22,8 +22,12 @@ const DynamicModal = ({ open, onClose, fields, type, suggestions ,metaData }) =>
     defaultValues: fields,
   });
   // console.log(`type ${JSON.stringify(fields)}`)
-  const onSubmit = (data) => {
-    console.log("Form Data:", data);
+
+  
+  const onSubmit = async(data) => {
+  
+    const response= await metaData.onSubmitFunc(data);
+    console.log("response from file",response)
     onClose();
   };
 

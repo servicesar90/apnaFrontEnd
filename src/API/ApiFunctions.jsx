@@ -1,11 +1,17 @@
 import axios from "axios";
-import { createEmpProfile, mobileApi, otpApi } from "./APIs";
+import { createEducationApi, createEmpProfile, getJobsApi, mobileApi, otpApi } from "./APIs";
 
 
 // data={ phone: "string", role: "string" }
 export const handlelogin = async (data) =>{
-    const response = await axios.post(mobileApi,data);
-    return response;
+    try{
+        const response = await axios.post(mobileApi,data);
+        return response;
+    }catch(e){
+        console.log("error in logging in",e)
+    }
+    
+    
 }
 
 // data={phone:"string",role:"string",otp:"string"}
@@ -37,6 +43,7 @@ export const createProfile = async (data)=>{
           });
 
           console.log(`response` , response);
+          return response
           
         
     } catch (error) {
@@ -58,5 +65,35 @@ export const getprofile = async ()=>{
         
     }catch(err){
         console.log("Error from get Profile api",err)
+    }
+}
+
+export const getJobs = async ()=>{
+    try{
+        const token = localStorage.getItem('TokenId')
+        const headers = {
+            Authorization: `Bearer ${token}`
+          };
+        const response= await axios.get(getJobsApi, {headers});
+      
+        return response;
+        
+    }catch(err){
+        console.log("Error from get jobs api",err)
+    }
+}
+
+export const createEducation = async (data)=>{
+    try{
+        const token = localStorage.getItem('TokenId')
+        const headers = {
+            Authorization: `Bearer ${token}`
+          };
+
+          const response= await axios.post(createEducationApi, data, {headers});
+
+          console.log(response)
+    }catch(e){
+        console.log("error from create education", e)
     }
 }

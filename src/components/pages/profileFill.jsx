@@ -1,5 +1,5 @@
 import React from "react";
-import ProfileModal from "../modals/profileModals/profileModal";
+import CreateProfileModal from "../modals/profileModals/createProfileModal";
 
 export default function ProfileFill() {
   
@@ -25,7 +25,7 @@ export default function ProfileFill() {
                 </div>
             </div>
 
-            <ProfileModal  className="w-2/3 p-8 bg-white overflow-y-auto" />
+            <CreateProfileModal  className="w-2/3 p-8 bg-white overflow-y-auto" />
         </div>
     );
 }
