@@ -28,8 +28,7 @@ const UserForm = () => {
     if (!file) return alert("Please select an image!");
 
     const data = new FormData();
-    if (formData.name) data.append("name", formData?.name || null);
-    if (formData.email) data.append("email", formData?.email || null);
+  
     if (file) data.append("resume", file);
     for (let [key, value] of data.entries()) {
         console.log(`${key}:`, value);

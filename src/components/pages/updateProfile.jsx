@@ -478,7 +478,25 @@ const ProfileOverviewCard = () => {
             )}
 
   {modalName === "editResume" && (
-               <UserForm />
+                // <UpdateProfileModal
+                // open={modalName === "editResume"}
+                // onClose={()=> setModalName("")}
+                // fields={{
+                //     resume: employee?.resume || ""
+                // }}
+                // label={{resume: "Upload Your resume here"}}
+                // type={{
+                //     resume: "file"
+                // }}
+                // suggestions={{}}
+                // metaData={{
+                //         title: "Upload Resume",
+                //         onSubmitFunc: uploadResume,
+                //         id: null,
+                //     }
+                // }
+                // />
+                <UserForm />
             )}
 
             {modalName === "skills" && (

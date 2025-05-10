@@ -61,7 +61,23 @@ const DynamicModal = ({ open, onClose, fields, label, type, suggestions, metaDat
       if (hasError) return;
     }
 
-    
+    // if (data.resume) {
+      
+      
+    //   const formData = new FormData();
+    //   const file = data.resume[0]; // File input returns an array
+    //   console.log(file)
+    //   if (file) {
+    //     formData.append("resume", file);
+    //   }
+    //   formData.forEach((e)=>{
+    //     console.log(e);
+        
+    //   })
+    //   const res = await metaData.onSubmitFunc(formData);
+    //   console.log(res)
+    // }
+
     if (!metaData.id) {
       const response = await metaData.onSubmitFunc(data);
       console.log("response from file", response)
