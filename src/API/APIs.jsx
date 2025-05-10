@@ -10,4 +10,10 @@ export const createEmpProfile = `${base_url}/api/v1/employee`
 
 export const getJobsApi = `${base_url}/api/v1/jobs`
 
-export const createEducationApi = `${base_url}/api/v1/jobs`
+export const createEducationApi = `${base_url}/api/v1/employee/edu`
+
+export const applyJobApi = `${base_url}/api/v1/apply`
+
+export const uploadProfileApi = `${base_url}/api/v1/employee-uploads`
+
+export const uploadResumeApi = `${base_url}/api/v1/employee-uploads/resume`

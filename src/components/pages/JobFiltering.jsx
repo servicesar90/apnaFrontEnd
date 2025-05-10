@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { getJobs } from "../../API/ApiFunctions";
 import JobCard from "../ui/jobCard";
 import Sidebar from "../ui/sidebar";
+import { useOutletContext } from "react-router-dom";
 const tabIcons = {
   "For You": "/icon-park-twotone_more-app.png",
   "High Salary": "/Vector.png",
@@ -44,7 +45,6 @@ export default function JobPortal() {
   const [salary, setSalary] = useState(75000);
   const [isOpen, setIsOpen] = useState(true);
   const [showfilters, setShowfilters] =useState(false);
-  const [jobs, setJobs] = useState(null);
 
   useEffect(() => {
     const mediaQuery = window.matchMedia("(max-width: 768px)");
@@ -70,19 +70,8 @@ export default function JobPortal() {
     };
   }, []);
 
-  useEffect(()=>{
-    const getJobsData= async()=>{
-      const response= await getJobs();
-      if(response){
-        setJobs(response.data.data)
-      }
-    }
-
-    getJobsData()
-  },[])
-
-  console.log(jobs)
-
+ 
+  const {jobs} = useOutletContext();
 
   return (
     <>

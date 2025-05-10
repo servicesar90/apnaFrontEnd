@@ -17,18 +17,76 @@ import {
   Box,
 } from "@mui/material";
 
-const DynamicModal = ({ open, onClose, fields, type, suggestions ,metaData }) => {
-  const { register, handleSubmit, setValue, watch } = useForm({
+const DynamicModal = ({ open, onClose, fields, label, type, suggestions, metaData }) => {
+  const { register, handleSubmit, setValue, watch, setError, formState: { errors } } = useForm({
     defaultValues: fields,
   });
   // console.log(`type ${JSON.stringify(fields)}`)
 
-  
-  const onSubmit = async(data) => {
-  
-    const response= await metaData.onSubmitFunc(data);
-    console.log("response from file",response)
-    onClose();
+
+  const onSubmit = async (data) => {
+
+    if (data.startDate) {
+      const start = new Date(data.startDate);
+      const end = new Date(data.endDate);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0); // remove time part
+
+      let hasError = false;
+
+      if (start > today) {
+        setError("startDate", {
+          type: "manual",
+          message: "Start date must be in the past",
+        });
+        hasError = true;
+      }
+
+      if (end > today) {
+        setError("endDate", {
+          type: "manual",
+          message: "End date must be in the past",
+        });
+        hasError = true;
+      }
+
+      if (start > end) {
+        setError("startDate", {
+          type: "manual",
+          message: "Start date can't be after end date",
+        });
+        hasError = true;
+      }
+
+      if (hasError) return;
+    }
+
+    
+    if (!metaData.id) {
+      const response = await metaData.onSubmitFunc(data);
+      console.log("response from file", response)
+      if (response) {
+        alert("succesfully Updated");
+        onClose()
+      } else {
+        alert("Could Not update, please try again")
+      }
+
+    } else {
+
+      const response = await metaData.onSubmitFunc(metaData.id, data);
+      console.log("response from file", response)
+      if (response) {
+        alert("succesfully Updated");
+        onClose()
+      } else {
+        alert("Could Not update, please try again")
+      }
+
+    }
+
+
+
   };
 
   // Handle adding/removing values in multi-select
@@ -60,13 +118,14 @@ const DynamicModal = ({ open, onClose, fields, type, suggestions ,metaData }) =>
       }}
     >
       <DialogTitle className="text-xl font-semibold ">
-      {metaData?.title || "Modal"}
+        {metaData?.title || "Modal"}
       </DialogTitle>
 
       <DialogContent>
         <div className=" rounded-3xl p-6 ">
           <form
             onSubmit={handleSubmit(onSubmit)}
+            encType="multipart/form-data"
             className="flex rounded-xl flex-col gap-6 mt-2"
           >
             {Object.entries(fields).map(([key, value]) => {
@@ -78,18 +137,23 @@ const DynamicModal = ({ open, onClose, fields, type, suggestions ,metaData }) =>
                 return (
                   <FormControl key={key} component="fieldset">
                     <FormLabel component="legend" className="mb-1">
-                      {key.charAt(0).toUpperCase() + key.slice(1)}
+                      {label[key]}
                     </FormLabel>
                     <RadioGroup row defaultValue={value}>
-                      {fieldSuggestions.map((option, idx) => (
-                        <FormControlLabel
-                          key={idx}
-                          value={option}
-                          control={<Radio />}
-                          label={option}
-                          {...register(key)}
-                        />
-                      ))}
+                      {fieldSuggestions.map((option, idx) => {
+                        const [keyName] = Object.keys(option); // e.g., "location"
+                        const value = option[keyName];
+                        return (
+                          <FormControlLabel
+                            key={idx}
+                            value={value}
+                            control={<Radio />}
+                            label={keyName}
+                            {...register(key)}
+                          />
+                        )
+
+                      })}
                     </RadioGroup>
                   </FormControl>
                 );
@@ -104,7 +168,7 @@ const DynamicModal = ({ open, onClose, fields, type, suggestions ,metaData }) =>
                 return (
                   <TextField
                     key={key}
-                    label={key.charAt(0).toUpperCase() + key.slice(1)}
+                    label={label[key]}
                     select
                     defaultValue={value}
                     {...register(key)}
@@ -133,7 +197,7 @@ const DynamicModal = ({ open, onClose, fields, type, suggestions ,metaData }) =>
                 return (
                   <div key={key}>
                     <FormLabel component="legend" className="mb-1">
-                      {key.charAt(0).toUpperCase() + key.slice(1)}
+                      {label[key]}
                     </FormLabel>
                     <Box className="flex flex-wrap  rounded-2xl gap-2 mb-2">
                       {selectedValues?.map((value, idx) => (
@@ -147,7 +211,7 @@ const DynamicModal = ({ open, onClose, fields, type, suggestions ,metaData }) =>
                     </Box>
                     <TextField
                       select
-                      label="Add a new value"
+                      label={label[key]}
                       fullWidth
                       variant="outlined"
                       size="small"
@@ -174,21 +238,26 @@ const DynamicModal = ({ open, onClose, fields, type, suggestions ,metaData }) =>
 
               // Render normal input
               return (
-                <TextField
-                  key={key}
-                  label={key.charAt(0).toUpperCase() + key.slice(1)}
-                  type={fieldType}
-                  defaultValue={value}
-                  {...register(key)}
-                  fullWidth
-                  variant="outlined"
-                  size="small"
-                  InputProps={{
-                    sx: {
-                      borderRadius: "16px",
-                    },
-                  }}
-                />
+                <>
+                  <TextField
+                    key={key}
+                    label={label[key]}
+                    type={fieldType}
+                    defaultValue={value}
+                    {...register(key)}
+                    fullWidth
+                    variant="outlined"
+                    size="small"
+                    slotProps={{
+                      inputLabel: { shrink: true },
+                      sx: {
+                        borderRadius: "16px",
+                      },
+                    }}
+                  />
+                  {errors[key] && <p className="text-red-500 text-[0.7rem] font-bold">{errors[key].message}</p>}
+                </>
+
               );
             })}
 

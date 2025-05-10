@@ -1,97 +1,96 @@
-
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { jobs } from "../../employeeData";
+import { useOutletContext, useParams } from "react-router-dom";
 import AppliedModal from "../modals/jobsModal/AppliedModal";
-import { employeeData } from "../../employeeData";
+import { applyJobs } from "../../API/ApiFunctions";
+
+
+const faqData = [
+  {
+    question:
+      "How much salary can I expect as a Computer Hardware Technician in Arvind Solution in Delhi-NCR?",
+    answer:
+      "You can expect a salary as per industry standards based on your experience and skillset. The job posting mentions a fixed salary of ₹10,000 to ₹15,000 per month.",
+  },
+  {
+    question:
+      "What is the eligibility criteria to apply for Computer Hardware Technician in Arvind Solution in Delhi-NCR?",
+    answer:
+      "You should have relevant experience or educational qualifications in Computer Hardware or related fields. Basic troubleshooting knowledge is preferred.",
+  },
+  {
+    question: "Is there any specific skill required for this job?",
+    answer:
+      "Yes, basic knowledge of computer hardware troubleshooting, assembling, and networking is required.",
+  },
+  {
+    question: "Who can apply for this job?",
+    answer:
+      "Anyone with the required skills and availability in the specified location can apply.",
+  },
+  {
+    question: "Is it a work from home job?",
+    answer: "No, this is an on-site job and not work-from-home.",
+  },
+  {
+    question:
+      "Are there any charges or deposits required while applying for the role or while joining?",
+    answer:
+      "No, there are no charges or deposits required to apply for or join this job.",
+  },
+  {
+    question: "How can I apply for this job?",
+    answer:
+      "You can apply by clicking on the 'Apply' button provided in this page. Make sure you are logged in to your account.",
+  },
+  {
+    question: "What is the last date to apply?",
+    answer:
+      "The last date is not specified, but it's recommended to apply as soon as possible due to urgent hiring.",
+  },
+];
 
 const JobDetails = () => {
   const [data, setData] = useState(null);
   const [showFullDescription, setShowFullDescription] = useState(false);
   const [showAllFaqs, setShowAllFaqs] = useState(false);
-  const [showMoreSimilarJobs, setShowMoreSimilarJobs] = useState(false);
   const [showAppliedModal, setShowAppliedModal] = useState(false);
-  const [employee, setEmployee] = useState(null);
   const [applied, setApplied] = useState(false);
+  const [appliedData, setAppliedData] = useState(null)
 
 
   const { id } = useParams();
-  const user = JSON.stringify(localStorage.getItem("User"))
+  const { jobs } = useOutletContext()
+  const user = JSON.parse(localStorage.getItem("User"))
 
   useEffect(() => {
-    const employeData = employeeData.filter((employee) => employee.id === user.id);
-    setEmployee(employeData[0])
-  }, [])
+    const newjobs = jobs?.filter((job) => job.id == id);
+    setData(newjobs?.[0]);
+  }, [jobs]);
 
   useEffect(() => {
-    const newjobs = jobs.filter((job) => job.id == id);
-    setData(newjobs[0]);
-  }, [id]);
-
-  useEffect(() => {
-    if (!employee?.appliedJobs || !id) return;
-
-    const isApplied = employee.appliedJobs.includes(id);
-    setApplied(isApplied);
-  }, [employee, id]);
 
 
-  const handleApplyClick = () => {
-    if (!employee?.appliedJobs.includes(id)) {
-      const updatedEmployee = {
-        ...employee,
-        appliedJobs: [...(employee?.appliedJobs || []), id],
-      };
-      setEmployee(updatedEmployee);
+    const alreadyApplied = data?.JobApplications.filter((ids) => (ids.employeeId == user?.id));
+
+    if (alreadyApplied?.length > 0) {
+      setApplied(true)
+      setAppliedData(alreadyApplied[0])
+    } else {
+      setApplied(false)
     }
-    setShowAppliedModal(true);
+  }, [data])
+
+
+  const handleApplyClick = async () => {
+    const response = await applyJobs(id);
+    if (response) {
+      setShowAppliedModal(true);
+    } else {
+      alert("could not apply")
+    }
   };
 
 
-  const faqData = [
-    {
-      question:
-        "How much salary can I expect as a Computer Hardware Technician in Arvind Solution in Delhi-NCR?",
-      answer:
-        "You can expect a salary as per industry standards based on your experience and skillset. The job posting mentions a fixed salary of ₹10,000 to ₹15,000 per month.",
-    },
-    {
-      question:
-        "What is the eligibility criteria to apply for Computer Hardware Technician in Arvind Solution in Delhi-NCR?",
-      answer:
-        "You should have relevant experience or educational qualifications in Computer Hardware or related fields. Basic troubleshooting knowledge is preferred.",
-    },
-    {
-      question: "Is there any specific skill required for this job?",
-      answer:
-        "Yes, basic knowledge of computer hardware troubleshooting, assembling, and networking is required.",
-    },
-    {
-      question: "Who can apply for this job?",
-      answer:
-        "Anyone with the required skills and availability in the specified location can apply.",
-    },
-    {
-      question: "Is it a work from home job?",
-      answer: "No, this is an on-site job and not work-from-home.",
-    },
-    {
-      question:
-        "Are there any charges or deposits required while applying for the role or while joining?",
-      answer:
-        "No, there are no charges or deposits required to apply for or join this job.",
-    },
-    {
-      question: "How can I apply for this job?",
-      answer:
-        "You can apply by clicking on the 'Apply' button provided in this page. Make sure you are logged in to your account.",
-    },
-    {
-      question: "What is the last date to apply?",
-      answer:
-        "The last date is not specified, but it's recommended to apply as soon as possible due to urgent hiring.",
-    },
-  ];
 
   return (
     <div className="flex justify-center items-start min-h-screen w-full bg-[#f3f4f6] p-6">
@@ -113,28 +112,41 @@ const JobDetails = () => {
           </div>
 
           <div className="flex flex-col md:flex-row justify-between bg-gray-100 rounded-md p-4">
-            <div>
-              <p className="text-sm text-gray-500">Fixed</p>
-              <p className="text-lg font-semibold text-gray-800">
-                {data?.minimumSalary} - {data?.maximumSalary}
-              </p>
+            <div className="flex flex-col w-full gap-4">
+              <div className="font-semibold text-[1rem]">
+                {data?.JobApplications.length} Applicant Applied
+              </div>
+
+              <div className="flex flex-row items-between justify-between w-full">
+
+                <div>
+                  <p className="text-sm text-gray-500">Fixed</p>
+                  <p className="text-lg font-semibold text-gray-800">
+                    {data?.minimumSalary} - {data?.maximumSalary}
+                  </p>
+                </div>
+
+                {data?.incentive &&
+                  <div>
+                    <p className="text-sm text-gray-500">Incentive</p>
+                    <p className="text-lg font-semibold text-gray-800">
+                      {data?.incentive}
+                    </p>
+                  </div>
+                }
+                <div>
+                  <p className="text-sm text-gray-500">Earning Potential</p>
+                  <p className="text-lg font-semibold text-gray-800">
+                    {data?.maximumSalary}+ {data?.incentive}
+                  </p>
+                </div>
+              </div>
+
             </div>
 
-            {data?.incentive &&
-              <div>
-                <p className="text-sm text-gray-500">Incentive</p>
-                <p className="text-lg font-semibold text-gray-800">
-                  {data?.incentive}
-                </p>
-              </div>
-            }
-            <div>
-              <p className="text-sm text-gray-500">Earning Potential</p>
-              <p className="text-lg font-semibold text-gray-800">
-                {data?.maximumSalary}+ {data?.incentive}
-              </p>
-            </div>
           </div>
+
+
 
           <div className="flex flex-wrap gap-2 mt-3">
 
@@ -169,7 +181,7 @@ const JobDetails = () => {
               onClick={handleApplyClick}
               disabled={applied}
             >
-              {applied ? <p>Applied</p> : <p>Apply</p>}
+              {applied ? <p>{appliedData.status}</p> : <p>Apply</p>}
             </button>
           </div>
 
@@ -372,7 +384,7 @@ const JobDetails = () => {
         </div>
 
         <div className="w-full lg:w-1/3 space-y-4">
-          <div className="bg-white rounded-lg shadow-md p-4">
+          {/* <div className="bg-white rounded-lg shadow-md p-4">
             <h3 className="text-lg font-semibold text-gray-800 mb-4">
               Similar Jobs
             </h3>
@@ -416,7 +428,7 @@ const JobDetails = () => {
             >
               {showMoreSimilarJobs ? "Show Less" : "Show More"}
             </button>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

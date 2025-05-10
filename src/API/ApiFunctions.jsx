@@ -1,5 +1,5 @@
 import axios from "axios";
-import { createEducationApi, createEmpProfile, getJobsApi, mobileApi, otpApi } from "./APIs";
+import { applyJobApi, createEducationApi, createEmpProfile, getJobsApi, mobileApi, otpApi, uploadProfileApi, uploadResumeApi } from "./APIs";
 
 
 // data={ phone: "string", role: "string" }
@@ -90,10 +90,64 @@ export const createEducation = async (data)=>{
             Authorization: `Bearer ${token}`
           };
 
+          console.log("data", data)
+
           const response= await axios.post(createEducationApi, data, {headers});
 
           console.log(response)
     }catch(e){
         console.log("error from create education", e)
+    }
+}
+
+export const editEducation = async (id, data)=>{
+    try{
+        const token = localStorage.getItem('TokenId')
+        const headers = {
+            Authorization: `Bearer ${token}`
+          };
+
+          console.log("data", data, "id", id)
+
+          const response= await axios.patch(`${createEducationApi}/${id}`, data, {headers});
+
+          console.log(response)
+          return response;
+    }catch(e){
+        console.log("error from edit education", e)
+    }
+}
+
+export const uploadResume = async (data) =>{
+    try{
+    const token = localStorage.getItem('TokenId')
+        const headers = {
+            Authorization: `Bearer ${token}`
+          };
+          
+         console.log("data", data)
+
+          const response= await axios.post(`${uploadResumeApi}`, data, {headers});
+
+          console.log(response)
+          return response;
+    }catch(e){
+        console.log("error from resume upload", e)
+    }
+}
+
+export const applyJobs = async (id)=>{
+    try{
+        const token = localStorage.getItem('TokenId')
+        const headers = {
+            Authorization: `Bearer ${token}`
+          };
+        
+        const response= await axios.post(`${applyJobApi}/${id}`,{},{headers});
+      
+        return response;
+        
+    }catch(err){
+        console.log("Error from get jobs api",err)
     }
 }

@@ -15,14 +15,15 @@ import { ProtectDirectRedirecting, ProtectedRoute, ProtectProfileCreation } from
 import LandingPage from "../views/home";
 import { useEffect } from "react";
 import { useState } from "react";
-import { getprofile } from "../API/ApiFunctions";
+import { getJobs, getprofile } from "../API/ApiFunctions";
 import JobPortal from "../components/pages/JobFiltering";
-import HomePageCandidateProfile from "../components/pages/updateProfile2";
+
 
 
 const Layout = () => {
 
   const [employee, setEmployee]= useState(null);
+  const [jobs, setJobs] = useState(null)
   
   useEffect(()=>{
  
@@ -39,13 +40,26 @@ const Layout = () => {
 
   },[]);
 
+  useEffect(()=>{
+ 
+    const getData=async()=>{
+      const response=await getJobs();
+      if(response){
+        setJobs(response?.data.data)
+   
+      }
+      
+    }
+    
+    getData()
 
+  },[]);
 
 
 return (
   <>
     <Navbar profile={employee} />
-    <Outlet context={employee}/>
+    <Outlet context={{employee, jobs}}/>
     <Footer />
   </>
 )
@@ -105,9 +119,7 @@ const AppRoutes = () => {
               </ProtectedRoute>
             }
           />
-
-<Route path="homeppp" element={<HomePageCandidateProfile />} /> 
-        </Route>
+      </Route>
 
       
 
