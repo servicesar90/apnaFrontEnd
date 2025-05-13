@@ -17,3 +17,5 @@ export const applyJobApi = `${base_url}/api/v1/apply`
 export const uploadProfileApi = `${base_url}/api/v1/employee-uploads`
 
 export const uploadResumeApi = `${base_url}/api/v1/employee-uploads/resume`
+
+export const employeeExpApi = `${base_url}/api/v1/employee/exp`

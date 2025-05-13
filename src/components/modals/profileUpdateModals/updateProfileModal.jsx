@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import {
   Dialog,
@@ -18,6 +18,8 @@ import {
 } from "@mui/material";
 
 const DynamicModal = ({ open, onClose, fields, label, type, suggestions, metaData }) => {
+  const [buttonDisable, setButtonDisable] = useState(false)
+
   const { register, handleSubmit, setValue, watch, setError, formState: { errors } } = useForm({
     defaultValues: fields,
   });
@@ -25,7 +27,7 @@ const DynamicModal = ({ open, onClose, fields, label, type, suggestions, metaDat
 
 
   const onSubmit = async (data) => {
-
+    setButtonDisable(true)
     if (data.startDate) {
       const start = new Date(data.startDate);
       const end = new Date(data.endDate);
@@ -61,28 +63,14 @@ const DynamicModal = ({ open, onClose, fields, label, type, suggestions, metaDat
       if (hasError) return;
     }
 
-    // if (data.resume) {
-      
-      
-    //   const formData = new FormData();
-    //   const file = data.resume[0]; // File input returns an array
-    //   console.log(file)
-    //   if (file) {
-    //     formData.append("resume", file);
-    //   }
-    //   formData.forEach((e)=>{
-    //     console.log(e);
-        
-    //   })
-    //   const res = await metaData.onSubmitFunc(formData);
-    //   console.log(res)
-    // }
 
     if (!metaData.id) {
       const response = await metaData.onSubmitFunc(data);
       console.log("response from file", response)
       if (response) {
         alert("succesfully Updated");
+         window.location.reload()
+         setButtonDisable(false)
         onClose()
       } else {
         alert("Could Not update, please try again")
@@ -94,9 +82,12 @@ const DynamicModal = ({ open, onClose, fields, label, type, suggestions, metaDat
       console.log("response from file", response)
       if (response) {
         alert("succesfully Updated");
+        window.location.reload()
+         setButtonDisable(false)
         onClose()
       } else {
         alert("Could Not update, please try again")
+         setButtonDisable(false)
       }
 
     }
@@ -290,6 +281,7 @@ const DynamicModal = ({ open, onClose, fields, label, type, suggestions, metaDat
                 type="submit"
                 variant="contained"
                 color="primary"
+                disabled={buttonDisable}
                 sx={{ borderRadius: "16px" }}
               >
                 Save

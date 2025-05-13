@@ -1,5 +1,5 @@
 import axios from "axios";
-import { applyJobApi, createEducationApi, createEmpProfile, getJobsApi, mobileApi, otpApi, uploadProfileApi, uploadResumeApi } from "./APIs";
+import { applyJobApi, createEducationApi, createEmpProfile, employeeExpApi, getJobsApi, mobileApi, otpApi, uploadProfileApi, uploadResumeApi } from "./APIs";
 
 
 // data={ phone: "string", role: "string" }
@@ -118,21 +118,64 @@ export const editEducation = async (id, data)=>{
     }
 }
 
-export const uploadResume = async (data) =>{
+export const uploadFile = async (file, field, Api) =>{
+     const data = new FormData();
+  
+     data.append(field, file);
+    for (let [key, value] of data.entries()) {
+        console.log(`${key}:`, value);
+      }
+    
+    try {
+
+      const token= localStorage.getItem("TokenId");
+      const headers={
+        Authorization:`Bearer ${token}`
+      }
+  
+      
+      const res = await axios.post(Api, data, {headers});
+
+      return res;
+      
+    } catch (err) {
+      console.error(err);
+    }
+}
+
+export const updateSkils = async (data)=>{
     try{
-    const token = localStorage.getItem('TokenId')
+        const token = localStorage.getItem('TokenId')
         const headers = {
             Authorization: `Bearer ${token}`
           };
-          
-         console.log("data", data)
 
-          const response= await axios.post(`${uploadResumeApi}`, data, {headers});
+          
+
+          console.log("data", data)
+
+          const response= await axios.patch(createEmpProfile, data, {headers});
 
           console.log(response)
           return response;
     }catch(e){
-        console.log("error from resume upload", e)
+        console.log("error from edit skills", e)
+    }
+}
+
+export const employeeExp = async (data)=>{
+    try{
+        const token = localStorage.getItem('TokenId')
+        const headers = {
+            Authorization: `Bearer ${token}`
+          };
+        
+        const response= await axios.post(employeeExpApi,data,{headers});
+      
+        return response;
+        
+    }catch(err){
+        console.log("Error from get jobs api",err)
     }
 }
 

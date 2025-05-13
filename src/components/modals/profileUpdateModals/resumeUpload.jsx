@@ -1,16 +1,12 @@
 import React, { useState } from "react";
-import axios from "axios";
+import { uploadFile } from "../../../API/ApiFunctions";
+import { Box, Button, Modal } from "@mui/material";
 
-const UserForm = () => {
-  const [formData, setFormData] = useState({ name: "", email: "", file:{}});
+const UserForm = ({ open, label, onClose, metaData }) => {
   const [file, setFile] = useState(null);
-  const [preview, setPreview] = useState(null);
+  const [preview, setPreview] = useState(metaData.default);
   const [uploadStatus, setUploadStatus] = useState("");
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
 
   const handleFileChange = (e) => {
     const selected = e.target.files[0];
@@ -19,54 +15,44 @@ const UserForm = () => {
       setPreview(URL.createObjectURL(selected));
     }
     console.log(selected);
-    
+
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (!file) return alert("Please select an image!");
+    setUploadStatus("Uploading....")
+    const response = await uploadFile(file, metaData.field, metaData.Api);
+    if (response) {
+      setUploadStatus("Successfully Uploaded");
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000)
 
-    const data = new FormData();
-  
-    if (file) data.append("resume", file);
-    for (let [key, value] of data.entries()) {
-        console.log(`${key}:`, value);
-      }
-    
-    try {
-      setUploadStatus("Uploading...");
-
-      const headers={
-        Authorization:"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTAwMDAxLCJwaG9uZSI6IjkzNjk0ODcyNTAiLCJyb2xlIjoiZW1wbG95ZWUiLCJpYXQiOjE3NDY4NTcyNjEsImV4cCI6MTc0NzQ2MjA2MX0.AoQK50Wz1pZs3iPXO5G1LDWalXDn-oHDVlUGd_JzVEI"
-      }
-  
-      
-      const res = await axios.post("https://production.careernest.online/api/v1/employee-uploads/resume", data, {headers});
-      
-      console.log(res);
-      
-      setUploadStatus("Success!");
-      
-    } catch (err) {
-      setUploadStatus("Upload failed!");
-      console.error(err);
+    } else {
+      setUploadStatus("Could not uploaded, please try again")
     }
+
   };
-  
-  
-  
+
+
+
 
   return (
-    <form onSubmit={handleSubmit} encType="multipart/form-data" style={{ maxWidth: 400, margin: "auto" }}>
-      <h2>Create User</h2>
-      <input type="text" name="name" value={formData.name} onChange={handleChange} placeholder="Name" required />
-      <input type="email" name="email" value={formData.email} onChange={handleChange} placeholder="Email" required />
-      <input type="file" accept="" onChange={handleFileChange} />
-      {preview && <img src={preview} alt="Preview" width="100" />}
-      <button type="submit">Submit</button>
-      <p>{uploadStatus}</p>
-    </form>
+    <Modal open={open} onClose={onClose} fullwidth >
+      <Box sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: 400, bgcolor: 'background.paper', borderRadius: 2, boxShadow: 24, p: 4, }}>
+        <form onSubmit={handleSubmit} encType="multipart/form-data" className="max-w-400 flex flex-col justify-center">
+          <h2 className="m-4 font-bold text-[1.5rem]">{label}</h2>
+             {preview && !preview.toLowerCase().endsWith('.pdf') && (
+            <img src={preview} alt="Preview" className="m-4 rounded-[50%] w-[10rem] h-[10rem] self-center" />
+          )}
+          <input type="file"  accept={label === "Upload Resume" ? ".pdf, .doc, .docx, .txt" : ".jpg,.jpeg,.png, .svg"} onChange={handleFileChange} className="m-4" />
+          <Button variant="contained" type="submit" sx={{ margin: "1rem" }}>Submit</Button>
+          <p className="m-4 font-bold text-red-500 text-[1rem]">{uploadStatus}</p>
+        </form>
+      </Box>
+    </Modal>
+
   );
 };
 

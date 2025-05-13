@@ -1,14 +1,13 @@
-import React, { use, useEffect, useState, useTransition } from "react";
-import { ExternalLink, Share2, Building2, Pencil, Plus, GraduationCap } from "lucide-react";
-import { Tooltip } from "@mui/material";
+import React, { use, useEffect, useState } from "react";
+import { Building2, Pencil, Plus, GraduationCap, PencilIcon } from "lucide-react";
 import UpdateProfileModal from "../modals/profileUpdateModals/updateProfileModal";
-import { createEducation, editEducation, getprofile, uploadResume } from "../../API/ApiFunctions";
+import { createEducation, editEducation, updateSkils } from "../../API/ApiFunctions";
 import EditExperienceModal from "../modals/profileUpdateModals/experienceModal";
-// import ProfileCard from "../modals/profileUpdateModals/ProfileCard";
 import { Mail, Phone, MapPin, Calendar, Briefcase, Timer } from 'lucide-react';
 import QuickLinks from "./Quicklinks";
 import { useOutletContext } from "react-router-dom";
 import UserForm from "../modals/profileUpdateModals/resumeUpload";
+import { uploadProfileApi, uploadResumeApi } from "../../API/APIs";
 
 
 
@@ -27,7 +26,7 @@ const ProfileOverviewCard = () => {
 
     const user = JSON.parse(localStorage.getItem("User"));
 
-    const {employee} = useOutletContext();
+    const { employee } = useOutletContext();
 
 
     return (
@@ -37,7 +36,7 @@ const ProfileOverviewCard = () => {
                 {/* Profile Header */}
                 <div className="flex items-center gap-4">
                     {/* Profile Image */}
-                    <div onClick={()=> setModalName("editImage")} className="relative w-20 h-20">
+                    <div onClick={() => setModalName("editImage")} className="relative w-20 h-20">
                         <img
                             src={employee?.profileImage || "/user.png"}
                             alt="avatar"
@@ -199,7 +198,7 @@ const ProfileOverviewCard = () => {
                             </div>
 
                         </div>
-                 
+
                         <div className="flex mt-6 items-center justify-between">
                             <h2 className="text-lg px-4  font-semibold text-gray-800">Education</h2>
                             <button
@@ -231,14 +230,14 @@ const ProfileOverviewCard = () => {
                                                     {edu.degree} {edu.specialization}
                                                 </h3>
                                                 <p className="text-sm text-gray-600">
-                                                    {edu.instituteName} -- {edu.highestEducation}
+                                                    {edu.instituteName} -- {edu.qualification}
                                                 </p>
                                                 <div className="flex gap-2 pt-1">
                                                     <span className="text-xs bg-gray-200 px-2 py-0.5 rounded-full text-gray-700">
                                                         Batch {edu.startDate} - {edu.endDate}
                                                     </span>
                                                     <span className="text-xs bg-gray-200 px-2 py-0.5 rounded-full text-gray-700">
-                                                        {edu.educationType}
+                                                        {edu.studyMode==="f"? <p>Full-Time</p>: <span>{edu.studyMode==="p"?<p>Part Time</p>:<p>Correspondence</p>}</span>}
                                                     </span>
                                                 </div>
                                             </div>
@@ -281,12 +280,13 @@ const ProfileOverviewCard = () => {
                         </div>
 
                         {/* Skill Tags */}
-                        <div className="flex flex-wrap flex-col  gap-2">
-                            {employee?.EmployeeExperiences?.[0]?.skillsUsed?.length > 0 ? (
-                                employee.EmployeeExperiences[0].skillsUsed.map((skill, idx) => (
+                        <div className="flex flex-wrap flex-row  gap-2">
+                         
+                            {employee?.skills ? (
+                               JSON.parse(employee.skills).map((skill, idx) => (
                                     <span
                                         key={idx}
-                                        className="px-3 py-1 rounded-full bg-gray-100 text-sm text-gray-700 border border-gray-300"
+                                        className="px-3 py-1 rounded-full w-auto bg-gray-100 text-sm text-gray-700 border border-gray-300"
                                     >
                                         {skill}
                                     </span>
@@ -347,19 +347,23 @@ const ProfileOverviewCard = () => {
                     </div>
 
 
-<section id="resume" className="px-7 pt-6 pb-10 mr-3 w-full text-lg bg-white rounded-3xl max-md:px-5 max-md:mr-2.5 max-md:max-w-full">
-                                    <div className="flex flex-wrap gap-5 justify-between font-medium text-black max-md:max-w-full">
-                                        <div className="flex flex-col">
-                                            <h2 className="self-start text-xl">Resume</h2>
-                                            <p className="mt-7">{employee?.resume}"resume File"</p>
-                                            <p className="mt-2 font-light text-gray-500 max-md:mr-2.5">
-                                                Uploaded on Nov 27,2024
-                                            </p>
-                                        </div>
-                                       
-                                    </div>
+                    <section id="resume" className="px-7 pt-6 pb-10 mr-3 w-full text-lg bg-white rounded-3xl max-md:px-5 max-md:mr-2.5 max-md:max-w-full">
+                        <div className="flex flex-wrap gap-5 justify-between font-medium text-black max-md:max-w-full">
+                            <div className="flex flex-col w-full">
+                                <div className="w-full flex flex-row justify-between">
+                                    <h2 className="self-start text-xl">Resume</h2>
+                                    <PencilIcon onClick={()=>setModalName("editResume")} size={20} />
+                                </div>
+
+                                {employee?.resumeURL ?
+                                    <div onClick={()=>window.open(employee?.resumeURL, '_blank')}>
+                                        <p className="mt-7">{employee?.resumeURL.split("/").pop()}</p>
+                                        <p className="mt-2 font-light text-gray-500 max-md:mr-2.5">
+                                            Uploaded on {employee?.updatedAt.split("T")[0]}
+                                        </p>
+                                    </div> :
                                     <div className="flex flex-col justify-center items-center px-20 py-10 mt-6 rounded-2xl border border-gray-500 border-dashed">
-                                        <div onClick={()=>setModalName("editResume")} className="flex flex-col max-w-full w-[389px]">
+                                        <div onClick={() => setModalName("editResume")} className="flex flex-col max-w-full w-[389px]">
                                             <button className="self-center px-5 py-2.5 max-w-full text-indigo-600 rounded-3xl border border-indigo-600 border-solid w-[20rem]">
                                                 Update resume
                                             </button>
@@ -368,7 +372,14 @@ const ProfileOverviewCard = () => {
                                             </p>
                                         </div>
                                     </div>
-                                </section>
+                                }
+
+
+                            </div>
+
+                        </div>
+
+                    </section>
 
                     <div className="flex items-left flex-col justify-left">
                         <h2 className="text-lg px-8 font-semibold text-gray-800">Other details</h2>
@@ -434,69 +445,36 @@ const ProfileOverviewCard = () => {
 
                             </div>
                         </div>
+                       
+                    </div>
 
-
-
-                        <div onClick={() => setModalName("basicDetails")} className="bg-white rounded-xl mt-4 p-4 shadow-md space-y-4 w-full">
+                      <div onClick={() => setModalName("basicDetails")} className="bg-white rounded-xl mt-4 p-4 shadow-md space-y-4 w-full">
 
                             <div className="flex justify-center items-left flex-col text-sm bg-gray-50 px-4 py-2 rounded-lg">
                                 <p className="text-gray-800 font-semibold text-lg">Basic Details</p>
                                 <div className="flex flex-row gap-6 flex-wrap">
 
-                                    <h2 className="text-lg font-semibold text-sm text-gray-500">{employee?.name}</h2>
+                                    <h2 className="text-lg font-semibold text-sm text-gray-500">{employee?.fullName}</h2>
                                     <h2 className="text-lg font-semibold text-sm text-gray-500">{employee?.email}</h2>
-                                    <h2 className="text-lg font-semibold text-sm text-gray-500">{employee?.number}</h2>
+                                    <h2 className="text-lg font-semibold text-sm text-gray-500">{user?.phone}</h2>
                                     <h2 className="text-lg font-semibold text-sm text-gray-500">{employee?.gender}</h2>
                                     <h2 className=" font-semibold text-sm text-gray-500">{employee?.dob}</h2>
                                 </div>
                             </div>
 
                         </div>
-                    </div>
 
                 </div>
             </div>
 
             {modalName === "editImage" && (
-                <UpdateProfileModal
-                open={modalName === "editImage"}
-                onClose={()=> setModalName("")}
-                fields={{
-                    profileImage: employee?.profileImage || ""
-                }}
-                label={{profileImage: "Upload the image here"}}
-                type={{
-                    profileImage: "file"
-                }}
-                suggestions={{}}
-                metaData={{
-                        title: "  Edit Profile Image",
-                        api: "somthing",
-                    }
-                }
-                />
+                <UserForm open={modalName === "editImage"} label={"Upload Profile Image"} onClose={() => setModalName("")} metaData={{ field: "profileImage", Api: uploadProfileApi, default: employee?.profileImage }} />
+
             )}
 
-  {modalName === "editResume" && (
-                // <UpdateProfileModal
-                // open={modalName === "editResume"}
-                // onClose={()=> setModalName("")}
-                // fields={{
-                //     resume: employee?.resume || ""
-                // }}
-                // label={{resume: "Upload Your resume here"}}
-                // type={{
-                //     resume: "file"
-                // }}
-                // suggestions={{}}
-                // metaData={{
-                //         title: "Upload Resume",
-                //         onSubmitFunc: uploadResume,
-                //         id: null,
-                //     }
-                // }
-                // />
-                <UserForm />
+            {modalName === "editResume" && (
+
+                <UserForm open={modalName === "editResume"} label={"Upload Resume"} onClose={() => setModalName("")} metaData={{ field: "resume", Api: uploadResumeApi, default: employee?.resumeURL }} />
             )}
 
             {modalName === "skills" && (
@@ -504,9 +482,9 @@ const ProfileOverviewCard = () => {
                     open={modalName === "skills"}
                     onClose={() => setModalName("")}
                     fields={{
-                        skills: employee?.EmployeeExperiences?.[0]?.skillsUsed || [],
+                        skills: JSON.parse(employee?.skills) || [],
                     }}
-                    label={{skills: "Add Skills"}}
+                    label={{ skills: "Add Skills" }}
 
                     type={{
                         skills: "multi",
@@ -532,14 +510,15 @@ const ProfileOverviewCard = () => {
                     }}
                     metaData={{
                         title: "  Edit skills",
-                        api: "somthing",
+                        onSubmitFunc: updateSkils,
+                        id: null
                     }
                     }
                 />
             )}
 
 
-         
+
 
             {modalName === "editExperience" && <EditExperienceModal Open={modalName === "editExperience"} close={() => setModalName("")} data={employee?.EmployeeExperiences[experienceIndex]} />}
 
@@ -550,7 +529,7 @@ const ProfileOverviewCard = () => {
                     fields={{
                         currentSalary: employee?.currentSalary || "",
                     }}
-                    label={{currentSalary: "Enter your Current Salary"}}
+                    label={{ currentSalary: "Enter your Current Salary" }}
                     type={{
                         currentSalary: "number",
                     }}
@@ -575,7 +554,7 @@ const ProfileOverviewCard = () => {
                     fields={{
                         preferredJobs: employee?.preferredJobRoles || [],
                     }}
-                    label={{preferredJobs: "Add Your Job Preference"}}
+                    label={{ preferredJobs: "Add Your Job Preference" }}
                     type={{
                         preferredJobs: "multiInput",
                     }}
@@ -638,7 +617,7 @@ const ProfileOverviewCard = () => {
                         language: employee?.otherLanguages || [],
                     }}
                     label={{
-                        englishLevel:"What is your englsih speaking level",
+                        englishLevel: "What is your englsih speaking level",
                         language: "Select other language"
                     }}
                     type={{
@@ -646,7 +625,7 @@ const ProfileOverviewCard = () => {
                         language: "checkbox",
                     }}
                     suggestions={{
-                        englishLevel: [{"Basic":"Basic"}, {"Intermediate":"Intermediate"}, {"Advanced":"Advanced"}],
+                        englishLevel: [{ "Basic": "Basic" }, { "Intermediate": "Intermediate" }, { "Advanced": "Advanced" }],
                         language: ["Hindi", "Telugu", "Bengali"],
                     }}
                     metaData={{
@@ -705,10 +684,10 @@ const ProfileOverviewCard = () => {
                     }}
                     suggestions={{
                         educationPreferences: [
-                            {"Post Graduate Degree":"Post Graduate Degree"},
-                            {"Certification / Courses": "Certification / Courses"},
-                           {"Govt. Job Preparation": "Govt. Job Preparation"}
-                    ]
+                            { "Post Graduate Degree": "Post Graduate Degree" },
+                            { "Certification / Courses": "Certification / Courses" },
+                            { "Govt. Job Preparation": "Govt. Job Preparation" }
+                        ]
                     }}
 
                     metaData={{
@@ -741,7 +720,7 @@ const ProfileOverviewCard = () => {
                         title: "Year Experience",
                         api: "somthing",
                     }
-                    } 
+                    }
                 />
             )}
 
@@ -785,18 +764,18 @@ const ProfileOverviewCard = () => {
                         endDate: "date"
                     }}
                     suggestions={{
-                        qualification: [{"Diploma": "Diploma" }, {"ITI": "ITI"}, {"Graduate": "Graduate"}, {"Post Graduate": "Post Graduate"}],
-                        isHighestQualification: [{"Yes": true}, {"no": false}],
+                        qualification: [{ "Diploma": "Diploma" }, { "ITI": "ITI" }, { "Graduate": "Graduate" }, { "Post Graduate": "Post Graduate" }],
+                        isHighestQualification: [{ "Yes": true }, { "no": false }],
                         degree: ["B.A.", "B.Com", "B.Sc", "B.Tech", "M.A"],
-                        schoolMedium: [{"Hindi": "Hindi"}, {"English": "English"}],
+                        schoolMedium: [{ "Hindi": "Hindi" }, { "English": "English" }],
                         specialisation: ["Computer Science", "Commerce", "Arts", "Physics"],
-                        studyMode: [{"Full-Time":"f"}, {"Part-Time":"p"}, {"Correspondence":"c"}]
+                        studyMode: [{ "Full-Time": "f" }, { "Part-Time": "p" }, { "Correspondence": "c" }]
                     }}
 
 
                     metaData={{
                         title: " Edit Education",
-                        onSubmitFunc: selectedEducation ? editEducation :createEducation,
+                        onSubmitFunc: selectedEducation ? editEducation : createEducation,
                         id: selectedEducation?.id
                     }
                     }
@@ -811,7 +790,7 @@ const ProfileOverviewCard = () => {
                     fields={{
                         certification: employee?.certification || "",
                     }}
-                    label={{certification: "Add Your Certification Name"}}
+                    label={{ certification: "Add Your Certification Name" }}
                     type={{
                         certification: "text",
                     }}
