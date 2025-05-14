@@ -1,7 +1,7 @@
 import React, { use, useEffect, useState } from "react";
 import { Building2, Pencil, Plus, GraduationCap, PencilIcon } from "lucide-react";
 import UpdateProfileModal from "../modals/profileUpdateModals/updateProfileModal";
-import { createEducation, editEducation, updateSkils } from "../../API/ApiFunctions";
+import { createEducation, editEducation, employeeExp, updateProfileFunc, updateSkils } from "../../API/ApiFunctions";
 import EditExperienceModal from "../modals/profileUpdateModals/experienceModal";
 import { Mail, Phone, MapPin, Calendar, Briefcase, Timer } from 'lucide-react';
 import QuickLinks from "./Quicklinks";
@@ -90,7 +90,7 @@ const ProfileOverviewCard = () => {
                     </div>
                     <div className="flex items-center gap-2">
                         <img src="/takeover.png" alt="Rupee" className="w-4 h-4" />
-                        <span>{employee?.EmployeeExperiences[0]?.currentSalary ? `₹ ${employee.EmployeeExperiences[0].currentSalary}` : "Salary not shared"}</span>
+                        <span>{employee?.salary ? `₹ ${employee?.salary}` : "Salary not shared"}</span>
                     </div>
                     <div className="flex items-center gap-2">
                         <Timer className="w-4 h-4 text-red-400" />
@@ -166,16 +166,16 @@ const ProfileOverviewCard = () => {
                                         </p>
                                     </div>
                                     <div className="text-sm text-gray-600 bg-gray-100 px-3 py-2 rounded-lg">
-                                        Creating project for the company
+                                        {experienc.description}
                                     </div>
                                     <div className="text-sm text-gray-700">
-                                        <span className="font-medium">Skills:</span> {experienc.skillsUsed?.map((skill, index) => (<p key={index}>{skill}</p>))}
+                                        <span className="font-medium">Skills:</span> {JSON.parse(experienc.skillsUsed)?.map((skill, index) => (<p key={index}>{skill}</p>))}
                                     </div>
                                     <div className="flex gap-2 text-xs text-gray-600 pt-1">
                                         <span className="bg-gray-200 px-2 py-0.5 rounded-full">{experienc.startDate}- {employee?.
                                             EmployeeExperiences[0].endDate ? <span>{employee?.
                                                 EmployeeExperiences[0].endDate}</span> : <span>present</span>}</span>
-                                        <span className="bg-gray-200 px-2 py-0.5 rounded-full">{experienc.employementType}</span>
+                                        <span className="bg-gray-200 px-2 py-0.5 rounded-full">{experienc.employmentType}</span>
                                     </div>
                                 </div>
                             ))}
@@ -185,7 +185,7 @@ const ProfileOverviewCard = () => {
 
                             <div onClick={() => setModalName("yearExperience")} className="flex justify-between items-center text-sm text-gray-700">
                                 <p className="font-medium">Total Years of experience:</p>
-                                <p className="text-gray-800">{employee?.years} years and {employee?.months} months</p>
+                                <p className="text-gray-800">{employee?.TotalExperience.years} years and {employee?.TotalExperience.months} months</p>
                             </div>
 
                         </div>
@@ -194,7 +194,7 @@ const ProfileOverviewCard = () => {
 
                             <div onClick={() => setModalName("salary")} className="flex justify-between items-center text-sm text-gray-700">
                                 <p className="font-medium">Current monthly salary:</p>
-                                <p className="text-gray-800"> {employee?.EmployeeExperiences[0].currentSalary}</p>
+                                <p className="text-gray-800"> {employee?.salary}</p>
                             </div>
 
                         </div>
@@ -237,14 +237,14 @@ const ProfileOverviewCard = () => {
                                                         Batch {edu.startDate} - {edu.endDate}
                                                     </span>
                                                     <span className="text-xs bg-gray-200 px-2 py-0.5 rounded-full text-gray-700">
-                                                        {edu.studyMode==="f"? <p>Full-Time</p>: <span>{edu.studyMode==="p"?<p>Part Time</p>:<p>Correspondence</p>}</span>}
+                                                        {edu.studyMode === "f" ? <p>Full-Time</p> : <span>{edu.studyMode === "p" ? <p>Part Time</p> : <p>Correspondence</p>}</span>}
                                                     </span>
                                                 </div>
                                             </div>
 
                                             {/* Edit icon */}
                                             <button
-                                                onClick={() => handleEditEducation(edu)}
+                                                onClick={() => handleEditEducation(idx)}
                                                 className="absolute top-2 right-2 text-gray-500 hover:text-green-600"
                                             >
                                                 <Pencil size={16} />
@@ -281,9 +281,9 @@ const ProfileOverviewCard = () => {
 
                         {/* Skill Tags */}
                         <div className="flex flex-wrap flex-row  gap-2">
-                         
+
                             {employee?.skills ? (
-                               JSON.parse(employee.skills).map((skill, idx) => (
+                                JSON.parse(employee.skills).map((skill, idx) => (
                                     <span
                                         key={idx}
                                         className="px-3 py-1 rounded-full w-auto bg-gray-100 text-sm text-gray-700 border border-gray-300"
@@ -306,10 +306,23 @@ const ProfileOverviewCard = () => {
 
                     <div className="bg-white rounded-xl mt-4 p-4 shadow-md space-y-4 w-full">
 
-                        <div onClick={() => setModalName("certification")} className="flex justify-between items-center text-sm bg-gray-50 px-4 py-2 rounded-lg">
-                            <p className="text-gray-700">Certification</p>
-                            <p className="text-gray-400 italic">+ Add</p>
+                        <div onClick={() => setModalName("certification")} className="flex flex-col gap-2">
+                            <div  className="flex justify-between items-center text-sm bg-gray-50 px-4 py-2 rounded-lg">
+                                <p className="text-gray-700">Certification</p>
+                                <p className="text-gray-400 italic">+ Add</p>
+
+                            </div>
+
+                            {employee?.certification && JSON.parse(employee.certification).map((certificate, index)=>(
+                               <div
+                                        key={index}
+                                        className="px-3 py-1 rounded-full bg-gray-100 text-sm text-gray-700 border border-gray-300"
+                                    >
+                                        {certificate}
+                                    </div>
+                            ))}
                         </div>
+
 
                     </div>
 
@@ -328,7 +341,7 @@ const ProfileOverviewCard = () => {
                             <span
                                 className="px-3 py-1 rounded-full bg-gray-100 text-sm text-gray-700 border border-gray-300"
                             >
-                                English <span className="text-green-600">{employee?.englishLevel}</span>
+                                English <span className="text-green-600">{employee?.englishProficiency}</span>
                             </span>
                             {employee?.otherLanguages &&
                                 Array.isArray(JSON.parse(employee.otherLanguages)) &&
@@ -352,11 +365,11 @@ const ProfileOverviewCard = () => {
                             <div className="flex flex-col w-full">
                                 <div className="w-full flex flex-row justify-between">
                                     <h2 className="self-start text-xl">Resume</h2>
-                                    <PencilIcon onClick={()=>setModalName("editResume")} size={20} />
+                                    <PencilIcon onClick={() => setModalName("editResume")} size={20} />
                                 </div>
 
                                 {employee?.resumeURL ?
-                                    <div onClick={()=>window.open(employee?.resumeURL, '_blank')}>
+                                    <div onClick={() => window.open(employee?.resumeURL, '_blank')}>
                                         <p className="mt-7">{employee?.resumeURL.split("/").pop()}</p>
                                         <p className="mt-2 font-light text-gray-500 max-md:mr-2.5">
                                             Uploaded on {employee?.updatedAt.split("T")[0]}
@@ -392,9 +405,12 @@ const ProfileOverviewCard = () => {
                             <p className="text-gray-800 font-semibold text-lg">Preferred Job Title/Role</p>
 
                             <ul className="flex flex-row gap-6">
-                                {employee?.preferredJobRoles?.map((role, index) => (
-                                    <li key={index} className="text-lg font-semibold text-sm text-gray-500">{role}</li>
-                                ))}
+                                {employee?.preferredJobRoles &&
+                                    JSON.parse(employee?.preferredJobRoles).map((role, index) => (
+                                        <li key={index} className="text-lg font-semibold text-sm text-gray-500">{role}</li>
+                                    ))
+                                }
+
                             </ul>
 
                         </div>
@@ -402,12 +418,12 @@ const ProfileOverviewCard = () => {
                     </div>
                     <div className="bg-white rounded-xl mt-4 p-4 shadow-md space-y-4 w-full">
 
-                        <div onClick={() => setModalName("location")} className="flex justify-center items-left flex-col text-sm bg-gray-50 px-4 py-2 rounded-lg">
+                        <div onClick={() => setModalName("preferredJobCity")} className="flex justify-center items-left flex-col text-sm bg-gray-50 px-4 py-2 rounded-lg">
                             <p className="text-gray-800 font-semibold text-lg">Location</p>
                             <div className="flex flex-row gap-6">
-
-                                <h2 className="text-lg font-semibold text-sm text-gray-500">{employee?.currentLocation}</h2>
-                                <h2 className="text-lg font-semibold text-sm text-gray-500">{employee?.hometown}</h2>
+                                <h2 className="text-lg font-semibold text-sm text-gray-500">{employee?.preferredJobCity && JSON.parse(employee?.preferredJobCity).map((city, index) => (
+                                    <li key={index} className="text-lg font-semibold text-sm text-gray-500">{city}</li>
+                                ))}</h2>
 
                             </div>
                         </div>
@@ -422,7 +438,7 @@ const ProfileOverviewCard = () => {
 
                             <div className="flex flex-row gap-6">
                                 <ul className="flex flex-row gap-6">
-                                    {employee?.preferredEmployementTypes?.map((role, index) => (
+                                    {employee?.preferredEmployementTypes && JSON.parse(employee.preferredEmployementTypes).map((role, index) => (
                                         <li key={index} className="text-lg font-semibold text-sm text-gray-500">{role}</li>
                                     ))}
                                 </ul>
@@ -445,24 +461,27 @@ const ProfileOverviewCard = () => {
 
                             </div>
                         </div>
-                       
+
                     </div>
 
-                      <div onClick={() => setModalName("basicDetails")} className="bg-white rounded-xl mt-4 p-4 shadow-md space-y-4 w-full">
+                    <div onClick={() => setModalName("basicDetails")} className="bg-white rounded-xl mt-4 p-4 shadow-md space-y-4 w-full">
 
-                            <div className="flex justify-center items-left flex-col text-sm bg-gray-50 px-4 py-2 rounded-lg">
-                                <p className="text-gray-800 font-semibold text-lg">Basic Details</p>
-                                <div className="flex flex-row gap-6 flex-wrap">
+                        <div className="flex justify-center items-left flex-col text-sm bg-gray-50 px-4 py-2 rounded-lg">
+                            <p className="text-gray-800 font-semibold text-lg">Basic Details</p>
+                            <div className="flex flex-row gap-6 flex-wrap">
 
-                                    <h2 className="text-lg font-semibold text-sm text-gray-500">{employee?.fullName}</h2>
-                                    <h2 className="text-lg font-semibold text-sm text-gray-500">{employee?.email}</h2>
-                                    <h2 className="text-lg font-semibold text-sm text-gray-500">{user?.phone}</h2>
-                                    <h2 className="text-lg font-semibold text-sm text-gray-500">{employee?.gender}</h2>
-                                    <h2 className=" font-semibold text-sm text-gray-500">{employee?.dob}</h2>
-                                </div>
+                                <h2 className="text-lg font-semibold text-sm text-gray-500">{employee?.fullName}</h2>
+                                <h2 className="text-lg font-semibold text-sm text-gray-500">{employee?.email}</h2>
+                                <h2 className="text-lg font-semibold text-sm text-gray-500">{user?.phone}</h2>
+                                <h2 className="text-lg font-semibold text-sm text-gray-500">{employee?.gender}</h2>
+                                <h2 className=" font-semibold text-sm text-gray-500">{employee?.dob}</h2>
+                                <h2 className="text-lg font-semibold text-sm text-gray-500">{employee?.currentLocation}</h2>
+                                <h2 className="text-lg font-semibold text-sm text-gray-500">{employee?.hometown}</h2>
+
                             </div>
-
                         </div>
+
+                    </div>
 
                 </div>
             </div>
@@ -482,7 +501,7 @@ const ProfileOverviewCard = () => {
                     open={modalName === "skills"}
                     onClose={() => setModalName("")}
                     fields={{
-                        skills: JSON.parse(employee?.skills) || [],
+                        skills: Array.isArray(employee?.skills)?employee?.skills: employee?.skills &&  JSON.parse(employee?.skills) || [],
                     }}
                     label={{ skills: "Add Skills" }}
 
@@ -520,27 +539,23 @@ const ProfileOverviewCard = () => {
 
 
 
-            {modalName === "editExperience" && <EditExperienceModal Open={modalName === "editExperience"} close={() => setModalName("")} data={employee?.EmployeeExperiences[experienceIndex]} />}
+            {modalName === "editExperience" && <EditExperienceModal Open={modalName === "editExperience"} close={() => setModalName("")} data={employee?.EmployeeExperiences[experienceIndex]} id={experienceIndex} />}
 
             {modalName === "salary" && (
                 <UpdateProfileModal
                     open={modalName === "salary"}
                     onClose={() => setModalName("")}
                     fields={{
-                        currentSalary: employee?.currentSalary || "",
+                        salary: employee?.salary || "",
                     }}
-                    label={{ currentSalary: "Enter your Current Salary" }}
+                    label={{ salary: "Enter your Current Salary" }}
                     type={{
-                        currentSalary: "number",
+                        salary: "number",
                     }}
-                    helperText={{
-                        currentSalary:
-                            "💡 Salary information is private, we use it only to show relevant jobs",
-                    }}
-
                     metaData={{
                         title: "Edit Current Monthly Salary",
-                        api: "somthing",
+                        onSubmitFunc: updateProfileFunc,
+                        id: null
                     }
                     }
                 />
@@ -552,14 +567,14 @@ const ProfileOverviewCard = () => {
                     open={modalName === "preferredJobs"}
                     onClose={() => setModalName("")}
                     fields={{
-                        preferredJobs: employee?.preferredJobRoles || [],
+                        preferredJobRoles: Array.isArray(employee?.preferredJobRoles)?employee?.preferredJobRoles: employee?.preferredJobRoles && JSON.parse(employee?.preferredJobRoles)|| [],
                     }}
-                    label={{ preferredJobs: "Add Your Job Preference" }}
+                    label={{ preferredJobRoles: "Add Your Job Preference" }}
                     type={{
-                        preferredJobs: "multiInput",
+                        preferredJobRoles: "multi",
                     }}
                     suggestions={{
-                        preferredJobs: [
+                        preferredJobRoles: [
                             "Software Backend Development",
                             "Website Development",
                             "DevOps",
@@ -571,37 +586,38 @@ const ProfileOverviewCard = () => {
                     }}
                     metaData={{
                         title: "preferredJobs",
-                        api: "somthing",
+                        onSubmitFunc: updateProfileFunc,
+                        id: null
                     }
                     }
                 />
             )}
 
 
-            {modalName === "location" && (
+            {modalName === "preferredJobCity" && (
                 <UpdateProfileModal
-                    open={modalName === "location"}
+                    open={modalName === "preferredJobCity"}
                     onClose={() => setModalName("")}
                     fields={{
-                        preferredJobCity: employee?.location?.preferredJobCity || [],
-                        currentLocation: employee?.location?.currentLocation || "",
-                        hometown: employee?.location?.hometown || "",
+                        preferredJobCity: Array.isArray(employee?.preferredJobCity)?employee?.preferredJobCity: employee?.preferredJobCity && JSON.parse(employee?.preferredJobCity) || [],
+
                     }}
                     label={{
                         preferredJobCity: "Add Your Prefered Job City",
-                        currentLocation: "Enter Your Current Location",
-                        hometown: "Enter Your HomeTown",
+
                     }}
                     type={{
-                        preferredJobCity: "multiInput",
-                        currentLocation: "text",
-                        hometown: "text",
+                        preferredJobCity: "multi",
+
                     }}
-                    suggestions={{}} // optional: you can provide city name suggestions if needed
+                    suggestions={{
+                        preferredJobCity: ["Delhi", "Gurgaon", "Noida", "Bangalore"]
+                    }} // optional: you can provide city name suggestions if needed
                     limits={{ preferredJobCity: 3 }}
                     metaData={{
                         title: "location",
-                        api: "somthing",
+                        onSubmitFunc: updateProfileFunc,
+                        id: null
                     }
                     }// to enforce a max of 3 cities
                 />
@@ -613,24 +629,25 @@ const ProfileOverviewCard = () => {
                     open={modalName === "languageKnown"}
                     onClose={() => setModalName("")}
                     fields={{
-                        englishLevel: employee?.englishLevel || "",
-                        language: employee?.otherLanguages || [],
+                        englishProficiency: employee?.englishProficiency || "",
+                        otherLanguages: Array.isArray(employee?.otherLanguages)?employee?.otherLanguages: employee?.otherLanguages && JSON.parse(employee?.otherLanguages) || [],
                     }}
                     label={{
-                        englishLevel: "What is your englsih speaking level",
-                        language: "Select other language"
+                        englishProficiency: "What is your englsih speaking level",
+                        otherLanguages: "Select other language"
                     }}
                     type={{
-                        englishLevel: "radio",
-                        language: "checkbox",
+                        englishProficiency: "radio",
+                        otherLanguages: "multi",
                     }}
                     suggestions={{
-                        englishLevel: [{ "Basic": "Basic" }, { "Intermediate": "Intermediate" }, { "Advanced": "Advanced" }],
-                        language: ["Hindi", "Telugu", "Bengali"],
+                        englishProficiency: [{ "Basic": "Basic" }, { "Intermediate": "Intermediate" }, { "Advanced": "Advanced" }],
+                        otherLanguages: ["Hindi", "Telugu", "Bengali"],
                     }}
                     metaData={{
-                        title: "languageKnown",
-                        api: "somthing",
+                        title: "language Known",
+                        onSubmitFunc: updateProfileFunc,
+                        id: null
                     }
                     }
                 />
@@ -642,57 +659,29 @@ const ProfileOverviewCard = () => {
                     open={modalName === "jobPreference"}
                     onClose={() => setModalName("")}
                     fields={{
-                        preferredEmployementType: employee?.preferredEmployementTypes || [],
-                        preferredWorkplace: employee?.preferredLocationTypes || [],
-                        preferredShifts: employee?.preferredShifts || [],
+                        preferredEmployementTypes: Array.isArray(employee?.preferredEmployementTypes)?employee?.preferredEmployementTypes: employee?.preferredEmployementTypes && JSON.parse(employee?.preferredEmployementTypes) || [],
+                        preferredLocationTypes: Array.isArray(employee?.preferredLocationTypes)?employee?.preferredLocationTypes: employee?.preferredLocationTypes && JSON.parse(employee?.preferredLocationTypes) || [],
+                        preferredShifts: Array.isArray(employee?.preferredShifts)?employee?.preferredShifts: employee?.preferredShifts && JSON.parse(employee?.preferredShifts) || [],
                     }}
                     label={{
-                        preferredEmployementType: "Select Your Preferred employement type",
-                        preferredWorkplace: "Select Your Preferred Work Place",
+                        preferredEmployementTypes: "Select Your Preferred employement type",
+                        preferredLocationTypes: "Select Your Preferred Work Place",
                         preferredShifts: "Select Your Preferred Work Shift",
                     }}
                     type={{
-                        preferredEmployementType: "checkbox",
-                        preferredWorkplace: "checkbox",
-                        preferredShifts: "checkbox",
+                        preferredEmployementTypes: "multi",
+                        preferredLocationTypes: "multi",
+                        preferredShifts: "multi",
                     }}
                     suggestions={{
-                        preferredEmployementType: ["Part Time", "Full Time", "Internships", "Contract"],
-                        preferredWorkplace: ["Work from Office", "Work from Home", "Field Jobs"],
+                        preferredEmployementTypes: ["Part Time", "Full Time", "Internships", "Contract"],
+                        preferredLocationTypes: ["Work from Office", "Work from Home", "Field Jobs"],
                         preferredShifts: ["Night Shift", "Day Shift"],
                     }}
                     metaData={{
                         title: "jobPreference",
-                        api: "somthing",
-                    }
-                    }
-                />
-            )}
-
-            {modalName === "furtherEducation" && (
-                <UpdateProfileModal
-                    open={modalName === "furtherEducation"}
-                    onClose={() => setModalName("")}
-                    fields={{
-                        educationPreferences: employee?.educationPreferences || ""
-                    }}
-                    label={{
-                        educationPreferences: "Select Your Education Preference"
-                    }}
-                    type={{
-                        educationPreferences: "radio"  // or "select" if you want a dropdown
-                    }}
-                    suggestions={{
-                        educationPreferences: [
-                            { "Post Graduate Degree": "Post Graduate Degree" },
-                            { "Certification / Courses": "Certification / Courses" },
-                            { "Govt. Job Preparation": "Govt. Job Preparation" }
-                        ]
-                    }}
-
-                    metaData={{
-                        title: "Further education preferences",
-                        api: "somthing",
+                        onSubmitFunc: updateProfileFunc,
+                        id: null
                     }
                     }
                 />
@@ -718,7 +707,8 @@ const ProfileOverviewCard = () => {
                     suggestions={{}}
                     metaData={{
                         title: "Year Experience",
-                        api: "somthing",
+                        onSubmitFunc: employeeExp,
+                        id: null
                     }
                     }
                 />
@@ -729,15 +719,15 @@ const ProfileOverviewCard = () => {
                     open={modalName === "education"}
                     onClose={() => setModalName("")}
                     fields={{
-                        qualification: employee?.education?.[0]?.highestEducation || "Graduate",
+                        qualification: employee?.EmployeeEducations[selectedEducation]?.qualification || "Graduate",
                         isHighestQualification: false,
                         schoolMedium: "Hindi",
-                        instituteName: employee?.education?.[0]?.instituteName || "",
-                        degree: employee?.education?.[0]?.degree || "",
-                        specialisation: employee?.education?.[0]?.specialisation || "",
-                        studyMode: employee?.education?.[0]?.educationType || "Full-time",
-                        startDate: employee?.education?.[0]?.startDate || "",
-                        endDate: employee?.education?.[0]?.endDate || ""
+                        instituteName: employee?.EmployeeEducations[selectedEducation]?.instituteName || "",
+                        degree: employee?.EmployeeEducations[selectedEducation]?.degree || "",
+                        specialisation: employee?.EmployeeEducations[selectedEducation]?.specialisation || "",
+                        studyMode: employee?.EmployeeEducations[selectedEducation]?.studyMode || "Full-time",
+                        startDate: employee?.EmployeeEducations[selectedEducation]?.startDate || "",
+                        endDate: employee?.EmployeeEducations[selectedEducation]?.endDate || ""
                     }}
 
                     label={{
@@ -788,18 +778,21 @@ const ProfileOverviewCard = () => {
                     open={modalName === "certification"}
                     onClose={() => setModalName("")}
                     fields={{
-                        certification: employee?.certification || "",
+                        certification: Array.isArray(employee?.certification)?employee?.certification: employee?.certification && JSON.parse(employee?.certification) || [],
                     }}
                     label={{ certification: "Add Your Certification Name" }}
                     type={{
-                        certification: "text",
+                        certification: "multi",
                     }}
-                    suggestions={{}}
+                    suggestions={{
+                        certification: ["Mechanical support", "Mern Stack Developer", "Software Development"]
+                    }}
 
 
                     metaData={{
                         title: " Add Certification",
-                        api: "somthing",
+                        onSubmitFunc: updateProfileFunc,
+                        id: null
                     }
                     }
                 />
@@ -811,25 +804,28 @@ const ProfileOverviewCard = () => {
                     open={modalName === "basicDetails"}
                     onClose={() => setModalName("")}
                     fields={{
-                        fullName: employee?.fullName,
-                        email: employee?.email,
-                        gender: employee?.gender,
-                        number: employee?.number,
-                        dob: employee?.dob
+                        fullName: employee?.fullName || "" ,
+                        email: employee?.email || "",
+                        gender: employee?.gender || "",
+                        dob: employee?.dob || "",
+                        currentLocation: employee?.currentLocation || "",
+                        hometown: employee?.hometown || ""
                     }}
                     label={{
                         fullName: "Enter Your Name",
                         email: "Enter Your Email",
                         gender: "Enter Your Gender",
-                        number: "Enter Your Mobile Number",
-                        dob: "Enter your Date of birth"
+                        dob: "Enter your Date of birth",
+                        currentLocation: "Enter Your Current Location",
+                        hometown: "Enter the Home Town"
                     }}
                     type={{
                         fullName: "text",
                         email: "text",
                         gender: "text",
-                        number: "number",
-                        dob: "date"
+                        dob: "date",
+                        currentLocation: "text",
+                        hometown: "text"
                     }}
 
                     suggestions={{
@@ -838,7 +834,8 @@ const ProfileOverviewCard = () => {
 
                     metaData={{
                         title: " Edit Basic Details",
-                        api: "somthing",
+                        onSubmitFunc: updateProfileFunc,
+                        id: null
                     }
                     }
                 />

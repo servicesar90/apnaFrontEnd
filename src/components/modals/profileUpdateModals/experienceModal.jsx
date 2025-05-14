@@ -2,79 +2,138 @@ import { Dialog } from "@mui/material";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import DynamicModal from "./updateProfileModal";
-// import EditJobRolesModal from "../";
+import { addEmpExp } from "../../../API/ApiFunctions";
+// import EditjobRoleModal from "../";
 
 
-const months = [
-  "January", "February", "March", "April", "May", "June",
-  "July", "August", "September", "October", "November", "December",
-];
-const industries = ["IT Services & Consulting","IT", "Education", "Healthcare", "Finance", "Manufacturing"];
+const industries = ["IT Services & Consulting", "IT", "Education", "Healthcare", "Finance", "Manufacturing"];
 const types = ["Full-time", "Part-time", "Intern", "Contract"];
 const noticePeriods = [
   "No notice period", "Less than 15 days", "1 month", "2 months", "3 or more months"
 ];
 
 
-const currentYear = new Date().getFullYear();
-const years = Array.from({ length: 50 }, (_, i) => currentYear - i);
 
-const EditExperienceModal = ({ data, Open, close }) => {
-  const [jobRolesModalOpen, setJobRolesModalOpen] = useState(false);
+
+const EditExperienceModal = ({ data, id, Open, close }) => {
+  const [jobRoleModalOpen, setjobRoleModalOpen] = useState(false);
   const [skillInput, setSkillInput] = useState("");
 
 
-  const { register, setValue,watch,  getValues, handleSubmit, formState: { errors } } = useForm({
+  const { register, setValue, watch, getValues, handleSubmit, formState: { errors } } = useForm({
     defaultValues: {
-      jobTitle: data?.jobTitle || "",
-      jobRoles: data?.jobRoles || "",
-      currentlyWorking: data?.currentlyWorking || false,
-      companyName: data?.companyName || "",
-      description: data?.description || "",
-      skills: data?.skills || [],
-      employmentType: data?.employementType || "",
-      startDate: data?.startDate || "",
-      endDate: data?.endDate || "",
-      industry: data?.industry || "",
-      noticePeriod: data?.noticePeriod || ""
+      jobTitle: data?.jobTitle || null,
+      jobRole: data?.jobRole || null,
+      isCurrent: data?.isCurrent || false,
+      companyName: data?.companyName || null,
+      description: data?.description || null,
+      skillsUsed: data?.skillsUsed || [],
+      employmentType: data?.employementType || null,
+      startDate: data?.startDate || null,
+      endDate: data?.endDate || null,
+      industry: data?.industry || null,
+      noticePeriod: data?.noticePeriod || null
     },
   });
 
-  const skills= watch("skills")
-  const isCurrentCompany= watch("currentlyWorking")
-  const jobRoles= watch("jobRoles");
+  const skillsUsed = watch("skillsUsed")
+  const isCurrentCompany = watch("isCurrent")
+  const jobRole = watch("jobRole");
   const employementType = watch("employmentType");
   const noticePeriod = watch("noticePeriod");
 
-  const onSubmit = (data) => {
-    
-    console.log(data);
-    
+  const onSubmit = async (data) => {
+
+    if (data.startDate) {
+      const start = new Date(data.startDate);
+      const end = new Date(data.endDate);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0); // remove time part
+
+      let hasError = false;
+
+      if (start > today) {
+        setError("startDate", {
+          type: "manual",
+          message: "Start date must be in the past",
+        });
+        hasError = true;
+      }
+
+      if (end > today) {
+        setError("endDate", {
+          type: "manual",
+          message: "End date must be in the past",
+        });
+        hasError = true;
+      }
+
+      if (start > end) {
+        setError("startDate", {
+          type: "manual",
+          message: "Start date can't be after end date",
+        });
+        hasError = true;
+      }
+
+      if (hasError) return;
+    }
+
+    const response = await addEmpExp(id, data);
+    if (response) {
+      alert("Succesfully Updated");
+      window.location.reload()
+      close()
+    } else {
+      alert("couldn't uploaded, Please try again!")
+    }
+
   };
 
 
   const addSkill = () => {
-    const trimmedSkill = skillInput.trim();
-    if (!trimmedSkill) return;
+  const trimmedSkill = skillInput.trim();
+  if (!trimmedSkill) return;
 
-    const currentSkills = getValues("skills") || [];
-    if (currentSkills.includes(trimmedSkill)) return; // avoid duplicates
+  let currentSkills = [];
 
-    const updatedSkills = [...currentSkills, trimmedSkill];
-    setValue("skills", updatedSkills);
-    setSkillInput(""); // clear input after adding
-  };
+  try {
+    const rawSkills = getValues("skillsUsed");
+    currentSkills = Array.isArray(rawSkills)
+      ? rawSkills
+      : JSON.parse(rawSkills) || [];
+  } catch {
+    currentSkills = [];
+  }
 
-  const removeSkill = (skill) => {
-    const newSkills= getValues("skills");
-    const removedSkills= newSkills.filter((s)=> s!= skill);
-    setValue("skills",removedSkills);
-  };
+  if (currentSkills.includes(trimmedSkill)) return; // avoid duplicates
+
+  const updatedSkills = [...currentSkills, trimmedSkill];
+  setValue("skillsUsed", updatedSkills);
+  setSkillInput(""); // clear input
+};
+
+const removeSkill = (skillToRemove) => {
+  let currentSkills= [];
+
+  try {
+    const rawSkills = getValues("skillsUsed");
+    currentSkills = Array.isArray(rawSkills)
+      ? rawSkills
+      : JSON.parse(rawSkills) || [];
+  } catch {
+    currentSkills = [];
+  }
+
+  const updatedSkills = currentSkills.filter((s) => s !== skillToRemove);
+  setValue("skillsUsed", updatedSkills);
+};
+
 
   return (
     <>
-    <Dialog  className="rounded-3xl" maxWidth="sm" fullWidth open={Open} onClose={close}>
-    
+      <Dialog className="rounded-3xl" maxWidth="sm" fullWidth open={Open} onClose={close}>
+
         <div className="bg-white p-6 rounded-3xl shadow-lg w-full max-w-3xl overflow-y-auto max-h-[90vh]">
           <h2 className="text-xl font-bold mb-4">Edit Experience</h2>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -93,13 +152,13 @@ const EditExperienceModal = ({ data, Open, close }) => {
               <label className="block font-medium mb-1">Job Roles</label>
               <div
                 onClick={() => {
-                  
-                  setJobRolesModalOpen(true);
+
+                  setjobRoleModalOpen(true);
                 }}
                 className="flex flex-wrap gap-2 mb-2 px-3 py-2 border border-gray-300 rounded-xl cursor-pointer min-h-[40px]"
               >
-                {jobRoles.length > 0 ? (
-                  jobRoles.map((role, index) => (
+                {Array.isArray(jobRole) ? (
+                  jobRole?.map((role, index) => (
                     <span
                       key={index}
                       className="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-2xl text-sm"
@@ -108,9 +167,14 @@ const EditExperienceModal = ({ data, Open, close }) => {
                     </span>
                   ))
                 ) : (
-                  <span className="text-gray-400 text-sm">
-                    Select job roles...
-                  </span>
+                  JSON.parse(jobRole)?.map((role, index) => (
+                    <span
+                      key={index}
+                      className="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-2xl text-sm"
+                    >
+                      {role}
+                    </span>
+                  ))
                 )}
               </div>
             </div>
@@ -126,22 +190,26 @@ const EditExperienceModal = ({ data, Open, close }) => {
               />
             </div>
 
-            {/* Skills */}
+            {/* skillUsed */}
             <div>
-              <label className="block font-medium">Skills (up to 10)</label>
+              <label className="block font-medium">Enter Your Skills</label>
               <div className="flex items-center gap-2 mb-2">
+
                 <input
                   onChange={(e) => setSkillInput(e.target.value)}
                   onKeyDown={(e) =>
                     e.key === "Enter" && (e.preventDefault(), addSkill())
                   }
+                  value={skillInput}
                   className="p-2 border rounded-xl w-full"
                   placeholder="Type a skill and press Enter"
                 />
-               
+
               </div>
               <div className="flex flex-wrap gap-2">
-                {skills.map((skill) => (
+                {Array.isArray(skillsUsed)?(
+                  <div className="flex flex-row gap-2">
+                     {skillsUsed?.map((skill) => (
                   <div
                     key={skill}
                     className="bg-blue-100 text-blue-800 px-3 py-1 rounded-xl text-sm flex items-center gap-1"
@@ -156,6 +224,27 @@ const EditExperienceModal = ({ data, Open, close }) => {
                     </button>
                   </div>
                 ))}
+                  </div>
+                ):
+                (<div className="flex flex-row gap-2">
+                  {JSON.parse(skillsUsed)?.map((skill) => (
+                  <div
+                    key={skill}
+                    className="bg-blue-100 text-blue-800 px-3 py-1 rounded-xl text-sm flex items-center gap-1"
+                  >
+                    {skill}
+                    <button
+                      type="button"
+                      onClick={() => removeSkill(skill)}
+                      className="text-red-500 hover:text-red-700 ml-1"
+                    >
+                      ×
+                    </button>
+                  </div>
+                ))}
+                </div>
+                )
+              }
               </div>
             </div>
 
@@ -189,23 +278,21 @@ const EditExperienceModal = ({ data, Open, close }) => {
               <div className="flex gap-4">
                 <button
                   type="button"
-                  className={`px-4 py-2 rounded-full border ${
-                    isCurrentCompany ? "bg-green-600 text-white" : "bg-white text-gray-700"
-                  }`}
+                  className={`px-4 py-2 rounded-full border ${isCurrentCompany ? "bg-green-600 text-white" : "bg-white text-gray-700"
+                    }`}
                   onClick={() => {
-                    setValue("currentlyWorking", true)
+                    setValue("isCurrent", true)
                   }}
                 >
                   Yes
                 </button>
                 <button
                   type="button"
-                  className={`px-4 py-2 rounded-full border ${
-                    !isCurrentCompany ? "bg-green-600 text-white" : "bg-white text-gray-700"
-                  }`}
+                  className={`px-4 py-2 rounded-full border ${!isCurrentCompany ? "bg-green-600 text-white" : "bg-white text-gray-700"
+                    }`}
                   onClick={() => {
-                   
-                    setValue("currentlyWorking",false);
+
+                    setValue("isCurrent", false);
                   }}
                 >
                   No
@@ -218,14 +305,13 @@ const EditExperienceModal = ({ data, Open, close }) => {
                   <button
                     key={type}
                     type="button"
-                    className={`px-4 py-2 rounded-full border transition ${
-                      employementType === type
-                        ? "bg-green-600 text-white border-green-600"
-                        : "bg-white text-gray-700 border-gray-300"
-                    }`}
+                    className={`px-4 py-2 rounded-full border transition ${employementType === type
+                      ? "bg-green-600 text-white border-green-600"
+                      : "bg-white text-gray-700 border-gray-300"
+                      }`}
                     onClick={() => {
-                      
-                      setValue("employmentType",type);
+
+                      setValue("employmentType", type);
                     }}
                   >
                     {type}
@@ -239,8 +325,8 @@ const EditExperienceModal = ({ data, Open, close }) => {
               <div className="flex flex-wrap gap-2">
                 {noticePeriods.map((period) => (
                   <label key={period} className="cursor-pointer">
-                    
-                    <div onClick={()=>setValue("noticePeriod", period)} className={`px-4 py-2 rounded-full border ${noticePeriod===period?"bg-green-600 text-white border-green-600" : "text-gray-700 border-gray-300"}`}>
+
+                    <div onClick={() => setValue("noticePeriod", period)} className={`px-4 py-2 rounded-full border ${noticePeriod === period ? "bg-green-600 text-white border-green-600" : "text-gray-700 border-gray-300"}`}>
                       {period}
                     </div>
                   </label>
@@ -252,8 +338,8 @@ const EditExperienceModal = ({ data, Open, close }) => {
             <div>
               <label className="block font-medium">Start Date</label>
               <div className="flex gap-2">
-                
-                <input className="p-2 border border-gray-300 rounded-xl w-full" type="date" {...register("startDate")} onChange={(e)=>setValue("startDate",e.target.value)} />
+
+                <input className="p-2 border border-gray-300 rounded-xl w-full" type="date" {...register("startDate")} onChange={(e) => setValue("startDate", e.target.value)} />
               </div>
             </div>
 
@@ -261,9 +347,9 @@ const EditExperienceModal = ({ data, Open, close }) => {
               <div>
                 <label className="block font-medium">End Date</label>
                 <div className="flex gap-2">
-                
-                <input className="p-2 border border-gray-300 rounded-xl w-full" type="date" {...register("endDate")} onChange={(e)=>setValue("endDate",e.target.value)} />
-              </div>
+
+                  <input className="p-2 border border-gray-300 rounded-xl w-full" type="date" {...register("endDate")} onChange={(e) => setValue("endDate", e.target.value)} />
+                </div>
               </div>
             )}
 
@@ -284,17 +370,28 @@ const EditExperienceModal = ({ data, Open, close }) => {
             </div>
           </form>
         </div>
-      
-    </Dialog>
-     
 
-      {jobRolesModalOpen && (
+      </Dialog>
+
+
+      {jobRoleModalOpen && (
         <DynamicModal
-          open={jobRolesModalOpen}
-          onClose={() => setJobRolesModalOpen(false)}
-          fields={{jobroles: "default"}}
-          type={{jobRoles: "text"}}
-          suggestions={{jobRoles: []}}
+          open={jobRoleModalOpen}
+          onClose={() => setjobRoleModalOpen(false)}
+          fields={{
+            jobRole: Array.isArray(jobRole)? jobRole: JSON.parse(jobRole) || []
+          }}
+          type={{ jobRole: "multi" }}
+          label={{ jobRole: "Please Add Job Roles" }}
+          suggestions={{ jobRole: ["manager", "Charted accountant", "Full stack developer", "Front end developer"] }}
+          metaData={{
+            title: "Job Roles",
+            onSubmitFunc: (data) => {
+              setValue("jobRole", data.jobRole);
+              return "succesfull"
+            },
+            id: null
+          }}
         />
       )}
     </>

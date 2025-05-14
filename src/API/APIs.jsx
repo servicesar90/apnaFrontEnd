@@ -19,3 +19,5 @@ export const uploadProfileApi = `${base_url}/api/v1/employee-uploads`
 export const uploadResumeApi = `${base_url}/api/v1/employee-uploads/resume`
 
 export const employeeExpApi = `${base_url}/api/v1/employee/exp`
+
+export const addExpApi = `${base_url}/api/v1/employee/experience`

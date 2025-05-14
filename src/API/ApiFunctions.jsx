@@ -1,196 +1,244 @@
 import axios from "axios";
-import { applyJobApi, createEducationApi, createEmpProfile, employeeExpApi, getJobsApi, mobileApi, otpApi, uploadProfileApi, uploadResumeApi } from "./APIs";
+import { addExpApi, applyJobApi, createEducationApi, createEmpProfile, employeeExpApi, getJobsApi, mobileApi, otpApi, uploadProfileApi, uploadResumeApi } from "./APIs";
 
 
 // data={ phone: "string", role: "string" }
-export const handlelogin = async (data) =>{
-    try{
-        const response = await axios.post(mobileApi,data);
+export const handlelogin = async (data) => {
+    try {
+        const response = await axios.post(mobileApi, data);
         return response;
-    }catch(e){
-        console.log("error in logging in",e)
+    } catch (e) {
+        console.log("error in logging in", e)
     }
-    
-    
+
+
 }
 
 // data={phone:"string",role:"string",otp:"string"}
-export const handleOtp = async (data)=>{
-    try{
-        const response= await axios.post(otpApi, data);
-    
-        localStorage.setItem("TokenId", response.data.token )
-        localStorage.setItem("User", JSON.stringify(response.data.user ))
-      
-    return response;
-    }catch(err){
-        console.log("error response",err);
+export const handleOtp = async (data) => {
+    try {
+        const response = await axios.post(otpApi, data);
+
+        localStorage.setItem("TokenId", response.data.token)
+        localStorage.setItem("User", JSON.stringify(response.data.user))
+
+        return response;
+    } catch (err) {
+        console.log("error response", err);
         alert("Login Unsucessfull")
-        
+
     }
 }
 
-export const createProfile = async (data)=>{
+export const createProfile = async (data) => {
     try {
         const token = localStorage.getItem('TokenId')
         console.log(`token ${token} data ${data}`);
         const headers = {
             Authorization: `Bearer ${token}`
-          };
-          
-          const response = await axios.post(createEmpProfile, data, {
+        };
+
+        const response = await axios.post(createEmpProfile, data, {
             headers
-          });
+        });
 
-          console.log(`response` , response);
-          return response
-          
-        
+        console.log(`response`, response);
+        return response
+
+
     } catch (error) {
-        console.log("Error from create Profile api",error);
-        
-        
+        console.log("Error from create Profile api", error);
+
+
     }
 }
 
-export const getprofile = async ()=>{
-    try{
+export const getprofile = async () => {
+    try {
         const token = localStorage.getItem('TokenId')
         const headers = {
             Authorization: `Bearer ${token}`
-          };
-        const response= await axios.get(createEmpProfile, {headers});
-      
+        };
+        const response = await axios.get(createEmpProfile, { headers });
+
         return response;
-        
-    }catch(err){
-        console.log("Error from get Profile api",err)
+
+    } catch (err) {
+        console.log("Error from get Profile api", err)
     }
 }
 
-export const getJobs = async ()=>{
-    try{
+export const getJobs = async () => {
+    try {
         const token = localStorage.getItem('TokenId')
         const headers = {
             Authorization: `Bearer ${token}`
-          };
-        const response= await axios.get(getJobsApi, {headers});
-      
+        };
+        const response = await axios.get(getJobsApi, { headers });
+
         return response;
-        
-    }catch(err){
-        console.log("Error from get jobs api",err)
+
+    } catch (err) {
+        console.log("Error from get jobs api", err)
     }
 }
 
-export const createEducation = async (data)=>{
-    try{
+export const updateProfileFunc = async (data) => {
+    try {
         const token = localStorage.getItem('TokenId')
         const headers = {
             Authorization: `Bearer ${token}`
-          };
+        };
 
-          console.log("data", data)
+        console.log("data", data)
 
-          const response= await axios.post(createEducationApi, data, {headers});
+        const response = await axios.patch(createEmpProfile, data, { headers });
 
-          console.log(response)
-    }catch(e){
+        console.log(response)
+        return response;
+    } catch (e) {
+        console.log("error from Edit Profile", e)
+    }
+}
+
+export const createEducation = async (data) => {
+    try {
+        const token = localStorage.getItem('TokenId')
+        const headers = {
+            Authorization: `Bearer ${token}`
+        };
+
+        console.log("data", data)
+
+        const response = await axios.post(createEducationApi, data, { headers });
+
+        console.log(response)
+        return response;
+    } catch (e) {
         console.log("error from create education", e)
     }
 }
 
-export const editEducation = async (id, data)=>{
-    try{
+
+
+export const editEducation = async (id, data) => {
+    try {
         const token = localStorage.getItem('TokenId')
         const headers = {
             Authorization: `Bearer ${token}`
-          };
+        };
 
-          console.log("data", data, "id", id)
+        console.log("data", data, "id", id)
 
-          const response= await axios.patch(`${createEducationApi}/${id}`, data, {headers});
+        const response = await axios.patch(`${createEducationApi}/${id}`, data, { headers });
 
-          console.log(response)
-          return response;
-    }catch(e){
+        console.log(response)
+        return response;
+    } catch (e) {
         console.log("error from edit education", e)
     }
 }
 
-export const uploadFile = async (file, field, Api) =>{
-     const data = new FormData();
-  
-     data.append(field, file);
+export const uploadFile = async (file, field, Api) => {
+    const data = new FormData();
+
+    data.append(field, file);
     for (let [key, value] of data.entries()) {
         console.log(`${key}:`, value);
-      }
-    
+    }
+
     try {
 
-      const token= localStorage.getItem("TokenId");
-      const headers={
-        Authorization:`Bearer ${token}`
-      }
-  
-      
-      const res = await axios.post(Api, data, {headers});
+        const token = localStorage.getItem("TokenId");
+        const headers = {
+            Authorization: `Bearer ${token}`
+        }
 
-      return res;
-      
+
+        const res = await axios.post(Api, data, { headers });
+
+        return res;
+
     } catch (err) {
-      console.error(err);
+        console.error(err);
     }
 }
 
-export const updateSkils = async (data)=>{
-    try{
+export const updateSkils = async (data) => {
+    try {
         const token = localStorage.getItem('TokenId')
         const headers = {
             Authorization: `Bearer ${token}`
-          };
+        };
 
-          
 
-          console.log("data", data)
 
-          const response= await axios.patch(createEmpProfile, data, {headers});
+        console.log("data", data)
 
-          console.log(response)
-          return response;
-    }catch(e){
+        const response = await axios.patch(createEmpProfile, data, { headers });
+
+        console.log(response)
+        return response;
+    } catch (e) {
         console.log("error from edit skills", e)
     }
 }
 
-export const employeeExp = async (data)=>{
-    try{
+export const employeeExp = async (data) => {
+    try {
         const token = localStorage.getItem('TokenId')
         const headers = {
             Authorization: `Bearer ${token}`
-          };
-        
-        const response= await axios.post(employeeExpApi,data,{headers});
-      
+        };
+
+        console.log("data", data)
+        const response = await axios.post(employeeExpApi, data, { headers });
+
         return response;
-        
-    }catch(err){
-        console.log("Error from get jobs api",err)
+
+    } catch (err) {
+        console.log("Error from get jobs api", err)
     }
 }
 
-export const applyJobs = async (id)=>{
-    try{
+export const addEmpExp = async (id, data) => {
+    try {
         const token = localStorage.getItem('TokenId')
         const headers = {
             Authorization: `Bearer ${token}`
-          };
-        
-        const response= await axios.post(`${applyJobApi}/${id}`,{},{headers});
-      
+        };
+
+        console.log("data", data, "id", id)
+
+        if (id) {
+            const response = await axios.patch(`${addExpApi}/${id}`, data, { headers });
+            console.log(response)
+            return response;
+        } else {
+            const response = await axios.post(addExpApi, data, { headers });
+            console.log(response)
+            return response;
+        }
+
+
+
+    } catch (e) {
+        console.log("error from edit education", e)
+    }
+}
+
+export const applyJobs = async (id) => {
+    try {
+        const token = localStorage.getItem('TokenId')
+        const headers = {
+            Authorization: `Bearer ${token}`
+        };
+
+        const response = await axios.post(`${applyJobApi}/${id}`, {}, { headers });
+
         return response;
-        
-    }catch(err){
-        console.log("Error from get jobs api",err)
+
+    } catch (err) {
+        console.log("Error from get jobs api", err)
     }
 }

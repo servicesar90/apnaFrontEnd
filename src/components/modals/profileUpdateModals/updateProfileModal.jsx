@@ -20,7 +20,7 @@ import {
 const DynamicModal = ({ open, onClose, fields, label, type, suggestions, metaData }) => {
   const [buttonDisable, setButtonDisable] = useState(false)
 
-  const { register, handleSubmit, setValue, watch, setError, formState: { errors } } = useForm({
+  const { register, handleSubmit, setValue,  watch, setError, formState: { errors } } = useForm({
     defaultValues: fields,
   });
   // console.log(`type ${JSON.stringify(fields)}`)
@@ -65,16 +65,21 @@ const DynamicModal = ({ open, onClose, fields, label, type, suggestions, metaDat
 
 
     if (!metaData.id) {
-      const response = await metaData.onSubmitFunc(data);
-      console.log("response from file", response)
-      if (response) {
-        alert("succesfully Updated");
-         window.location.reload()
-         setButtonDisable(false)
-        onClose()
-      } else {
-        alert("Could Not update, please try again")
-      }
+        const response = await metaData.onSubmitFunc(data);
+        console.log("response from file", response)
+        if (response && response!=="succesfull") {
+          alert("succesfully Updated");
+          window.location.reload()
+          setButtonDisable(false)
+          onClose()
+        }else if(response && response==="succesfull"){
+          alert("succesfully Updated");
+          setButtonDisable(false)
+          console.log("saving....")
+          onClose()
+        }else {
+          alert("Could Not update, please try again")
+        }
 
     } else {
 
@@ -83,11 +88,11 @@ const DynamicModal = ({ open, onClose, fields, label, type, suggestions, metaDat
       if (response) {
         alert("succesfully Updated");
         window.location.reload()
-         setButtonDisable(false)
+        setButtonDisable(false)
         onClose()
       } else {
         alert("Could Not update, please try again")
-         setButtonDisable(false)
+        setButtonDisable(false)
       }
 
     }
@@ -251,7 +256,7 @@ const DynamicModal = ({ open, onClose, fields, label, type, suggestions, metaDat
                     label={label[key]}
                     type={fieldType}
                     defaultValue={value}
-                    {...register(key)}
+                    {...register(key, { valueAsNumber: fieldType === 'number' })}
                     fullWidth
                     variant="outlined"
                     size="small"
