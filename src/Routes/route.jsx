@@ -9,7 +9,6 @@ import NotFound from "../views/NotFound";
 import Navbar from "../components/ui/Navbar";
 import Footer from "../components/ui/Footer";
 import JobDetails from "../components/pages/JobDetailed";
-import ProfileOverviewCard from "../components/pages/updateProfile";
 import ProfileFill from "../components/pages/profileFill";
 import { ProtectDirectRedirecting, ProtectedRoute, ProtectProfileCreation } from "./RouteProtection";
 import LandingPage from "../views/home";
@@ -17,6 +16,7 @@ import { useEffect } from "react";
 import { useState } from "react";
 import { getJobs, getprofile } from "../API/ApiFunctions";
 import JobPortal from "../components/pages/JobFiltering";
+import HomePageCandidateProfile from "../components/pages/updateProfile2";
 
 
 
@@ -113,13 +113,17 @@ const AppRoutes = () => {
             element={
               <ProtectedRoute>
                 <ProtectDirectRedirecting>
-                  <ProfileOverviewCard />
+                  <HomePageCandidateProfile />
                 </ProtectDirectRedirecting>
 
               </ProtectedRoute>
             }
           />
+
+          
       </Route>
+
+      
 
         {/* 404 Page */}
         <Route path="*" element={<NotFound />} />
