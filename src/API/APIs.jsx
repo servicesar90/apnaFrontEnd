@@ -1,4 +1,4 @@
-  const base_url = "https://production.careernest.online";
+  const base_url = "https://backend.careernest.online";
 
 
 // LoginAPIs

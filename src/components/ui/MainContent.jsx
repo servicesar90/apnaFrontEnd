@@ -5,26 +5,62 @@ import { createEducation, employeeExp, getprofile, updateProfileFunc, updateSkil
 import EditExperienceModal from "../modals/profileUpdateModals/experienceModal";
 import UserForm from "../modals/profileUpdateModals/resumeUpload";
 import { uploadResumeApi } from "../../API/APIs";
+import Skeleton from '@mui/material/Skeleton';
+import Box from '@mui/material/Box';
 
 
-export default function MainContent({ employee }) {
+export default function MainContent({ employee, showContent }) {
   const [modalName, setModalName] = useState(null);
   const [experienceIndex, setExperienceIndex] = useState(null);
   const [selectedEducation, setSelectedEducation] = useState(null);
 
   const handleEditEducation = (edu) => {
-        setSelectedEducation(edu);
-        setModalName("education");
-    };
+    setSelectedEducation(edu);
+    setModalName("education");
+  };
 
 
   const user = JSON.parse(localStorage.getItem("User"));
 
+  function SkeletonCard() {
+    return (
+      <Box width={800}>
+        {/* Outer container */}
 
+
+        {/* Add space or simulate content inside */}
+        <Box padding={2} sx={{ display: "flex", flexDirection: "column", gap: "0px" }}>
+          <Skeleton variant="text" height={30} width="20%" animation="wave" />
+          <Skeleton variant="text" height={30} width="60%" animation="wave" />
+          <Skeleton variant="text" height={30} width="50%" animation="wave" />
+          <Skeleton variant="text" height={30} width="50%" animation="wave" />
+          <Skeleton variant="text" height={30} width="60%" animation="wave" />
+          <Skeleton variant="text" height={30} width="50%" animation="wave" />
+        </Box>
+      </Box>
+    );
+  }
+
+  function SkeletonEducation() {
+    return (
+      <Box width={800}>
+        {/* Outer container */}
+
+
+        {/* Add space or simulate content inside */}
+        <Box padding={2} sx={{ display: "flex", flexDirection: "column", gap: "0px" }}>
+          <Skeleton variant="text" height={30} width="20%" animation="wave" />
+          <Skeleton variant="text" height={30} width="40%" animation="wave" />
+          <Skeleton variant="text" height={30} width="50%" animation="wave" />
+
+        </Box>
+      </Box>
+    );
+  }
 
   return (
     <>
-      <div>
+      <div className="w-full">
         <div className="flex items-center  justify-between -mt-3">
           <h2 className=" mt-10 bg-white font-medium text-16 text-gray-800">
             Work Experience
@@ -44,133 +80,166 @@ export default function MainContent({ employee }) {
           {/* Header */}
 
           {/* Work Experience Item 1 */}
-          {employee?.EmployeeExperiences?.map((experienc, index) => (
-            <div
-              key={index}
-              className=" p-4 space-y-2 relative border rounded-lg shadow-xl"
-            >
-              <button
-                onClick={() => {
-                  setModalName("editExperience");
-                  setExperienceIndex(index);
-                }}
-                className="absolute top-2 right-2 text-gray-500 hover:text-green-600"
+          {employee && showContent ? <>
+            {employee.EmployeeExperiences?.map((experienc, index) => (
+              <div
+                key={index}
+                className=" p-4 space-y-2 relative border rounded-lg shadow-xl"
               >
-                <Pencil size={18} className="w-4 h-4 text-secondary" />
-              </button>
-              <div className="flex items-center gap-2">
-                <Building2 className="w-4 h-4 text-secondary" size={18} />
-                <h3 className="text-14 text-gray-800">
-                  {experienc.companyName}
-                </h3>
-              </div>
+                <button
+                  onClick={() => {
+                    setModalName("editExperience");
+                    setExperienceIndex(index);
+                  }}
+                  className="absolute top-2 right-2 text-gray-500 hover:text-green-600"
+                >
+                  <Pencil size={18} className="w-4 h-4 text-secondary" />
+                </button>
+                <div className="flex items-center gap-2">
+                  <Building2 className="w-4 h-4 text-secondary" size={18} />
+                  <h3 className="text-14 text-gray-800">
+                    {experienc.companyName}
+                  </h3>
+                </div>
 
 
 
-              <div>
-                <p className="text-14 text-gray-650">{experienc.jobTitle}</p>
-                <div className="text-14 text-gray-650 space-y-2 mt-2">
-                  {/* Job Roles */}
-                  <div className="flex">
-                    <span className="w-28 min-w-[7rem] font-medium text-gray-800">
-                      Job Roles:
-                    </span>
-                    <div className="flex flex-wrap gap-2">
-                      {JSON.parse(experienc.jobRole)?.map((skill, index) => (
-                        <span
-                          key={index}
-                          className="text-gray-650 text-14 bg-light px-2 py-1 rounded-lg"
-                        >
-                          {skill}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Industry */}
-                  <div className="flex">
-                    <span className="w-28 min-w-[7rem] font-medium text-gray-800">
-                      Industry:
-                    </span>
-                    <span className="text-gray-650 text-14 bg-light px-2 py-1 rounded-lg">
-                      {experienc.industry}
-                    </span>
-                  </div>
-
-                  {/* Description */}
-                  <div className="flex">
-                    <span className="w-28 min-w-[7rem] font-medium text-gray-800">
-                      Description:
-                    </span>
-                    <div className="text-gray-650 text-14 bg-light px-2 py-1 rounded-lg">
-                      {experienc?.description}
-                    </div>
-                  </div>
-
-                  {/* Skills */}
-                  <div className="flex">
-                    <span className="w-28 min-w-[7rem] font-medium text-gray-800">
-                      Skills:
-                    </span>
-                    <div className="flex flex-wrap gap-2">
-                      {JSON.parse(experienc.skillsUsed)?.map((skill, index) => (
-                        <span
-                          key={index}
-                          className="text-gray-650 text-14 bg-light px-2 py-1 rounded-lg"
-                        >
-                          {skill}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Dates and Employment Type */}
-                  <div className="flex">
-                    <span className="w-28 min-w-[7rem] font-medium text-gray-800">
-                      Duration:
-                    </span>
-                    <div className="flex gap-4 text-14 text-gray-650 ">
-                      <span className="text-gray-650 text-14 bg-light px-2 py-1 rounded-lg">
-                        {experienc.startDate} -{" "}
-                        {employee?.EmployeeExperiences[0].endDate
-                          ? employee?.EmployeeExperiences[0].endDate
-                          : "Present"}
+                <div>
+                  <p className="text-14 text-gray-650">{experienc.jobTitle}</p>
+                  <div className="text-14 text-gray-650 space-y-2 mt-2">
+                    {/* Job Roles */}
+                    <div className="flex">
+                      <span className="w-28 min-w-[7rem] font-medium text-gray-800">
+                        Job Roles:
                       </span>
-                      <span className="text-gray-650 text-14 bg-light px-2 py-1 rounded-lg">
-                        {experienc.employmentType}
-                      </span>
+                      <div className="flex flex-wrap gap-2">
+                        {(Array.isArray(experienc.jobRole) ? experienc.jobRole : JSON.parse(experienc.jobRole))?.map((skill, index) => (
+                          <span
+                            key={index}
+                            className="text-gray-650 text-14 bg-light px-2 py-1 rounded-lg"
+                          >
+                            {skill}
+                          </span>
+                        ))}
+                      </div>
                     </div>
+
+                    {/* Industry */}
+
+
+                    {experienc?.industry &&
+                      <div className="flex">
+                        <span className="w-28 min-w-[7rem] font-medium text-gray-800">
+                          Industry:
+                        </span>
+                        <span className="text-gray-650 text-14 bg-light px-2 py-1 rounded-lg">
+                          {experienc.industry}
+                        </span>
+                      </div>
+                    }
+
+
+
+                    {/* Description */}
+
+                    {experienc?.description &&
+                      <div className="flex">
+                        <span className="w-28 min-w-[7rem] font-medium text-gray-800">
+                          Description:
+                        </span>
+
+                        <div className="text-gray-650 text-14 bg-light px-2 py-1 rounded-lg">
+                          {experienc.description}
+                        </div>
+                      </div>
+
+                    }
+
+
+
+                    {/* Skills */}
+                    {experienc?.skillsUsed &&
+                      <div className="flex">
+                        <span className="w-28 min-w-[7rem] font-medium text-gray-800">
+                          Skills:
+                        </span>
+                        <div className="flex flex-wrap gap-2">
+                          {(Array.isArray(experienc.skillsUsed) ? experienc.skillsUsed : JSON.parse(experienc.skillsUsed))?.map((skill, index) => (
+                            <span
+                              key={index}
+                              className="text-gray-650 text-14 bg-light px-2 py-1 rounded-lg"
+                            >
+                              {skill}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    }
+
+
+                    {/* Dates and Employment Type */}
+                    {experienc.startDate &&
+                      <div className="flex">
+                        <span className="w-28 min-w-[7rem] font-medium text-gray-800">
+                          Duration:
+                        </span>
+                        <div className="flex gap-4 text-14 text-gray-650 ">
+                          <span className="text-gray-650 text-14 bg-light px-2 py-1 rounded-lg">
+                            {experienc.startDate} -{" "}
+                            {employee?.EmployeeExperiences[0].endDate
+                              ? employee?.EmployeeExperiences[0].endDate
+                              : "Present"}
+                          </span>
+                          <span className="text-gray-650 text-14 bg-light px-2 py-1 rounded-lg">
+                            {experienc.employmentType}
+                          </span>
+                        </div>
+                      </div>
+                    }
+
                   </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </> : <SkeletonCard />}
+
         </div>
 
         <div className=" border bg-white mt-10 p-4 rounded-lg shadow-xl space-y-4 w-full">
           <div
-            onClick={() => setModalName("yearExperience")}
-            className="flex justify-between items-center text-14 text-gray-650 bg-light cursor-pointer rounded-lg px-3 py-2 "
+           
+            className="flex justify-between items-center text-14 text-gray-650 bg-light  rounded-lg px-3 py-2 "
           >
             <p className="text-14 text-gray-800 font-medium ">
               Total Years of experience:
             </p>
-            <p className="text-14 text-gray-650">
-              {employee?.TotalExperience?.years} years and {employee?.TotalExperience?.months} months
+
+            {employee?.TotalExperience?.years ?
+             <p  onClick={() => setModalName("yearExperience")} className="text-14 cursor-pointer text-gray-650">
+              {employee && showContent ? `${employee?.TotalExperience?.years} years and ${employee?.TotalExperience?.months} months` : <Skeleton animation="wave" variant="text" height={20} width={100} />}
+            </p>:
+            <p  onClick={() => setModalName("yearExperience")} className="text-14 cursor-pointer text-gray-650">
+              +Add
             </p>
+            }
+           
           </div>
         </div>
 
         <div className=" border bg-white mt-4 p-4 rounded-lg shadow-xl space-y-4 w-full">
           <div
-            onClick={() => setModalName("salary")}
-            className="flex justify-between items-center text-14 text-gray-650 bg-light cursor-pointer rounded-lg px-3 py-2 "
+            
+            className="flex justify-between items-center text-14 text-gray-650 bg-light rounded-lg px-3 py-2 "
           >
             <p className="text-14 text-gray-800 font-medium">
               Current monthly salary:
             </p>
-            <p className="text-14 text-gray-650"> {employee?.salary}</p>
-          </div>
+            {employee?.salary? 
+            <p onClick={() => setModalName("salary")} className="text-14 cursor-pointer text-gray-650"> {(employee && showContent) ? employee.salary : <Skeleton animation="wave" variant="text" height={20} width={100} />}</p>
+            :<p onClick={() => setModalName("salary")} className="text-14 cursor-pointer text-gray-650"> +Add</p>
+     
+          }
+                 </div>
         </div>
 
 
@@ -183,63 +252,67 @@ export default function MainContent({ employee }) {
             + Add
           </button>
         </div>
-        {employee?.EmployeeEducations?.length > 0 ? (
-          <div className=" mt-4  space-y-4 w-full">
-            {/* Education Section */}
 
-            <div className="space-y-8 pt-2 ">
-              {/* Education Cards */}
-              {employee?.EmployeeEducations?.map((edu, idx) => (
-                <div
-                  key={idx}
-                  className=" p-4 flex gap-4 border rounded-lg shadow-xl relative"
-                >
-                  {/* Timeline dot */}
-                  <div className="flex flex-col items-center">
-                    <GraduationCap
-                      className="w-4 h-4 text-secondary mt-1"
-                      size={20}
-                    />
-                    <div className="h-full border-l border-dotted border-secondary mt-1" />
-                  </div>
+        {employee && showContent ? <>
+          {employee?.EmployeeEducations?.length > 0 ? (
+            <div className=" mt-4  space-y-4 w-full">
+              {/* Education Section */}
 
-                  {/* Card Content */}
-                  <div className="flex-1 space-y-1">
-                    <h3 className="text-14 font-medium text-gray-650">
-                      {edu.degree} {edu.specialization}
-                    </h3>
-                    <p className="text-14 text-gray-650">
-                      {edu.instituteName} -- {edu.highestEducation}
-                    </p>
-                    <div className="flex gap-2 pt-1">
-                      <span className="text-14 bg-light px-3 py-2 rounded-lg text-gray-650">
-                        Batch {edu.startDate} - {edu.endDate}
-                      </span>
-                      <span className="text-14 bg-light px-3 py-2 rounded-lg text-gray-650">
-                        {edu.studyMode === "f" ? <p>Full-Time</p> : <span>{edu.studyMode === "p" ? <p>Part Time</p> : <p>Correspondence</p>}</span>}
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Edit icon */}
-                  <button
-                    onClick={() => handleEditEducation(idx)}
-                    className=" top-2 right-2 text-gray-650 hover:text-secondary"
+              <div className="space-y-8 pt-2 ">
+                {/* Education Cards */}
+                {employee?.EmployeeEducations?.map((edu, idx) => (
+                  <div
+                    key={idx}
+                    className=" p-4 flex gap-4 border rounded-lg shadow-xl relative"
                   >
-                    <Pencil size={18} className="w-4 h-4 text-secondary" />
-                  </button>
-                </div>
-              ))}
+                    {/* Timeline dot */}
+                    <div className="flex flex-col items-center">
+                      <GraduationCap
+                        className="w-4 h-4 text-secondary mt-1"
+                        size={20}
+                      />
+                      <div className="h-full border-l border-dotted border-secondary mt-1" />
+                    </div>
+
+                    {/* Card Content */}
+                    <div className="flex-1 space-y-1">
+                      <h3 className="text-14 font-medium text-gray-650">
+                        {edu.degree} {edu.specialization}
+                      </h3>
+                      <p className="text-14 text-gray-650">
+                        {edu.instituteName} -- {edu.highestEducation}
+                      </p>
+                      <div className="flex gap-2 pt-1">
+                        <span className="text-14 bg-light px-3 py-2 rounded-lg text-gray-650">
+                          Batch {edu.startDate} - {edu.endDate}
+                        </span>
+                        <span className="text-14 bg-light px-3 py-2 rounded-lg text-gray-650">
+                          {edu.studyMode === "f" ? <p>Full-Time</p> : <span>{edu.studyMode === "p" ? <p>Part Time</p> : <p>Correspondence</p>}</span>}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Edit icon */}
+                    <button
+                      onClick={() => handleEditEducation(idx)}
+                      className=" top-2 right-2 text-gray-650 hover:text-secondary"
+                    >
+                      <Pencil size={18} className="w-4 h-4 text-secondary" />
+                    </button>
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
-        ) : (
-          <h1
-            onClick={() => setModalName("education")}
-            className="bg-white text-14 text-gray-650 shadow-xl p-4 cursor-pointer hover:bg-light"
-          >
-            No Education added
-          </h1>
-        )}
+          ) : (
+            <h1
+              onClick={() => setModalName("education")}
+              className="bg-white text-14 text-gray-650 shadow-xl p-4 border rounded-lg mt-2 cursor-pointer hover:bg-light"
+            >
+              No Education added
+            </h1>
+          )}
+        </> : <SkeletonEducation />}
+
 
         <div className=" w-full ml-auto  mt-10">
           <div className="bg-white p-2 border rounded-lg shadow-xl flex-col mt-4 ">
@@ -258,21 +331,36 @@ export default function MainContent({ employee }) {
 
             {/* Skill Tags */}
             <div className="flex flex-wrap flex-row gap-2 pl-3 ">
-              {console.log("employee data", employee)}
-              {employee?.skills?.length > 0 ? (
-                JSON.parse(employee?.skills).map((skill, idx) => (
-                  <span
-                    key={idx}
-                    className="px-2 py-1 rounded-lg bg-light text-14 text-gray-650 "
-                  >
-                    {skill}
-                  </span>
-                ))
-              ) : (
-                <p className="px-3 py-2 text-14 ml-2 mr-2 bg-light rounded-lg text-gray-650">
-                  No skills listed yet.
-                </p>
-              )}
+
+              {employee && showContent ? <>
+                {employee?.skills?.length > 0 ? (
+                  (Array.isArray(employee?.skills) ? employee?.skills : JSON.parse(employee?.skills))?.map((skill, idx) => (
+                    <span
+                      key={idx}
+                      className="px-2 py-1 rounded-lg bg-light text-14 text-gray-650 "
+                    >
+                      {skill}
+                    </span>
+                  ))
+                ) : (
+                  <p className="px-2 py-1 text-14 ml-2 mr-2 bg-light rounded-lg text-gray-650">
+                    No skills listed yet.
+                  </p>
+                )}
+              </> :
+                (
+                  Array.from({ length: 3 }).map((_, idx) => (
+                    <Skeleton
+                      key={idx}
+                      variant="text"
+                      width={60}
+                      height={24}
+                      animation="wave"
+                      sx={{ borderRadius: '8px', display: 'inline-block', marginRight: '8px' }}
+                    />
+                  ))
+                )}
+
             </div>
 
             {/* Footer Note */}
@@ -293,7 +381,7 @@ export default function MainContent({ employee }) {
             </div>
 
             <div className="flex flex-row gap-2 text-14 ">
-              {employee?.certification &&
+              {employee && showContent ? <>{employee?.certification &&
                 JSON.parse(employee.certification).map((certificate, index) => (
                   <div
                     key={index}
@@ -302,6 +390,19 @@ export default function MainContent({ employee }) {
                     {certificate}
                   </div>
                 ))}
+              </>
+                : (
+                  Array.from({ length: 3 }).map((_, idx) => (
+                    <Skeleton
+                      key={idx}
+                      variant="text"
+                      width={60}
+                      height={24}
+                      animation="wave"
+                      sx={{ borderRadius: '8px', display: 'inline-block', marginRight: '8px' }}
+                    />
+                  ))
+                )}
             </div>
           </div>
 
@@ -321,13 +422,13 @@ export default function MainContent({ employee }) {
 
             {/* language tags */}
             <div className="flex flex-wrap gap-2">
-              <span className="px-2 py-1 rounded-lg bg-light text-14 text-gray-650  ">
+              {employee && showContent ? <span className="px-2 py-1 rounded-lg bg-light text-14 text-gray-650  ">
                 English:{" "}
                 <span className="text-gray-800">
-                  {employee?.englishProficiency}
+                  {employee.englishProficiency}
                 </span>
-              </span>
-              {employee?.otherLanguages &&
+              </span> : <Skeleton width={100} height={20} variant="text" animation="wave" />}
+              {employee && showContent ? <>{employee?.otherLanguages &&
                 Array.isArray(JSON.parse(employee.otherLanguages)) &&
                 JSON.parse(employee.otherLanguages).map((language, idx) => (
                   <span
@@ -336,15 +437,22 @@ export default function MainContent({ employee }) {
                   >
                     {language}
                   </span>
-                ))}
+                ))}</> : (
+                Array.from({ length: 2 }).map((_, idx) => (
+                  <Skeleton
+                    key={idx}
+                    variant="text"
+                    width={60}
+                    height={24}
+                    animation="wave"
+                    sx={{ borderRadius: '8px', display: 'inline-block', marginRight: '8px' }}
+                  />
+                ))
+              )}
             </div>
           </div>
 
-          {/* <div className="bg-white border mt-4 p-4 shadow-xl space-y-4 w-full">
-              <div className="flex justify-between items-center  bg-light px-3 py-2 rounded-lg">
-                <p className="text-14 text-gray-650">Spoken English</p>
-              </div>
-            </div> */}
+
 
           <section
             id="resume"
@@ -414,8 +522,8 @@ export default function MainContent({ employee }) {
 
             <div className="flex justify-center items-left flex-col text-14 ">
               <ul className="flex flex-row gap-2">
-                {employee?.preferredJobRoles &&
-                  JSON.parse(employee.preferredJobRoles)?.map((role, index) => (
+                {employee && showContent ? <>{employee?.preferredJobRoles &&
+                  (Array.isArray(employee.preferredJobRoles) ? employee.preferredJobRoles : JSON.parse(employee.preferredJobRoles))?.map((role, index) => (
                     <span
                       key={index}
                       className=" text-14 text-gray-650 bg-light px-2 py-1 rounded-lg"
@@ -423,6 +531,19 @@ export default function MainContent({ employee }) {
                       {role}
                     </span>
                   ))}
+                </> :
+                  (
+                    Array.from({ length: 3 }).map((_, idx) => (
+                      <Skeleton
+                        key={idx}
+                        variant="text"
+                        width={60}
+                        height={24}
+                        animation="wave"
+                        sx={{ borderRadius: '8px', display: 'inline-block', marginRight: '8px' }}
+                      />
+                    ))
+                  )}
               </ul>
             </div>
           </div>
@@ -441,9 +562,21 @@ export default function MainContent({ employee }) {
             <div className="flex justify-center items-left flex-col ">
 
               <div className="flex flex-row gap-2">
-                {employee?.preferredJobCity && JSON.parse(employee?.preferredJobCity).map((city, index) => (
+                {employee && showContent ? (Array.isArray(employee?.preferredJobCity) ? employee?.preferredJobCity : JSON.parse(employee?.preferredJobCity))?.map((city, index) => (
                   <h2 key={index} className="text-14  text-gray-650 bg-light px-2 py-1 rounded-lg">{city}</h2>
-                ))}
+                )) :
+                  (
+                    Array.from({ length: 3 }).map((_, idx) => (
+                      <Skeleton
+                        key={idx}
+                        variant="text"
+                        width={60}
+                        height={24}
+                        animation="wave"
+                        sx={{ borderRadius: '8px', display: 'inline-block', marginRight: '8px' }}
+                      />
+                    ))
+                  )}
 
               </div>
             </div>
@@ -462,10 +595,10 @@ export default function MainContent({ employee }) {
             </div>
             <div className="flex justify-center items-left flex-col">
               <div className="flex flex-row gap-4">
-               
-                  {employee?.preferredEmployementTypes &&
-                    Array.isArray(JSON.parse(employee.preferredEmployementTypes)) &&
-                    JSON.parse(employee.preferredEmployementTypes).map((role, index) => (
+
+                {employee && showContent ? <>{employee?.preferredEmployementTypes &&
+                  Array.isArray(JSON.parse(employee.preferredEmployementTypes)) &&
+                  JSON.parse(employee.preferredEmployementTypes).map((role, index) => (
                     <div
                       key={index}
                       className="text-14 text-gray-650  bg-light px-2 py-1 rounded-lg "
@@ -473,20 +606,20 @@ export default function MainContent({ employee }) {
                       {role}
                     </div>
                   ))}
-          
+
                   {employee?.preferredShifts &&
                     Array.isArray(JSON.parse(employee.preferredShifts)) &&
                     JSON.parse(employee.preferredShifts).map((role, index) => (
                       <span
                         key={index}
-                       className="text-14 text-gray-650  bg-light px-2 py-1 rounded-lg "
+                        className="text-14 text-gray-650  bg-light px-2 py-1 rounded-lg "
                       >
                         {role}
                       </span>
                     ))}
-             
 
-               
+
+
                   {employee?.preferredLocationTypes &&
                     Array.isArray(
                       JSON.parse(employee.preferredLocationTypes)
@@ -501,7 +634,19 @@ export default function MainContent({ employee }) {
                         </span>
                       )
                     )}
-              
+                </> : (
+                  Array.from({ length: 3 }).map((_, idx) => (
+                    <Skeleton
+                      key={idx}
+                      variant="text"
+                      width={60}
+                      height={24}
+                      animation="wave"
+                      sx={{ borderRadius: '8px', display: 'inline-block', marginRight: '8px' }}
+                    />
+                  ))
+                )}
+
               </div>
             </div>
           </div>
@@ -518,24 +663,39 @@ export default function MainContent({ employee }) {
             </div>
             <div className="flex justify-center items-left flex-col  ">
               <div className="flex flex-row gap-2 flex-wrap ">
-                <h2 className="text-14 text-gray-650  bg-light px-2 py-1 rounded-lg">
-                  {employee?.fullName}
-                </h2>
-                <h2 className="text-14 text-gray-650  bg-light px-2 py-1 rounded-lg">
-                  {employee?.email}
-                </h2>
-                <h2 className="text-14 text-gray-650  bg-light px-2 py-1 rounded-lg">
-                  {user?.phone}
-                </h2>
-                <h2 className="text-14 text-gray-650  bg-light px-2 py-1 rounded-lg">
-                  {employee?.gender}
-                </h2>
-                <h2 className="text-14 text-gray-650  bg-light px-2 py-1 rounded-lg">
-                  {employee?.dob}
-                </h2>
-                <h2 className="text-14 text-gray-650  bg-light px-2 py-1 rounded-lg">
-                  {employee?.currentLocation}
-                </h2>
+
+                {employee && showContent ?
+                  <h2 className="text-14 text-gray-650  bg-light px-2 py-1 rounded-lg">
+                    {employee.fullName}
+                  </h2>
+                  : <Skeleton height={20} width={100} animation="wave" variant="text" />}
+
+                {employee && showContent ?
+                  <h2 className="text-14 text-gray-650  bg-light px-2 py-1 rounded-lg">
+                    {employee.email}
+                  </h2> : <Skeleton height={20} width={100} animation="wave" variant="text" />}
+
+                {user && showContent ?
+                  <h2 className="text-14 text-gray-650  bg-light px-2 py-1 rounded-lg">
+                    {user.phone}
+                  </h2> : <Skeleton height={20} width={100} animation="wave" variant="text" />}
+
+                {employee && showContent ?
+                  <h2 className="text-14 text-gray-650  bg-light px-2 py-1 rounded-lg">
+                    {employee.gender}
+                  </h2> : <Skeleton height={20} width={100} animation="wave" variant="text" />}
+
+                {employee && showContent ?
+                  <h2 className="text-14 text-gray-650  bg-light px-2 py-1 rounded-lg">
+                    {employee.dob}
+                  </h2> : <Skeleton height={20} width={100} animation="wave" variant="text" />}
+
+                {employee?.currentLocation && ( showContent ?
+                  <h2 className="text-14 text-gray-650  bg-light px-2 py-1 rounded-lg">
+                    {employee.currentLocation}
+                  </h2> : <Skeleton height={20} width={100} animation="wave" variant="text" />) }
+              
+                
               </div>
             </div>
           </div>
@@ -544,360 +704,357 @@ export default function MainContent({ employee }) {
         {/* div 2/3 end */}
       </div>
 
-      {modalName === "editImage" && (
-                <UserForm open={modalName === "editImage"} label={"Upload Profile Image"} onClose={() => setModalName("")} metaData={{ field: "profileImage", Api: uploadProfileApi, default: employee?.profileImage }} />
+    
 
-            )}
+      {modalName === "editResume" && (
 
-            {modalName === "editResume" && (
+        <UserForm open={modalName === "editResume"} label={"Upload Resume"} onClose={() => setModalName("")} metaData={{ field: "resume", Api: uploadResumeApi, default: employee?.resumeURL }} />
+      )}
 
-                <UserForm open={modalName === "editResume"} label={"Upload Resume"} onClose={() => setModalName("")} metaData={{ field: "resume", Api: uploadResumeApi, default: employee?.resumeURL }} />
-            )}
+      {modalName === "skills" && (
+        <UpdateProfileModal
+          open={modalName === "skills"}
+          onClose={() => setModalName("")}
+          fields={{
+            skills: Array.isArray(employee?.skills) ? employee?.skills : employee?.skills && JSON.parse(employee?.skills) || [],
+          }}
+          label={{ skills: "Add Skills" }}
 
-            {modalName === "skills" && (
-                <UpdateProfileModal
-                    open={modalName === "skills"}
-                    onClose={() => setModalName("")}
-                    fields={{
-                        skills: Array.isArray(employee?.skills)?employee?.skills: employee?.skills &&  JSON.parse(employee?.skills) || [],
-                    }}
-                    label={{ skills: "Add Skills" }}
-
-                    type={{
-                        skills: "multi",
-                    }}
-                    suggestions={{
-                        skills: [
-                            "OOPS",
-                            "Java2D",
-                            "Content development",
-                            "Next.js",
-                            "Node",
-                            "Advanced java",
-                            "XPath",
-                            "Content Design",
-                            "XHTML",
-                            "Object-Oriented Design",
-                            "Front-end app development",
-                            "Java",
-                            "MongoDB",
-                            "HTML/CSS",
-                            "JavaScript",
-                        ],
-                    }}
-                    metaData={{
-                        title: "  Edit skills",
-                        onSubmitFunc: updateSkils,
-                        id: null
-                    }
-                    }
-                />
-            )}
+          type={{
+            skills: "multi",
+          }}
+          suggestions={{
+            skills: [
+              "OOPS",
+              "Java2D",
+              "Content development",
+              "Next.js",
+              "Node",
+              "Advanced java",
+              "XPath",
+              "Content Design",
+              "XHTML",
+              "Object-Oriented Design",
+              "Front-end app development",
+              "Java",
+              "MongoDB",
+              "HTML/CSS",
+              "JavaScript",
+            ],
+          }}
+          metaData={{
+            title: "  Edit skills",
+            onSubmitFunc: updateSkils,
+            id: null
+          }
+          }
+        />
+      )}
 
 
 
 
-            {modalName === "editExperience" && <EditExperienceModal Open={modalName === "editExperience"} close={() => setModalName("")} data={employee?.EmployeeExperiences[experienceIndex]} id={experienceIndex} />}
+      {modalName === "editExperience" && <EditExperienceModal Open={modalName === "editExperience"} close={() => setModalName("")} data={employee?.EmployeeExperiences[experienceIndex]} id={experienceIndex} />}
 
-            {modalName === "salary" && (
-                <UpdateProfileModal
-                    open={modalName === "salary"}
-                    onClose={() => setModalName("")}
-                    fields={{
-                        salary: employee?.salary || "",
-                    }}
-                    label={{ salary: "Enter your Current Salary" }}
-                    type={{
-                        salary: "number",
-                    }}
-                    metaData={{
-                        title: "Edit Current Monthly Salary",
-                        onSubmitFunc: updateProfileFunc,
-                        id: null
-                    }
-                    }
-                />
-            )}
-
-
-            {modalName === "preferredJobs" && (
-                <UpdateProfileModal
-                    open={modalName === "preferredJobs"}
-                    onClose={() => setModalName("")}
-                    fields={{
-                        preferredJobRoles: Array.isArray(employee?.preferredJobRoles)?employee?.preferredJobRoles: employee?.preferredJobRoles && JSON.parse(employee?.preferredJobRoles)|| [],
-                    }}
-                    label={{ preferredJobRoles: "Add Your Job Preference" }}
-                    type={{
-                        preferredJobRoles: "multi",
-                    }}
-                    suggestions={{
-                        preferredJobRoles: [
-                            "Software Backend Development",
-                            "Website Development",
-                            "DevOps",
-                            "UI / UX Design",
-                        ],
-                    }}
-                    limits={{
-                        preferredJobs: 5,
-                    }}
-                    metaData={{
-                        title: "preferredJobs",
-                        onSubmitFunc: updateProfileFunc,
-                        id: null
-                    }
-                    }
-                />
-            )}
+      {modalName === "salary" && (
+        <UpdateProfileModal
+          open={modalName === "salary"}
+          onClose={() => setModalName("")}
+          fields={{
+            salary: employee?.salary || "",
+          }}
+          label={{ salary: "Enter your Current Salary" }}
+          type={{
+            salary: "number",
+          }}
+          metaData={{
+            title: "Edit Current Monthly Salary",
+            onSubmitFunc: updateProfileFunc,
+            id: null
+          }
+          }
+        />
+      )}
 
 
-            {modalName === "preferredJobCity" && (
-                <UpdateProfileModal
-                    open={modalName === "preferredJobCity"}
-                    onClose={() => setModalName("")}
-                    fields={{
-                        preferredJobCity: Array.isArray(employee?.preferredJobCity)?employee?.preferredJobCity: employee?.preferredJobCity && JSON.parse(employee?.preferredJobCity) || [],
-
-                    }}
-                    label={{
-                        preferredJobCity: "Add Your Prefered Job City",
-
-                    }}
-                    type={{
-                        preferredJobCity: "multi",
-
-                    }}
-                    suggestions={{
-                        preferredJobCity: ["Delhi", "Gurgaon", "Noida", "Bangalore"]
-                    }} // optional: you can provide city name suggestions if needed
-                    limits={{ preferredJobCity: 3 }}
-                    metaData={{
-                        title: "Preferred job city",
-                        onSubmitFunc: updateProfileFunc,
-                        id: null
-                    }
-                    }// to enforce a max of 3 cities
-                />
-            )}
-
-
-            {modalName === "languageKnown" && (
-                <UpdateProfileModal
-                    open={modalName === "languageKnown"}
-                    onClose={() => setModalName("")}
-                    fields={{
-                        englishProficiency: employee?.englishProficiency || "",
-                        otherLanguages: Array.isArray(employee?.otherLanguages)?employee?.otherLanguages: employee?.otherLanguages && JSON.parse(employee?.otherLanguages) || [],
-                    }}
-                    label={{
-                        englishProficiency: "What is your englsih speaking level",
-                        otherLanguages: "Select other language"
-                    }}
-                    type={{
-                        englishProficiency: "radio",
-                        otherLanguages: "multi",
-                    }}
-                    suggestions={{
-                        englishProficiency: [{ "Basic": "Basic" }, { "Intermediate": "Intermediate" }, { "Advanced": "Advanced" }],
-                        otherLanguages: ["Hindi", "Telugu", "Bengali"],
-                    }}
-                    metaData={{
-                        title: "language Known",
-                        onSubmitFunc: updateProfileFunc,
-                        id: null
-                    }
-                    }
-                />
-            )}
+      {modalName === "preferredJobs" && (
+        <UpdateProfileModal
+          open={modalName === "preferredJobs"}
+          onClose={() => setModalName("")}
+          fields={{
+            preferredJobRoles: Array.isArray(employee?.preferredJobRoles) ? employee?.preferredJobRoles : employee?.preferredJobRoles && JSON.parse(employee?.preferredJobRoles) || [],
+          }}
+          label={{ preferredJobRoles: "Add Your Job Preference" }}
+          type={{
+            preferredJobRoles: "multi",
+          }}
+          suggestions={{
+            preferredJobRoles: [
+              "Software Backend Development",
+              "Website Development",
+              "DevOps",
+              "UI / UX Design",
+            ],
+          }}
+          limits={{
+            preferredJobs: 5,
+          }}
+          metaData={{
+            title: "preferredJobs",
+            onSubmitFunc: updateProfileFunc,
+            id: null
+          }
+          }
+        />
+      )}
 
 
-            {modalName === "jobPreference" && (
-                <UpdateProfileModal
-                    open={modalName === "jobPreference"}
-                    onClose={() => setModalName("")}
-                    fields={{
-                        preferredEmployementTypes: Array.isArray(employee?.preferredEmployementTypes)?employee?.preferredEmployementTypes: employee?.preferredEmployementTypes && JSON.parse(employee?.preferredEmployementTypes) || [],
-                        preferredLocationTypes: Array.isArray(employee?.preferredLocationTypes)?employee?.preferredLocationTypes: employee?.preferredLocationTypes && JSON.parse(employee?.preferredLocationTypes) || [],
-                        preferredShifts: Array.isArray(employee?.preferredShifts)?employee?.preferredShifts: employee?.preferredShifts && JSON.parse(employee?.preferredShifts) || [],
-                    }}
-                    label={{
-                        preferredEmployementTypes: "Select Your Preferred employement type",
-                        preferredLocationTypes: "Select Your Preferred Work Place",
-                        preferredShifts: "Select Your Preferred Work Shift",
-                    }}
-                    type={{
-                        preferredEmployementTypes: "multi",
-                        preferredLocationTypes: "multi",
-                        preferredShifts: "multi",
-                    }}
-                    suggestions={{
-                        preferredEmployementTypes: ["Part Time", "Full Time", "Internships", "Contract"],
-                        preferredLocationTypes: ["Work from Office", "Work from Home", "Field Jobs"],
-                        preferredShifts: ["Night Shift", "Day Shift"],
-                    }}
-                    metaData={{
-                        title: "jobPreference",
-                        onSubmitFunc: updateProfileFunc,
-                        id: null
-                    }
-                    }
-                />
-            )}
+      {modalName === "preferredJobCity" && (
+        <UpdateProfileModal
+          open={modalName === "preferredJobCity"}
+          onClose={() => setModalName("")}
+          fields={{
+            preferredJobCity: Array.isArray(employee?.preferredJobCity) ? employee?.preferredJobCity : employee?.preferredJobCity && JSON.parse(employee?.preferredJobCity) || [],
+
+          }}
+          label={{
+            preferredJobCity: "Add Your Prefered Job City",
+
+          }}
+          type={{
+            preferredJobCity: "multi",
+
+          }}
+          suggestions={{
+            preferredJobCity: ["Delhi", "Gurgaon", "Noida", "Bangalore"]
+          }} // optional: you can provide city name suggestions if needed
+          limits={{ preferredJobCity: 3 }}
+          metaData={{
+            title: "Preferred job city",
+            onSubmitFunc: updateProfileFunc,
+            id: null
+          }
+          }// to enforce a max of 3 cities
+        />
+      )}
 
 
-            {modalName === "yearExperience" && (
-                <UpdateProfileModal
-                    open={modalName === "yearExperience"}
-                    onClose={() => setModalName("")}
-                    fields={{
-                        years: employee?.years || 0,
-                        months: employee?.months || 0
-                    }}
-                    label={{
-                        years: "Experience Years",
-                        months: "Experience Months"
-                    }}
-                    type={{
-                        years: "number",
-                        months: "number"
-                    }}
-                    suggestions={{}}
-                    metaData={{
-                        title: "Year Experience",
-                        onSubmitFunc: employeeExp,
-                        id: null
-                    }
-                    }
-                />
-            )}
-
-            {modalName === "education" && (
-                <UpdateProfileModal
-                    open={modalName === "education"}
-                    onClose={() => setModalName("")}
-                    fields={{
-                        qualification: employee?.EmployeeEducations[selectedEducation]?.qualification || "Graduate",
-                        isHighestQualification: false,
-                        schoolMedium: "Hindi",
-                        instituteName: employee?.EmployeeEducations[selectedEducation]?.instituteName || "",
-                        degree: employee?.EmployeeEducations[selectedEducation]?.degree || "",
-                        specialisation: employee?.EmployeeEducations[selectedEducation]?.specialisation || "",
-                        studyMode: employee?.EmployeeEducations[selectedEducation]?.studyMode || "Full-time",
-                        startDate: employee?.EmployeeEducations[selectedEducation]?.startDate || "",
-                        endDate: employee?.EmployeeEducations[selectedEducation]?.endDate || ""
-                    }}
-
-                    label={{
-                        qualification: "Education Level",
-                        instituteName: "College/School Name",
-                        isHighestQualification: "Is this your highest qualification",
-                        schoolMedium: "Medium of this study",
-                        degree: "Degree",
-                        specialisation: "Specializatin",
-                        studyMode: "Mode of your study",
-                        startDate: "Start Date",
-                        endDate: "End Date"
-                    }}
-
-                    type={{
-                        qualification: "radio",
-                        instituteName: "text",
-                        isHighestQualification: "radio",
-                        schoolMedium: "radio",
-                        degree: "select",
-                        specialisation: "select",
-                        studyMode: "radio",
-                        startDate: "date",
-                        endDate: "date"
-                    }}
-                    suggestions={{
-                        qualification: [{ "Diploma": "Diploma" }, { "ITI": "ITI" }, { "Graduate": "Graduate" }, { "Post Graduate": "Post Graduate" }],
-                        isHighestQualification: [{ "Yes": true }, { "no": false }],
-                        degree: ["B.A.", "B.Com", "B.Sc", "B.Tech", "M.A"],
-                        schoolMedium: [{ "Hindi": "Hindi" }, { "English": "English" }],
-                        specialisation: ["Computer Science", "Commerce", "Arts", "Physics"],
-                        studyMode: [{ "Full-Time": "f" }, { "Part-Time": "p" }, { "Correspondence": "c" }]
-                    }}
+      {modalName === "languageKnown" && (
+        <UpdateProfileModal
+          open={modalName === "languageKnown"}
+          onClose={() => setModalName("")}
+          fields={{
+            englishProficiency: employee?.englishProficiency || "",
+            otherLanguages: Array.isArray(employee?.otherLanguages) ? employee?.otherLanguages : employee?.otherLanguages && JSON.parse(employee?.otherLanguages) || [],
+          }}
+          label={{
+            englishProficiency: "What is your englsih speaking level",
+            otherLanguages: "Select other language"
+          }}
+          type={{
+            englishProficiency: "radio",
+            otherLanguages: "multi",
+          }}
+          suggestions={{
+            englishProficiency: [{ "Basic": "Basic" }, { "Intermediate": "Intermediate" }, { "Advanced": "Advanced" }],
+            otherLanguages: ["Hindi", "Telugu", "Bengali"],
+          }}
+          metaData={{
+            title: "language Known",
+            onSubmitFunc: updateProfileFunc,
+            id: null
+          }
+          }
+        />
+      )}
 
 
-                    metaData={{
-                        title: " Edit Education",
-                        onSubmitFunc: selectedEducation ? editEducation : createEducation,
-                        id: selectedEducation?.id
-                    }
-                    }
-                />
-            )}
+      {modalName === "jobPreference" && (
+        <UpdateProfileModal
+          open={modalName === "jobPreference"}
+          onClose={() => setModalName("")}
+          fields={{
+            preferredEmployementTypes: Array.isArray(employee?.preferredEmployementTypes) ? employee?.preferredEmployementTypes : employee?.preferredEmployementTypes && JSON.parse(employee?.preferredEmployementTypes) || [],
+            preferredLocationTypes: Array.isArray(employee?.preferredLocationTypes) ? employee?.preferredLocationTypes : employee?.preferredLocationTypes && JSON.parse(employee?.preferredLocationTypes) || [],
+            preferredShifts: Array.isArray(employee?.preferredShifts) ? employee?.preferredShifts : employee?.preferredShifts && JSON.parse(employee?.preferredShifts) || [],
+          }}
+          label={{
+            preferredEmployementTypes: "Select Your Preferred employement type",
+            preferredLocationTypes: "Select Your Preferred Work Place",
+            preferredShifts: "Select Your Preferred Work Shift",
+          }}
+          type={{
+            preferredEmployementTypes: "multi",
+            preferredLocationTypes: "multi",
+            preferredShifts: "multi",
+          }}
+          suggestions={{
+            preferredEmployementTypes: ["Part Time", "Full Time", "Internships", "Contract"],
+            preferredLocationTypes: ["Work from Office", "Work from Home", "Field Jobs"],
+            preferredShifts: ["Night Shift", "Day Shift"],
+          }}
+          metaData={{
+            title: "jobPreference",
+            onSubmitFunc: updateProfileFunc,
+            id: null
+          }
+          }
+        />
+      )}
 
 
-            {modalName === "certification" && (
-                <UpdateProfileModal
-                    open={modalName === "certification"}
-                    onClose={() => setModalName("")}
-                    fields={{
-                        certification: Array.isArray(employee?.certification)?employee?.certification: employee?.certification && JSON.parse(employee?.certification) || [],
-                    }}
-                    label={{ certification: "Add Your Certification Name" }}
-                    type={{
-                        certification: "multi",
-                    }}
-                    suggestions={{
-                        certification: ["Mechanical support", "Mern Stack Developer", "Software Development"]
-                    }}
+      {modalName === "yearExperience" && (
+        <UpdateProfileModal
+          open={modalName === "yearExperience"}
+          onClose={() => setModalName("")}
+          fields={{
+            years: employee?.years || 0,
+            months: employee?.months || 0
+          }}
+          label={{
+            years: "Experience Years",
+            months: "Experience Months"
+          }}
+          type={{
+            years: "number",
+            months: "number"
+          }}
+          suggestions={{}}
+          metaData={{
+            title: "Year Experience",
+            onSubmitFunc: employeeExp,
+            id: null
+          }
+          }
+        />
+      )}
+
+      {modalName === "education" && (
+        <UpdateProfileModal
+          open={modalName === "education"}
+          onClose={() => setModalName("")}
+          fields={{
+            qualification: employee?.EmployeeEducations[selectedEducation]?.qualification || "Graduate",
+            isHighestQualification: false,
+            schoolMedium: "Hindi",
+            instituteName: employee?.EmployeeEducations[selectedEducation]?.instituteName || "",
+            degree: employee?.EmployeeEducations[selectedEducation]?.degree || "",
+            specialisation: employee?.EmployeeEducations[selectedEducation]?.specialisation || "",
+            studyMode: employee?.EmployeeEducations[selectedEducation]?.studyMode || "Full-time",
+            startDate: employee?.EmployeeEducations[selectedEducation]?.startDate || "",
+            endDate: employee?.EmployeeEducations[selectedEducation]?.endDate || ""
+          }}
+
+          label={{
+            qualification: "Education Level",
+            instituteName: "College/School Name",
+            isHighestQualification: "Is this your highest qualification",
+            schoolMedium: "Medium of this study",
+            degree: "Degree",
+            specialisation: "Specializatin",
+            studyMode: "Mode of your study",
+            startDate: "Start Date",
+            endDate: "End Date"
+          }}
+
+          type={{
+            qualification: "radio",
+            instituteName: "text",
+            isHighestQualification: "radio",
+            schoolMedium: "radio",
+            degree: "select",
+            specialisation: "select",
+            studyMode: "radio",
+            startDate: "date",
+            endDate: "date"
+          }}
+          suggestions={{
+            qualification: [{ "Diploma": "Diploma" }, { "ITI": "ITI" }, { "Graduate": "Graduate" }, { "Post Graduate": "Post Graduate" }],
+            isHighestQualification: [{ "Yes": true }, { "no": false }],
+            degree: ["B.A.", "B.Com", "B.Sc", "B.Tech", "M.A"],
+            schoolMedium: [{ "Hindi": "Hindi" }, { "English": "English" }],
+            specialisation: ["Computer Science", "Commerce", "Arts", "Physics"],
+            studyMode: [{ "Full-Time": "f" }, { "Part-Time": "p" }, { "Correspondence": "c" }]
+          }}
 
 
-                    metaData={{
-                        title: " Add Certification",
-                        onSubmitFunc: updateProfileFunc,
-                        id: null
-                    }
-                    }
-                />
-            )}
+          metaData={{
+            title: " Edit Education",
+            onSubmitFunc: selectedEducation ? editEducation : createEducation,
+            id: selectedEducation?.id
+          }
+          }
+        />
+      )}
 
 
-            {modalName === "basicDetails" && (
-                <UpdateProfileModal
-                    open={modalName === "basicDetails"}
-                    onClose={() => setModalName("")}
-                    fields={{
-                        fullName: employee?.fullName || "" ,
-                        email: employee?.email || "",
-                        gender: employee?.gender || "",
-                        dob: employee?.dob || "",
-                        currentLocation: employee?.currentLocation || "",
-                        hometown: employee?.hometown || ""
-                    }}
-                    label={{
-                        fullName: "Enter Your Name",
-                        email: "Enter Your Email",
-                        gender: "Enter Your Gender",
-                        dob: "Enter your Date of birth",
-                        currentLocation: "Enter Your Current Location",
-                        hometown: "Enter the Home Town"
-                    }}
-                    type={{
-                        fullName: "text",
-                        email: "text",
-                        gender: "text",
-                        dob: "date",
-                        currentLocation: "text",
-                        hometown: "text"
-                    }}
+      {modalName === "certification" && (
+        <UpdateProfileModal
+          open={modalName === "certification"}
+          onClose={() => setModalName("")}
+          fields={{
+            certification: Array.isArray(employee?.certification) ? employee?.certification : employee?.certification && JSON.parse(employee?.certification) || [],
+          }}
+          label={{ certification: "Add Your Certification Name" }}
+          type={{
+            certification: "multi",
+          }}
+          suggestions={{
+            certification: ["Mechanical support", "Mern Stack Developer", "Software Development"]
+          }}
 
-                    suggestions={{
-                        gender: ["Male", "Female", "Other"]
-                    }}
 
-                    metaData={{
-                        title: " Edit Basic Details",
-                        onSubmitFunc: updateProfileFunc,
-                        id: null
-                    }
-                    }
-                />
-            )}
+          metaData={{
+            title: " Add Certification",
+            onSubmitFunc: updateProfileFunc,
+            id: null
+          }
+          }
+        />
+      )}
+
+
+      {modalName === "basicDetails" && (
+        <UpdateProfileModal
+          open={modalName === "basicDetails"}
+          onClose={() => setModalName("")}
+          fields={{
+            fullName: employee?.fullName || "",
+            email: employee?.email || "",
+            gender: employee?.gender || "",
+            dob: employee?.dob || "",
+            currentLocation: employee?.currentLocation || "",
+            hometown: employee?.hometown || ""
+          }}
+          label={{
+            fullName: "Enter Your Name",
+            email: "Enter Your Email",
+            gender: "Enter Your Gender",
+            dob: "Enter your Date of birth",
+            currentLocation: "Enter Your Current Location",
+            hometown: "Enter the Home Town"
+          }}
+          type={{
+            fullName: "text",
+            email: "text",
+            gender: "text",
+            dob: "date",
+            currentLocation: "text",
+            hometown: "text"
+          }}
+
+          suggestions={{
+            gender: ["Male", "Female", "Other"]
+          }}
+
+          metaData={{
+            title: " Edit Basic Details",
+            onSubmitFunc: updateProfileFunc,
+            id: null
+          }
+          }
+        />
+      )}
     </>
   );
 }

@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
-import { TextField, Button,  Typography, Box, Chip, RadioGroup, FormLabel, FormControlLabel, Radio, Checkbox, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
-import { Plus} from "lucide-react";
-import {useNavigate} from "react-router-dom";
+import { TextField, Button, Typography, Box, Chip, RadioGroup, FormLabel, FormControlLabel, Radio, Checkbox, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
+import { Plus, X } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { createProfile } from "../../../API/ApiFunctions";
 
 
@@ -72,13 +72,15 @@ export default function CreateProfileModal() {
     const yearsOptions = Array.from({ length: 31 }, (_, i) => i);
     const monthsOptions = Array.from({ length: 12 }, (_, i) => i);
 
-    const navigate= useNavigate();
+    const navigate = useNavigate();
 
     const {
         register,
         control,
         handleSubmit,
         setValue,
+        setError,
+        getValues,
         formState: { errors },
     } = useForm({
         defaultValues: {
@@ -104,10 +106,16 @@ export default function CreateProfileModal() {
 
 
 
+    const handleToggleJobRole = (role) => {
+        const current = getValues('experiences[0].jobRole') || [];
 
-    const handleSelectedJobRoles = (value) => {
-        setValue('experiences[0].jobRole', value);
+        const updated = current.includes(role)
+            ? current.filter((r) => r !== role) // remove
+            : [...current, role]; // add
+
+        setValue('experiences[0].jobRole', updated);
     };
+
 
     const handleSelectedJobTitles = (value) => {
         setValue('experiences[0].jobTitle', value);
@@ -141,17 +149,71 @@ export default function CreateProfileModal() {
     };
 
 
+    const firstStepValidation = (data) => {
+        if (data.dob) {
+            const start = new Date(data.dob);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
 
-    const onSubmit = async(data) => {
-       const response= await createProfile(data);
-       if(response){
-        const user= JSON.parse(localStorage.getItem("User"));
-        const newUser= JSON.stringify({...user, profile: true})
-        localStorage.setItem("User", newUser)
-        navigate("/jobs")
-       }else{
-        alert("could not create profile, Please try again")
-       }
+            const eighteenYearsAgo = new Date();
+            eighteenYearsAgo.setFullYear(today.getFullYear() - 18);
+
+            const sixtyYearAgo = new Date();
+            sixtyYearAgo.setFullYear(today.getFullYear() - 60);
+
+            let hasError = false;
+
+            console.log(start, today, eighteenYearsAgo)
+
+            if (start > today) {
+                setError("dob", {
+                    type: "manual",
+                    message: "Start date must be in the past",
+                });
+                hasError = true;
+            }
+
+            if (start > eighteenYearsAgo) {
+                setError("dob", {
+                    type: "manual",
+                    message: "Minimum age should be 18 years",
+                });
+                hasError = true;
+            }
+
+            if (start < sixtyYearAgo) {
+                setError("dob", {
+                    type: "manual",
+                    message: "Maximum age should be 60 years",
+                });
+                hasError = true;
+            }
+
+
+
+
+            if (hasError) return;
+        }
+
+        setSteps((prev) => prev + 1)
+    }
+
+
+    const onSubmit = async (data) => {
+
+
+
+        const response = await createProfile(data);
+        if (response) {
+            const user = JSON.parse(localStorage.getItem("User"));
+            const newUser = JSON.stringify({ ...user, profile: true })
+            localStorage.setItem("User", newUser)
+            alert("Profile created successfully")
+            window.location.reload()
+            navigate("/jobs")
+        } else {
+            alert("could not create profile, Please try again")
+        }
     };
 
     return (
@@ -184,7 +246,7 @@ export default function CreateProfileModal() {
                                 type="date"
                                 {...register("dob", { required: true })}
                                 error={!!errors.dob}
-                                helperText={errors.dob ? "DOB is required" : ""}
+                                helperText={errors.dob ? errors.dob.message : ""}
                                 slotProps={{
                                     inputLabel: {
                                         shrink: true,
@@ -230,7 +292,7 @@ export default function CreateProfileModal() {
                         {/* Submit Button */}
                         <Button
                             variant="contained"
-                            onClick={handleSubmit(() => setSteps((prev) => prev + 1))}
+                            onClick={handleSubmit(firstStepValidation)}
                             fullWidth
                             className="!bg-green-600 hover:!bg-green-700 text-white font-bold"
                         >
@@ -305,23 +367,59 @@ export default function CreateProfileModal() {
 
                         {(experienceYears !== 0 || experienceMonths !== 0) &&
                             <>
-                                <Controller
+                            <Controller
                                     name="experiences[0].jobRole"
                                     control={control}
                                     rules={{ required: "Job Role is required" }}
-                                    render={({ field }) => (
-                                        <TextField
-                                            {...field}
-                                            value={field.value ?? ""}
-                                            size="small"
-                                            placeholder="Search your job role"
-                                            variant="outlined"
-                                            fullWidth
-                                            error={!!errors.experiences?.[0]?.jobRole}
-                                            helperText={errors.experiences?.[0]?.jobRole ? errors.experiences?.[0]?.jobRole.message : ""}  // Display error message
-                                        />
-                                    )}
+                                    render={({ field }) => {
+                                        const selectedRoles = field.value || [];
+
+                                        const handleDelete = (roleToRemove) => {
+                                            const updated = selectedRoles.filter((role) => role !== roleToRemove);
+                                            field.onChange(updated);
+                                        };
+
+                                        return (
+                                            <>
+                                                
+                                                <TextField
+                                                    {...field}
+                                                    value="" 
+                                                    onChange={() => { }} 
+                                                    style={{ display: "none" }}
+                                                />
+
+                                                {/* Display selected roles as chips */}
+                                                <Box className="flex flex-wrap gap-2 border p-2 rounded-md min-h-[48px]">
+                                                    {selectedRoles.map((role, idx) => (
+                                                        <Chip
+                                                            key={idx}
+                                                            label={role}
+                                                            onDelete={() => handleDelete(role)}
+                                                            deleteIcon={<X size={14} />}
+                                                           
+                                                            variant="filled"
+                                                            sx={{backgroundColor: "secondary"}}
+                                                        />
+                                                    ))}
+
+                                                    {/* Optional: placeholder when empty */}
+                                                    {selectedRoles.length === 0 && (
+                                                        <span className="text-gray-400 text-sm">No job roles selected</span>
+                                                    )}
+                                                </Box>
+
+                                                {/* Error message */}
+                                                {errors.experiences?.[0]?.jobRole && (
+                                                    <p className="text-red-500 text-xs mt-1">
+                                                        {errors.experiences[0].jobRole.message}
+                                                    </p>
+                                                )}
+                                            </>
+                                        );
+                                    }}
                                 />
+
 
 
                                 {/* Suggested Roles */}
@@ -330,18 +428,24 @@ export default function CreateProfileModal() {
                                         Suggested job roles
                                     </Typography>
                                     <Box className="flex flex-wrap gap-2">
-                                        {suggestedRoles.map((role) => (
-                                            <Chip
-                                                key={role}
-                                                label={
-                                                    <span className="flex items-center gap-1">
-                                                        {role} <Plus size={14} />
-                                                    </span>
-                                                }
-                                                onClick={() => handleSelectedJobRoles(role)}
-                                                variant="outlined"
-                                            />
-                                        ))}
+                                        {suggestedRoles.map((role) => {
+                                            const selectedRoles = getValues('experiences[0].jobRole') || [];
+                                            const isSelected = selectedRoles.includes(role);
+
+                                            return (
+                                                <Chip
+                                                    key={role}
+                                                    label={
+                                                        <span className="flex items-center gap-1">
+                                                            {role} {isSelected ? <X size={14} /> : <Plus size={14} />}
+                                                        </span>
+                                                    }
+                                                    onClick={() => handleToggleJobRole(role)}
+                                                    variant={isSelected ? "filled" : "outlined"}
+                                                    color={isSelected ? "primary" : "default"}
+                                                />
+                                            );
+                                        })}
                                     </Box>
                                     <Typography className="text-sm text-green-600 mt-2 cursor-pointer">
                                         Show all roles &gt;
@@ -363,6 +467,7 @@ export default function CreateProfileModal() {
                                                 value={field.value ?? ""}
                                                 placeholder="Search your job title"
                                                 size="small"
+                                                label="Job Titles"
                                                 variant="outlined"
                                                 fullWidth
                                                 error={!!errors.experiences?.[0]?.jobTitle}
@@ -468,17 +573,28 @@ export default function CreateProfileModal() {
                             </>
                         }
 
+                        <div className="flex flex-row gap-5">
+                            <Button
+                                variant="outlined"
+                                onClick={() => setSteps((prev) => prev - 1)}
+                                fullWidth
 
+                                className="hover:!bg-gray-200 text-white font-bold"
+                            >
+                                Back
+                            </Button>
 
-                        {/* Submit Button */}
-                        <Button
-                            variant="contained"
-                            onClick={handleSubmit(() => setSteps((prev) => prev + 1))}
-                            fullWidth
-                            className="!bg-green-400 hover:!bg-green-500 text-white font-bold"
-                        >
-                            Next
-                        </Button>
+                            {/* Submit Button */}
+                            <Button
+                                variant="contained"
+                                onClick={handleSubmit(() => setSteps((prev) => prev + 1))}
+                                fullWidth
+                                className="!bg-green-400 hover:!bg-green-500 text-white font-bold"
+                            >
+                                Next
+                            </Button>
+                        </div>
+
                     </form>
                 </div>
 
@@ -564,13 +680,27 @@ export default function CreateProfileModal() {
                         </Box>
                     </Box>
 
-                    <Button
-                        variant="contained"
-                        onClick={handleSubmit(() => setSteps((prev) => prev + 1))}
-                        className="bg-green-600 hover:bg-green-700 w-full"
-                    >
-                        Next
-                    </Button>
+                   <div className="flex flex-row gap-5">
+                            <Button
+                                variant="outlined"
+                                onClick={() => setSteps((prev) => prev - 1)}
+                                fullWidth
+
+                                className="hover:!bg-gray-200 text-white font-bold"
+                            >
+                                Back
+                            </Button>
+
+                            {/* Submit Button */}
+                            <Button
+                                variant="contained"
+                                onClick={handleSubmit(() => setSteps((prev) => prev + 1))}
+                                fullWidth
+                                className="!bg-green-400 hover:!bg-green-500 text-white font-bold"
+                            >
+                                Next
+                            </Button>
+                        </div>
                 </form>
             }
 
@@ -646,14 +776,27 @@ export default function CreateProfileModal() {
                         })}
                     </Box>
 
-                    <Button
-                        variant="contained"
-                        type='submit'
+                   <div className="flex flex-row gap-5">
+                            <Button
+                                variant="outlined"
+                                onClick={() => setSteps((prev) => prev - 1)}
+                                fullWidth
 
-                        className="bg-green-600 hover:bg-green-700 w-full"
-                    >
-                        Next
-                    </Button>
+                                className="hover:!bg-gray-200 text-white font-bold"
+                            >
+                                Back
+                            </Button>
+
+                            {/* Submit Button */}
+                            <Button
+                                variant="contained"
+                                type="submit"
+                                fullWidth
+                                className="!bg-green-400 hover:!bg-green-500 text-white font-bold"
+                            >
+                                Submit
+                            </Button>
+                        </div>
                 </form>
             )}
 

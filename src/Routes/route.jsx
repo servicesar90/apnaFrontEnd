@@ -22,47 +22,50 @@ import HomePageCandidateProfile from "../components/pages/updateProfile2";
 
 const Layout = () => {
 
-  const [employee, setEmployee]= useState(null);
+  const [employee, setEmployee] = useState(null);
   const [jobs, setJobs] = useState(null)
-  
-  useEffect(()=>{
- 
-    const getData=async()=>{
-      const response=await getprofile();
-      if(response){
+
+  useEffect(() => {
+
+    const getData = async () => {
+      const response = await getprofile();
+      if (response) {
         setEmployee(response?.data.data)
-   
+
       }
-      
+
     }
-    
+
     getData()
 
-  },[]);
+  }, []);
 
-  useEffect(()=>{
- 
-    const getData=async()=>{
-      const response=await getJobs();
-      if(response){
+  useEffect(() => {
+
+    const getData = async () => {
+      const response = await getJobs();
+      if (response) {
         setJobs(response?.data.data)
-   
+
       }
-      
+
     }
-    
+
     getData()
 
-  },[]);
+  }, []);
 
 
-return (
-  <>
-    <Navbar profile={employee} />
-    <Outlet context={{employee, jobs}}/>
-    <Footer />
-  </>
-)
+  return (
+    <>
+      <Navbar profile={employee} />
+      <div className="flex flex-col justify-center items-center w-[100vw]">
+
+        <Outlet context={{ employee, jobs }} />
+      </div>
+      <Footer />
+    </>
+  )
 };
 
 // Main Routes
@@ -120,10 +123,10 @@ const AppRoutes = () => {
             }
           />
 
-          
-      </Route>
 
-      
+        </Route>
+
+
 
         {/* 404 Page */}
         <Route path="*" element={<NotFound />} />

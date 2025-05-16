@@ -6,6 +6,8 @@ import { Mail, Phone, MapPin, Calendar, Briefcase, Timer } from "lucide-react";
 import QuickLinks from "./Quicklinks";
 import { useOutletContext } from "react-router-dom";
 import Skeleton from "@mui/material/Skeleton";
+import UserForm from "../modals/profileUpdateModals/resumeUpload";
+import { uploadProfileApi } from "../../API/APIs";
 
 const HomePageCandidateProfile = () => {
   const user = JSON.parse(localStorage.getItem("User"));
@@ -13,8 +15,7 @@ const HomePageCandidateProfile = () => {
   const [isMobile, setIsMobile] = useState(false);
   const {employee} = useOutletContext();
   const [showContent, setShowContent] = useState(false);
-
-  console.log(employee)
+  const [modalName, setModalName] = useState("")
 
   // Prevent background scroll when drawer is open
   useEffect(() => {
@@ -43,18 +44,7 @@ const HomePageCandidateProfile = () => {
     }
   }, [employee]);
 
-  function SkeletonPlaceholder() {
-  return (
-    <div>
-      <Skeleton variant="text" width={200} height={30} />
-      <Skeleton variant="rectangular" width="100%" height={100} />
-      <Skeleton variant="circular" width={40} height={40} />
-     
-    </div>
-  );
-}
-
-  console.log("ismobile", isMobile);
+ 
   return (
     <>
       {/* <div className="w-full p-6 bg-red-500 flex justify-center flex-row gap-10"> */}
@@ -64,17 +54,17 @@ const HomePageCandidateProfile = () => {
         {/* Profile Header */}
         <div className="flex items-center gap-4">
           {/* Profile Image */}
-          <div className="relative w-20 h-20">
+          <div onClick={()=> setModalName("editImage")} className="relative cursor-pointer border rounded-[50%]   w-20 h-20">
               {employee && showContent?<> <img
               src={employee?.profileImage || "/user.png"}
               alt="avatar"
-              className="rounded-lg w-20 h-20 object-cover"
+              className="rounded-[50%] w-20 h-20 object-cover"
             />
              <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 bg-blue-500 text-white text-xs px-2 py-0.5 rounded-lg">
               100%
             </span>
             </>
-            :<Skeleton variant="rectangular" width={90} height={90} />}
+            :<Skeleton variant="circular" width={80} height={80} sx={{margin: 0}} />}
           
            
            
@@ -83,18 +73,20 @@ const HomePageCandidateProfile = () => {
           {/* Profile Info */}
           <div className="flex flex-col  ">
             <div className="flex-1 ">
-              {employee && showContent?<h2 className="text-16 font-gray-800">{employee?.fullName}</h2>:<Skeleton variant="text" width={200} height={30} />}
-              <p className="text-14 text-gray-650">
+              {employee && showContent?<h2 className="text-16 font-gray-800">{employee?.fullName}</h2>:<Skeleton animation="wave" variant="text" width={200} height={20} />}
+               {employee && showContent?<p className="text-14 text-gray-650">
                 {employee?.EmployeeExperiences[0]?.jobTitle}
-              </p>
-              <p className="text-14 text-gray-650">
+              </p>:<Skeleton animation="wave" variant="text" width={200} height={20} />}
+            
+             {employee && showContent? <p className="text-14 text-gray-650">
                 at {employee?.EmployeeExperiences[0]?.companyName}
-              </p>
+              </p>:<Skeleton animation="wave" variant="text" width={200} height={20} />} 
+             
             </div>
 
             {/* Last Updated */}
             <div className="text-12 text-gray-650   hidden lg:block">
-              Profile last updated · {employee?.updatedAt.split("T")[0] || "N/A"}
+              Profile last updated ·  {employee?.updatedAt.split("T")[0] && showContent?employee?.updatedAt.split("T")[0] : <Skeleton variant="text" width={20} height={20}  animation="wave" />}
             </div>
           </div>
         </div>
@@ -107,40 +99,41 @@ const HomePageCandidateProfile = () => {
           <div className="flex items-center gap-2">
             <MapPin className="w-4 h-4 text-secondary" />
             <span className="text-14 text-gray-650">
-              {employee?.currentLocation || "Location unavailable"}
+              {(employee && showContent) ? (employee.currentLocation? employee.currentLocation:"Location not updated"): <Skeleton animation="wave" variant="text" width={100} height={30} />}
             </span>
           </div>
           <div className="flex items-center gap-2">
             <Phone className="w-4 h-4 text-secondary" />
             <span className="text-14 text-gray-650">
-              {user?.phone || "N/A"}
+              {(user.phone && showContent) ? user.phone: <Skeleton animation="wave" variant="text" width={100} height={30} />}
+    
             </span>
           </div>
           <div className="flex items-center gap-2">
             <Calendar className="w-4 h-4 text-secondary" />
             <span className="text-14 text-gray-650">
-              {employee?.TotalExperience?.years?`${employee?.TotalExperience?.years} years ${employee?.TotalExperience?.months} months Experience`:
-                "Experience not provided"}
+              {(employee && showContent)? (employee?.TotalExperience?.years ? `${employee?.TotalExperience?.years} years ${employee?.TotalExperience?.months} months Experience`: "Experience not provided"):
+                <Skeleton animation="wave" variant="text" width={100} height={30} />}
             </span>
           </div>
           <div className="flex items-center gap-2">
             <Mail className="w-4 h-4 text-secondary" />
             <span className="text-14 text-gray-650">
-              {employee?.email || "No email"}
+              {(employee && showContent) ?employee.email : <Skeleton animation="wave" variant="text" width={100} height={30} />}
             </span>
           </div>
           <div className="flex items-center gap-2">
             <BadgeIndianRupee className="w-4 h-4 text-secondary" />
             <span className="text-14 text-gray-650">
-              {employee?.salary
-                ? ` ${employee.salary}`
-                : "Salary not shared"}
+              {(employee && showContent)
+                ? (employee.salary? ` ${employee.salary}`: "Salary not Provided")
+                : <Skeleton animation="wave" variant="text" width={100} height={30} />}
             </span>
           </div>
           <div className="flex items-center gap-2">
             <Timer className="w-4 h-4 text-secondary" />
             <span className="text-14 text-gray-650">
-              {employee?.noticePeriod || "No notice period info"}
+              {(employee && showContent) ? employee?.noticePeriod : <Skeleton animation="wave" variant="text" width={100} height={30} />}
             </span>
           </div>
         </div>
@@ -149,7 +142,7 @@ const HomePageCandidateProfile = () => {
       {/* {Body Section} */}
 
       {isMobile ? (
-        <>
+        <div className="flex flex-col w-full bg-black-500">
           <div className="flex justify-start mt-5 ml-5 ">
             <div className="block">
               <button
@@ -160,12 +153,12 @@ const HomePageCandidateProfile = () => {
               </button>
             </div>
           </div>
-          <div className="flex flex-row mt-5 ml-4 mr-5  w-full">
-            <div className="flex flex-col w-full lg:w-full  mt-5 mb-10 mr-5 shadow-xl rounded-lg justify-start right-6 pr-6 pl-6 border">
-              {employee ?<MainContent employee={employee} /> :"Loading..."}
+          <div className="flex flex-row mt-5 w-full">
+            <div className="flex flex-col w-full  mt-5 mb-10 mr-2 shadow-xl rounded-lg justify-center items-center pr-4 pl-4 border">
+              <MainContent employee={employee} showContent={showContent} />
             </div>
           </div>
-        </>
+        </div>
       ) : (
         <div>
           <div className="flex flex-row mt-5 gap-4 lg:flex-row  w-full">
@@ -176,9 +169,7 @@ const HomePageCandidateProfile = () => {
 
             {/* Right Main Content of width 2/3*/}
             <div className="flex flex-col w-full lg:w-2/3 sm:w-full  mt-5 mb-10 mr-5 shadow-xl rounded-lg justify-start right-6 pr-6 pl-6 border">
-              {employee && showContent ?<MainContent employee={employee} /> :(
-        <SkeletonPlaceholder />
-      )}
+             <MainContent employee={employee} showContent={showContent} />
             </div>
           </div>
         </div>
@@ -231,9 +222,18 @@ const HomePageCandidateProfile = () => {
         ))}
       </ul>
             
+            
           </div>
+
+          
         </div>
       )}
+
+  {modalName === "editImage" && (
+        <UserForm open={modalName === "editImage"} label={"Upload Profile Image"} onClose={() => setModalName("")} metaData={{ field: "profileImage", Api: uploadProfileApi, default: employee?.profileImage }} />
+
+      )}
+      
     </>
   );
 };

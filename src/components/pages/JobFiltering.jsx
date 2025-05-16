@@ -76,7 +76,7 @@ export default function JobPortal() {
   return (
     <>
     {isOpen?
-      <div className="flex flex-row min-h-screen bg-gray-50">
+      <div className="flex flex-row w-full min-h-screen bg-gray-50">
         <div className="flex flex-col mt-4 w-1/3 max-w-[250px]">
         <h2 className="font-bold text-lg ml-4">Filters</h2>
         <Sidebar filters={filters} setFilters={setFilters} salary={salary} setSalary={setSalary} />

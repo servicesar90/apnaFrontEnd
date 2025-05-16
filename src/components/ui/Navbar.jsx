@@ -76,7 +76,7 @@ export default function Navbar({profile}) {
     <>
       <nav className="bg-white shadow p-4 flex justify-between h-20 items-center relative">
 
-        <img onClick={() => navigate("/")} src="/Unigrow logo (4).png" className="w-[70px] h-[60px]" alt="Logo" />
+        <img onClick={() => navigate("/")} src="/unigrowLogo.png" className="w-[7rem] h-auto" alt="Logo" />
 
 
 
@@ -88,11 +88,13 @@ export default function Navbar({profile}) {
 
             <div
               className="relative"
-              onMouseEnter={() => setIsCareerOpen(true)}
-              onMouseLeave={() => setIsCareerOpen(false)}
+              // onMouseEnter={() => setIsCareerOpen(true)}
+              // onMouseLeave={() => setIsCareerOpen(false)}
+              onClick={()=>navigate("/jobs")}
             >
               <button className="flex items-center gap-1 font-semibold text-black">
-                find A Job <ChevronDown size={16} />
+                find A Job 
+                {/* <ChevronDown size={16} /> */}
               </button>
               {isCareerOpen && (
                 <div className="absolute top-10 left-0 bg-white shadow-lg p-4 flex gap-6 rounded-md z-50 w-[600px]">
@@ -121,7 +123,7 @@ export default function Navbar({profile}) {
               )}
             </div>
 
-            <Link to="/blog" className="font-semibold text-black">Career Compass</Link>
+            
           </div>
 
 

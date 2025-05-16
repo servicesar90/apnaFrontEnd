@@ -5,7 +5,7 @@ export default function ProfileFill() {
   
 
     return (
-        <div className="flex min-h-screen bg-gray-100">
+        <div className="flex w-full min-h-screen bg-gray-100">
             {/* Left Section */}
             <div className="w-1/3 bg-blue-700 text-white p-6 flex flex-col justify-center items-center space-y-6">
                 <div className="bg-white text-blue-800 rounded-lg p-4 w-4/5">
