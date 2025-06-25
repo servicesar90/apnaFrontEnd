@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
-import { TextField, Button, Typography, Box, Chip, RadioGroup, FormLabel, FormControlLabel, Radio, Checkbox, FormControl, InputLabel, Select, MenuItem, Autocomplete } from "@mui/material";
+import { TextField, Button, Typography, Box, Chip, RadioGroup, FormLabel, FormControlLabel, Radio, Checkbox, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 import { Plus, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { createProfile, getJobRolesuggestions } from "../../../API/ApiFunctions";
+import { createProfile } from "../../../API/ApiFunctions";
 import { showErrorToast, showSuccessToast } from "../../ui/toast";
 
 
@@ -69,8 +69,6 @@ export default function CreateProfileModal() {
     const [selectedShift, setSelectedShifts] = useState([]);
     const [selectedWorkPlaces, setSelectedWorkPlaces] = useState([]);
     const [selectedEmployementType, setSelectedEmployementType] = useState([]);
-    const [jobRoleSuggestions, setJobRoleSuggestions] = useState([])
-    const [inputText, setInputText] = useState("")
 
     const yearsOptions = Array.from({ length: 31 }, (_, i) => i);
     const monthsOptions = Array.from({ length: 12 }, (_, i) => i);
@@ -109,6 +107,17 @@ export default function CreateProfileModal() {
 
 
 
+    const handleToggleJobRole = (role) => {
+        const current = getValues('experiences[0].jobRole') || [];
+
+        const updated = current.includes(role)
+            ? current.filter((r) => r !== role) // remove
+            : [...current, role]; // add
+
+        setValue('experiences[0].jobRole', updated);
+    };
+
+
     const handleSelectedJobTitles = (value) => {
         setValue('experiences[0].jobTitle', value);
     };
@@ -128,13 +137,6 @@ export default function CreateProfileModal() {
         setValue(fieldName, updated);
     };
 
-
-    const inputRoleChange = async (value) => {
-        const response = await getJobRolesuggestions(value);
-        if (response) {
-            setJobRoleSuggestions(response.data.data)
-        }
-    }
 
 
 
@@ -262,9 +264,9 @@ export default function CreateProfileModal() {
                             rules={{ required: true }}
                             render={({ field }) => (
                                 <RadioGroup row {...field}>
-                                    <FormControlLabel value="Male" control={<Radio />} label="Male" />
-                                    <FormControlLabel value="Female" control={<Radio />} label="Female" />
-                                    <FormControlLabel value="Other" control={<Radio />} label="Other" />
+                                    <FormControlLabel value="male" control={<Radio />} label="Male" />
+                                    <FormControlLabel value="female" control={<Radio />} label="Female" />
+                                    <FormControlLabel value="other" control={<Radio />} label="Other" />
                                 </RadioGroup>
                             )}
                         />
@@ -383,52 +385,72 @@ export default function CreateProfileModal() {
 
                         {(experienceYears !== 0 || experienceMonths !== 0) &&
                             <>
-
                                 <Controller
                                     name="experiences[0].jobRole"
                                     control={control}
-                                    render={({ field }) => (
-                                        <>
-                                            {/* Render chips above input */}
-                                            <Box display="flex" flexWrap="wrap" gap={1} mb={1}>
-                                                {(field.value || []).map((item, index) => (
-                                                    <Chip
-                                                        key={index}
-                                                        label={item}
-                                                        onDelete={() => {
-                                                            const updated = field.value.filter((_, i) => i !== index);
-                                                            field.onChange(updated);
-                                                        }}
-                                                    />
-                                                ))}
-                                            </Box>
+                                    render={({ field }) => {
+                                        const selectedRoles = field.value || [];
+                                        const [inputValue, setInputValue] = useState("");
 
-                                            {/* Autocomplete input only (no chips inside) */}
-                                            <Autocomplete
-                                                freeSolo
-                                                options={jobRoleSuggestions}
-                                                value={null}
-                                                inputValue={inputText}
-                                                onInputChange={(event, newInputValue) => {
-                                                    setInputText(newInputValue);
-                                                    inputRoleChange(newInputValue); 
-                                                }}
-                                                onChange={(event, newValue) => {
-                                                    if (!newValue) return;
-                                                    const updated = [...(field.value || []), newValue];
-                                                    field.onChange([...new Set(updated)]); 
-                                                    setInputText(""); 
-                                                }}
-                                                renderInput={(params) => (
-                                                    <TextField {...params} label="Job Roles" size="small" variant="outlined" />
-                                                )}
-                                            />
-                                        </>
-                                    )}
+                                        const addRole = (role) => {
+                                            if (role && !selectedRoles.includes(role)) {
+                                                field.onChange([...selectedRoles, role]);
+                                            }
+                                            setInputValue("");
+                                        };
+
+                                        const handleKeyDown = (e) => {
+                                            if (e.key === "Enter") {
+                                                e.preventDefault();
+                                                addRole(inputValue.trim());
+                                            }
+                                        };
+
+                                        const handleDelete = (roleToRemove) => {
+                                            field.onChange(selectedRoles.filter((r) => r !== roleToRemove));
+                                        };
+
+                                        return (
+                                            <>
+                                                <TextField
+                                                    label="Job Roles"
+                                                    variant="outlined"
+                                                    fullWidth
+                                                    size="small"
+                                                    value={inputValue}
+                                                    onChange={(e) => setInputValue(e.target.value)}
+                                                    onKeyDown={handleKeyDown}
+                                                    placeholder="Type a role and press Enter"
+                                                />
+
+                                                {/* Show selected roles */}
+                                                <Box className="flex flex-wrap gap-2 my-2">
+                                                    {selectedRoles.map((role, idx) => (
+                                                        <Chip
+                                                            key={idx}
+                                                            label={role}
+                                                            onDelete={() => handleDelete(role)}
+                                                        />
+                                                    ))}
+                                                </Box>
+
+                                                {/* Suggestions */}
+                                                <Typography className="mb-1 text-sm text-gray-600">Suggestions:</Typography>
+                                                <Box className="flex flex-wrap gap-2">
+                                                    {suggestedRoles.map((role) => (
+                                                        <Chip
+                                                            key={role}
+                                                            label={role}
+                                                            onClick={() => addRole(role)}
+                                                            variant={selectedRoles.includes(role) ? "filled" : "outlined"}
+                                                            color={selectedRoles.includes(role) ? "primary" : "default"}
+                                                        />
+                                                    ))}
+                                                </Box>
+                                            </>
+                                        );
+                                    }}
                                 />
-
-
-
 
 
                                 {/* Job Title */}

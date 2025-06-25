@@ -90,7 +90,8 @@ export default function JobCard({ job }) {
         className="border-b border-gray-100 px-4 py-2"
         style={{ backgroundColor: "#dff3f9" }}
       >
-        <div className="flex items-center gap-2">
+        {(job?.jobPlan !=="Premium" ||  job?.jobPlan !=="Hot") && <div className="flex items-center gap-2">
+          
           <div
             className="w-1.5 h-1.5 rounded-full animate-pulse"
             style={{ backgroundColor: "#003B70" }}
@@ -98,7 +99,7 @@ export default function JobCard({ job }) {
           <span className="font-medium text-xs" style={{ color: "#003B70" }}>
             Urgently hiring
           </span>
-        </div>
+        </div>}
       </div>
 
       <div className="p-4">

@@ -1,725 +1,1175 @@
-import React, { useState, useEffect, useRef } from "react";
-import {useNavigate} from "react-router-dom"
-// import CandidateLoginModal from "../modals/loginModals/CandidateLoginModal";
-import { showErrorToast, showSuccessToast } from '../components/ui/toast.jsx';
-import { motion, useInView, AnimatePresence } from "framer-motion";
+import React, { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import {
-  ChevronRight,
-  Search,
-  MapPin,
-  Users,
-  Building2,
-  Star,
-  Clock,
-  DollarSign,
-  CheckCircle,
-  ChevronLeft,
   Menu,
   X,
+  Target,
+  ChevronDown,
+  Bell,
+  Search,
+  Building2,
+  Sparkles,
+  ArrowRight,
+  Users,
+  Briefcase,
+  TrendingUp,
+  Zap,
+  Star,
+  BarChart3,
+  Shield,
+  Clock,
+  CheckCircle,
+  Calendar,
+  ChevronLeft,
+  ChevronRight,
+  Quote,
+  Award,
+  HelpCircle,
+  User,
+  BookOpen,
   Mail,
   Phone,
-  Facebook,
+  MapPin,
   Twitter,
   Linkedin,
+  Facebook,
   Instagram,
-  Briefcase,
-  Globe,
-  Code,
-  TrendingUp,
-  Award,
   Heart,
-  Eye,
-  ChevronDown,
-  Target,
-  Sparkles,
-  Rocket,
-  Shield,
-  ArrowRight,
-  Trophy,
-  Zap,
+  MapPin as Location,
+  DollarSign,
+  Filter,
+  Play,
 } from "lucide-react";
-import { Button } from "../components/landingPageContent/button";
-import { Card, CardContent } from "../components/landingPageContent/card";
-import { Badge } from "../components/landingPageContent/badge";
-import useEmblaCarousel from "embla-carousel-react";
 
-const JobPlatformLandingPage = () => {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [selectedExperience, setSelectedExperience] =
-    useState("Select experience");
-    const [showLoginModal, setShowLoginModal] = useState(false);
-  const [selectedLocation, setSelectedLocation] = useState("");
-  const [currentStatIndex, setCurrentStatIndex] = useState(0);
-  const [isHovered, setIsHovered] = useState(false);
-  const navigate= useNavigate()
+const EmployeeLandingPage = () => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [openIndex, setOpenIndex] = useState(0);
 
-  // Multiple carousel refs
-  const [testimonialsRef, testimonialsApi] = useEmblaCarousel({ loop: true });
-  const [companiesRef, companiesApi] = useEmblaCarousel({
-    loop: true,
-    align: "start",
-    dragFree: true,
-    containScroll: "trimSnaps",
-  });
-  const [jobsRef, jobsApi] = useEmblaCarousel({
-    loop: true,
-    align: "start",
-    slidesToScroll: 1,
-  });
-  const [categoriesRef, categoriesApi] = useEmblaCarousel({
-    loop: true,
-    align: "start",
-    dragFree: true,
-  });
-
-  // Scroll refs for animations
-  const heroRef = useRef(null);
-  const statsRef = useRef(null);
-  const categoriesContainerRef = useRef(null);
-  const companiesContainerRef = useRef(null);
-  const jobsContainerRef = useRef(null);
-  const testimonialsContainerRef = useRef(null);
-  const ctaRef = useRef(null);
-
-  // Scroll-triggered animations
-  // const { scrollYProgress } = useScroll();
-
-  const heroInView = useInView(heroRef);
-  const statsInView = useInView(statsRef);
-  const categoriesInView = useInView(categoriesContainerRef);
-  const companiesInView = useInView(companiesContainerRef);
-  const jobsInView = useInView(jobsContainerRef);
-  const testimonialsInView = useInView(testimonialsContainerRef);
-  const ctaInView = useInView(ctaRef);
-
-  // Auto-scroll carousels
   useEffect(() => {
-    const intervals = [];
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 10);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
-    if (testimonialsApi) {
-      intervals.push(setInterval(() => testimonialsApi.scrollNext(), 4000));
-    }
-    if (companiesApi) {
-      intervals.push(setInterval(() => companiesApi.scrollNext(), 3000));
-    }
-    if (categoriesApi) {
-      intervals.push(setInterval(() => categoriesApi.scrollNext(), 2500));
-    }
+  const navItems = [
+    { name: "Home", hasDropdown: false },
+    { name: "Find Jobs", hasDropdown: false },
+    { name: "Browse Companies", hasDropdown: false },
+    { name: "Career Resources", hasDropdown: false },
+  ];
 
-    return () => intervals.forEach(clearInterval);
-  }, [testimonialsApi, companiesApi, categoriesApi]);
+  const floatingElements = [
+    { icon: Star, delay: 0, x: 100, y: 50 },
+    { icon: Zap, delay: 1, x: -80, y: 80 },
+    { icon: Sparkles, delay: 2, x: 120, y: -60 },
+    { icon: Heart, delay: 0.5, x: -100, y: -40 },
+  ];
 
-  // Stats animation
-  useEffect(() => {
-    if (statsInView) {
-      const interval = setInterval(() => {
-        setCurrentStatIndex((prev) => (prev + 1) % 3);
-      }, 2000);
-      return () => clearInterval(interval);
-    }
-  }, [statsInView]);
+  const companies = [
+    { name: "TechCorp", logo: "TC", color: "from-blue-500 to-blue-600" },
+    { name: "InnovateLab", logo: "IL", color: "from-purple-500 to-purple-600" },
+    { name: "DataFlow", logo: "DF", color: "from-green-500 to-green-600" },
+    { name: "CloudSync", logo: "CS", color: "from-orange-500 to-orange-600" },
+    { name: "AI Dynamics", logo: "AD", color: "from-red-500 to-red-600" },
+    { name: "FutureWork", logo: "FW", color: "from-teal-500 to-teal-600" },
+    { name: "CodeCraft", logo: "CC", color: "from-indigo-500 to-indigo-600" },
+    { name: "NextGen", logo: "NG", color: "from-pink-500 to-pink-600" },
+  ];
 
-  // Floating particles animation
-  const particles = Array.from({ length: 20 }, (_, i) => ({
-    id: i,
-    x: Math.random() * 100,
-    y: Math.random() * 100,
-    delay: Math.random() * 2,
-    duration: 3 + Math.random() * 2,
-  }));
-
-  // Job categories with enhanced data
-  const jobCategories = [
+  const features = [
     {
-      icon: <Globe className="w-6 h-6" />,
-      name: "Remote",
-      count: "12K+",
-      color: "bg-blue-100 text-blue-700",
-      growth: "+15%",
+      icon: Target,
+      title: "Smart Job Matching",
+      description:
+        "Our AI analyzes your skills, experience, and preferences to match you with perfect job opportunities that align with your career goals.",
+      color: "from-blue-500 to-blue-600",
+      stats: "98% match accuracy",
+      delay: 0,
     },
     {
-      icon: <Building2 className="w-6 h-6" />,
-      name: "MNC",
-      count: "8.5K+",
-      color: "bg-purple-100 text-purple-700",
-      growth: "+8%",
+      icon: BarChart3,
+      title: "Career Insights",
+      description:
+        "Get real-time salary insights, market trends, and career progression data to make informed decisions about your professional journey.",
+      color: "from-purple-500 to-purple-600",
+      stats: "Live market data",
+      delay: 0.1,
     },
     {
-      icon: <Users className="w-6 h-6" />,
-      name: "HR",
-      count: "2.1K+",
-      color: "bg-green-100 text-green-700",
-      growth: "+12%",
+      icon: Zap,
+      title: "Fast Application Process",
+      description:
+        "Apply to multiple jobs with one-click applications, track your progress, and receive instant feedback from employers.",
+      color: "from-orange-500 to-orange-600",
+      stats: "3x faster applications",
+      delay: 0.2,
     },
     {
-      icon: <Code className="w-6 h-6" />,
-      name: "Software & IT",
-      count: "15K+",
-      color: "bg-orange-100 text-orange-700",
-      growth: "+22%",
+      icon: Shield,
+      title: "Verified Opportunities",
+      description:
+        "All job postings are verified and screened to ensure legitimacy, fair compensation, and quality work environments.",
+      color: "from-green-500 to-green-600",
+      stats: "100% verified jobs",
+      delay: 0.3,
     },
     {
-      icon: <Award className="w-6 h-6" />,
-      name: "Fresher",
-      count: "9.2K+",
-      color: "bg-pink-100 text-pink-700",
-      growth: "+18%",
+      icon: Clock,
+      title: "24/7 Career Support",
+      description:
+        "Access career coaches, resume experts, and interview preparation resources whenever you need guidance in your job search.",
+      color: "from-red-500 to-red-600",
+      stats: "Always available",
+      delay: 0.4,
     },
     {
-      icon: <Target className="w-6 h-6" />,
-      name: "Project Mgmt",
-      count: "1.8K+",
-      color: "bg-indigo-100 text-indigo-700",
-      growth: "+10%",
-    },
-    {
-      icon: <TrendingUp className="w-6 h-6" />,
-      name: "Sales",
-      count: "6.7K+",
-      color: "bg-red-100 text-red-700",
-      growth: "+14%",
-    },
-    {
-      icon: <DollarSign className="w-6 h-6" />,
-      name: "Banking",
-      count: "3.4K+",
-      color: "bg-emerald-100 text-emerald-700",
-      growth: "+9%",
-    },
-    {
-      icon: <Shield className="w-6 h-6" />,
-      name: "Cybersecurity",
-      count: "1.2K+",
-      color: "bg-gray-100 text-gray-700",
-      growth: "+25%",
-    },
-    {
-      icon: <Rocket className="w-6 h-6" />,
-      name: "Startup",
-      count: "4.1K+",
-      color: "bg-yellow-100 text-yellow-700",
-      growth: "+30%",
+      icon: Users,
+      title: "Professional Network",
+      description:
+        "Connect with industry professionals, join career communities, and get referrals from your network to accelerate your job search.",
+      color: "from-teal-500 to-teal-600",
+      stats: "1M+ professionals",
+      delay: 0.5,
     },
   ];
 
-  // Enhanced companies data
-  const topCompanies = [
+  const dashboardFeatures = [
     {
-      id: 1,
-      name: "TechCorp Inc.",
-      logo: "🏢",
-      category: "Technology",
-      hiringCount: "2.1K+",
-      rating: 4.8,
-      reviews: "12.5K+",
-      description:
-        "Leading technology company specializing in cloud solutions and AI innovation.",
-      tags: ["Tech", "AI/ML", "Cloud", "Product"],
-      trending: true,
-      verified: true,
-      featured: true,
+      label: "Job Applications",
+      value: "12",
+      icon: Briefcase,
+      color: "blue",
+      trend: "+4 this week",
     },
     {
-      id: 2,
-      name: "FinanceFlow",
-      logo: "💼",
-      category: "Fintech",
-      hiringCount: "890",
-      rating: 4.6,
-      reviews: "8.2K+",
-      description:
-        "Revolutionary fintech company transforming digital payments.",
-      tags: ["Fintech", "Payments", "B2C", "Unicorn"],
-      trending: false,
-      verified: true,
-      featured: true,
+      label: "Profile Views",
+      value: "89",
+      icon: Users,
+      color: "green",
+      trend: "+23 this week",
     },
     {
-      id: 3,
-      name: "HealthTech Pro",
-      logo: "🏥",
-      category: "Healthcare",
-      hiringCount: "1.5K+",
-      rating: 4.9,
-      reviews: "6.8K+",
-      description: "Healthcare technology leader improving patient outcomes.",
-      tags: ["Healthcare", "MedTech", "B2B"],
-      trending: true,
-      verified: true,
-      featured: false,
+      label: "Interview Invites",
+      value: "3",
+      icon: Calendar,
+      color: "purple",
+      trend: "+2 pending",
     },
     {
-      id: 4,
-      name: "EduLearn",
-      logo: "📚",
-      category: "EdTech",
-      hiringCount: "560",
-      rating: 4.7,
-      reviews: "3.1K+",
-      description:
-        "Educational technology startup creating personalized learning.",
-      tags: ["EdTech", "E-learning", "B2C"],
-      trending: false,
-      verified: true,
-      featured: false,
-    },
-    {
-      id: 5,
-      name: "GreenEnergy Co",
-      logo: "🌱",
-      category: "Renewable",
-      hiringCount: "340",
-      rating: 4.5,
-      reviews: "2.8K+",
-      description:
-        "Sustainable energy solutions for the bright and successful future.",
-      tags: ["Green Tech", "Energy", "Sustainability"],
-      trending: true,
-      verified: true,
-      featured: true,
+      label: "Avg Response Time",
+      value: "1.2d",
+      icon: Clock,
+      color: "orange",
+      trend: "2x faster",
     },
   ];
 
-  // Enhanced featured jobs
-  const featuredJobs = [
+  const activities = [
     {
-      id: 1,
-      title: "Senior Full Stack Developer",
-      company: "TechCorp Inc.",
-      location: "Bangalore, India",
-      salary: "₹25-35 LPA",
-      experience: "4-7 years",
-      type: "Full-time",
-      skills: ["React", "Node.js", "TypeScript", "MongoDB"],
-      posted: "2 days ago",
-      applicants: 145,
-      views: 1200,
-      urgent: true,
-      companyLogo: "🏢",
-      description: "Join our innovative team to build scalable applications.",
-      perks: ["Health Insurance", "Flexible Hours", "Remote Work"],
-      trending: true,
-      verified: true,
-      popularity: 95,
+      name: "TechCorp",
+      action: "Viewed your profile",
+      time: "2 min ago",
+      avatar: "TC",
+      status: "viewed",
     },
     {
-      id: 2,
-      title: "Senior UX/UI Designer",
-      company: "FinanceFlow",
-      location: "Mumbai, India",
-      salary: "₹18-28 LPA",
-      experience: "3-6 years",
-      type: "Full-time",
-      skills: ["Figma", "Sketch", "Prototyping", "User Research"],
-      posted: "1 week ago",
-      applicants: 89,
-      views: 890,
-      urgent: false,
-      companyLogo: "💼",
-      description: "Design intuitive financial products for millions.",
-      perks: ["Stock Options", "Learning Budget", "Health Insurance"],
-      trending: false,
-      verified: true,
-      popularity: 88,
+      name: "InnovateLab",
+      action: "Sent interview invite",
+      time: "1 hour ago",
+      avatar: "IL",
+      status: "interview",
     },
     {
-      id: 3,
-      title: "Data Science Manager",
-      company: "HealthTech Pro",
-      location: "Hyderabad, India",
-      salary: "₹30-45 LPA",
-      experience: "5-8 years",
-      type: "Full-time",
-      skills: ["Python", "Machine Learning", "SQL", "Leadership"],
-      posted: "3 days ago",
-      applicants: 67,
-      views: 750,
-      urgent: true,
-      companyLogo: "🏥",
-      description: "Lead data science initiatives in healthcare AI.",
-      perks: ["Performance Bonus", "Team Lead Role", "International Travel"],
-      trending: true,
-      verified: true,
-      popularity: 92,
+      name: "DataFlow",
+      action: "Application accepted",
+      time: "3 hours ago",
+      avatar: "DF",
+      status: "accepted",
     },
     {
-      id: 4,
-      title: "Product Manager - Growth",
-      company: "EduLearn",
-      location: "Pune, India",
-      salary: "₹22-32 LPA",
-      experience: "4-6 years",
-      type: "Full-time",
-      skills: ["Product Strategy", "Analytics", "A/B Testing"],
-      posted: "5 days ago",
-      applicants: 123,
-      views: 980,
-      urgent: false,
-      companyLogo: "📚",
-      description: "Drive user acquisition for educational platform.",
-      perks: ["Equity", "Flexible WFH", "Professional Development"],
-      trending: false,
-      verified: true,
-      popularity: 85,
+      name: "CloudSync",
+      action: "New job match found",
+      time: "5 hours ago",
+      avatar: "CS",
+      status: "match",
     },
+  ];
+
+  const benefits = [
     {
-      id: 5,
-      title: "DevOps Architect",
-      company: "TechCorp Inc.",
-      location: "Chennai, India",
-      salary: "₹28-40 LPA",
-      experience: "6-9 years",
-      type: "Full-time",
-      skills: ["AWS", "Kubernetes", "Docker", "Terraform"],
-      posted: "1 day ago",
-      applicants: 201,
-      views: 1500,
-      urgent: true,
-      companyLogo: "🏢",
-      description: "Architect cloud infrastructure for scale.",
-      perks: ["AWS Certification", "Conference Budget", "Premium Health"],
-      trending: true,
-      verified: true,
-      popularity: 98,
-    },
-    {
-      id: 6,
-      title: "Sustainability Engineer",
-      company: "GreenEnergy Co",
-      location: "Delhi NCR, India",
-      salary: "₹20-30 LPA",
-      experience: "3-5 years",
-      type: "Full-time",
-      skills: [
-        "Renewable Energy",
-        "Environmental Engineering",
-        "Project Management",
+      icon: BarChart3,
+      title: "Career Growth Analytics",
+      description:
+        "Track your career progression with detailed insights into salary growth, skill development, and market positioning.",
+      features: [
+        "Salary progression tracking",
+        "Skill gap analysis",
+        "Market position insights",
+        "Career roadmap planning",
       ],
-      posted: "4 days ago",
-      applicants: 78,
-      views: 650,
-      urgent: false,
-      companyLogo: "🌱",
-      description: "Build sustainable energy solutions for tomorrow.",
-      perks: ["Green Incentives", "Research Budget", "Impact Work"],
-      trending: true,
-      verified: true,
-      popularity: 87,
+    },
+    {
+      icon: Calendar,
+      title: "Smart Interview Management",
+      description:
+        "Never miss an opportunity with AI-powered interview scheduling, preparation resources, and follow-up reminders.",
+      features: [
+        "Automated scheduling",
+        "Interview preparation",
+        "Follow-up reminders",
+        "Video interview practice",
+      ],
+    },
+    {
+      icon: Users,
+      title: "Professional Networking",
+      description:
+        "Build meaningful connections with industry professionals, mentors, and potential colleagues in your field.",
+      features: [
+        "Industry networking events",
+        "Mentor matching",
+        "Professional communities",
+        "Referral opportunities",
+      ],
     },
   ];
 
-  // Enhanced testimonials
   const testimonials = [
     {
-      id: 1,
-      name: "Priya Sharma",
-      role: "Software Engineer",
-      company: "TechCorp Inc.",
-      avatar: "👩‍💻",
-      experience: "400% salary increase",
-      content:
-        "JobPortal transformed my career completely! From a small-town developer to working at a top tech company. The AI matching was spot-on, and I got my dream job within 2 weeks.",
+      name: "Alex Chen",
+      title: "Software Engineer",
+      company: "TechCorp Solutions",
+      image: "AC",
       rating: 5,
-      location: "Bangalore",
-      joinedDate: "6 months ago",
-      verified: true,
+      text: "TalentHire helped me find my dream job in just 2 weeks! The AI matching was incredibly accurate, and I loved how easy it was to apply to multiple positions.",
+      stats: { applications: 8, timeToHire: "2 weeks" },
     },
     {
-      id: 2,
-      name: "Rajesh Kumar",
-      role: "Talent Acquisition Manager",
-      company: "FinanceFlow",
-      avatar: "👨‍💼",
-      experience: "Hired 100+ candidates",
-      content:
-        "As a recruiter, JobPortal has been game-changing. The quality of candidates is exceptional, and our hiring time reduced by 60%. Best platform for talent acquisition.",
+      name: "Sarah Johnson",
+      title: "Product Designer",
+      company: "InnovateLab",
+      image: "SJ",
       rating: 5,
-      location: "Mumbai",
-      joinedDate: "1 year ago",
-      verified: true,
+      text: "The career insights and salary data helped me negotiate a 40% salary increase. The platform made job searching stress-free and actually enjoyable!",
+      stats: { applications: 5, timeToHire: "3 weeks" },
     },
     {
-      id: 3,
-      name: "Sneha Patel",
-      role: "Senior UX Designer",
-      company: "HealthTech Pro",
-      avatar: "👩‍🎨",
-      experience: "Dream company achieved",
-      content:
-        "From struggling freelancer to senior designer at a unicorn! JobPortal's career guidance and skill assessments helped me identify my strengths and land my dream role.",
+      name: "Michael Rodriguez",
+      title: "Data Scientist",
+      company: "DataFlow Inc",
+      image: "MR",
       rating: 5,
-      location: "Hyderabad",
-      joinedDate: "8 months ago",
-      verified: true,
+      text: "I was skeptical about job platforms, but TalentHire changed my mind. The quality of opportunities and the personal career coaching made all the difference.",
+      stats: { applications: 12, timeToHire: "1 month" },
     },
     {
-      id: 4,
-      name: "Amit Singh",
-      role: "Data Scientist",
-      company: "EduLearn",
-      avatar: "👨‍🔬",
-      experience: "Perfect role match",
-      content:
-        "The AI-powered matching is incredible! It found opportunities I never would have discovered. The platform understands skills better than traditional job boards.",
+      name: "Emily Davis",
+      title: "Marketing Manager",
+      company: "CloudSync",
+      image: "ED",
       rating: 5,
-      location: "Pune",
-      joinedDate: "4 months ago",
-      verified: true,
-    },
-    {
-      id: 5,
-      name: "Kavya Reddy",
-      role: "Product Manager",
-      company: "GreenEnergy Co",
-      avatar: "👩‍💼",
-      experience: "Career pivot success",
-      content:
-        "Successfully transitioned from engineering to product management with JobPortal's guidance. The interview prep and skill recommendations were invaluable.",
-      rating: 5,
-      location: "Delhi",
-      joinedDate: "3 months ago",
-      verified: true,
+      text: "From application to offer letter in just 10 days! The interview preparation resources and networking opportunities were invaluable for my career growth.",
+      stats: { applications: 6, timeToHire: "10 days" },
     },
   ];
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentIndex((prevIndex) =>
+        prevIndex === testimonials.length - 1 ? 0 : prevIndex + 1,
+      );
+    }, 5000);
+    return () => clearInterval(timer);
+  }, [testimonials.length]);
+
+  const goToPrevious = () => {
+    setCurrentIndex(
+      currentIndex === 0 ? testimonials.length - 1 : currentIndex - 1,
+    );
+  };
+
+  const goToNext = () => {
+    setCurrentIndex(
+      currentIndex === testimonials.length - 1 ? 0 : currentIndex + 1,
+    );
+  };
 
   const stats = [
     {
-      label: "Active Jobs",
-      value: "50K+",
-      icon: <Briefcase className="w-8 h-8" />,
+      icon: Briefcase,
+      value: "250K+",
+      label: "Dream Jobs Found",
+      description: "Successful placements across industries",
+      color: "from-blue-500 to-blue-600",
+      delay: 0,
     },
     {
-      label: "Happy Users",
-      value: "2M+",
-      icon: <Users className="w-8 h-8" />,
+      icon: Users,
+      value: "1M+",
+      label: "Active Job Seekers",
+      description: "Professionals advancing their careers",
+      color: "from-green-500 to-green-600",
+      delay: 0.1,
     },
     {
-      label: "Success Stories",
-      value: "10K+",
-      icon: <Trophy className="w-8 h-8" />,
+      icon: Star,
+      value: "4.9",
+      label: "Average Rating",
+      description: "From job seekers worldwide",
+      color: "from-yellow-500 to-yellow-600",
+      delay: 0.2,
+    },
+    {
+      icon: Clock,
+      value: "2.5 weeks",
+      label: "Average Job Search",
+      description: "From signup to offer acceptance",
+      color: "from-purple-500 to-purple-600",
+      delay: 0.3,
+    },
+    {
+      icon: TrendingUp,
+      value: "40%",
+      label: "Average Salary Increase",
+      description: "Career advancement success rate",
+      color: "from-red-500 to-red-600",
+      delay: 0.4,
+    },
+    {
+      icon: Award,
+      value: "95%",
+      label: "Job Satisfaction Rate",
+      description: "Happy professionals after 1 year",
+      color: "from-indigo-500 to-indigo-600",
+      delay: 0.5,
     },
   ];
 
-  const experienceOptions = [
-    "Fresher (0 years)",
-    "1-2 years",
-    "3-5 years",
-    "6-10 years",
-    "10+ years",
+  const faqs = [
+    {
+      question: "How does TalentHire match me with relevant job opportunities?",
+      answer:
+        "Our AI-powered system analyzes your skills, experience, career goals, salary expectations, and location preferences to find the most relevant opportunities. The algorithm learns from your application patterns and feedback to improve matches over time.",
+    },
+    {
+      question: "Is TalentHire free for job seekers?",
+      answer:
+        "Yes! TalentHire is completely free for job seekers. You can create a profile, apply to jobs, access career resources, and use our networking features at no cost. We're committed to helping you advance your career without any barriers.",
+    },
+    {
+      question: "How quickly can I expect to hear back from employers?",
+      answer:
+        "Most employers respond within 2-3 business days. Our platform encourages quick responses, and you'll receive real-time notifications about application status updates, profile views, and interview invitations.",
+    },
+    {
+      question: "What career support resources do you provide?",
+      answer:
+        "We offer comprehensive career support including resume optimization, interview preparation, salary negotiation guidance, career coaching sessions, skill development resources, and networking opportunities with industry professionals.",
+    },
+    {
+      question: "Can I control who sees my profile?",
+      answer:
+        "Absolutely! You have full control over your privacy settings. You can choose to make your profile visible to all employers, specific companies, or remain completely anonymous while browsing jobs. You can also block specific companies from seeing your profile.",
+    },
+    {
+      question: "How do you verify that job postings are legitimate?",
+      answer:
+        "We thoroughly vet all employers and job postings before they go live. This includes company verification, salary range validation, and compliance checks. We also monitor for fraudulent activity and have a dedicated team to ensure all opportunities are genuine.",
+    },
+    {
+      question: "Can I apply to jobs on mobile?",
+      answer:
+        "Yes! Our mobile app and responsive website allow you to search jobs, apply with one click, manage applications, and communicate with employers from anywhere. You'll also receive push notifications for new matches and updates.",
+    },
+    {
+      question: "What if I'm currently employed and looking for a new role?",
+      answer:
+        "We understand the need for discretion. You can use our confidential job search features, control your visibility settings, and apply anonymously. Many of our users successfully transition to new roles while maintaining their current employment.",
+    },
   ];
 
+  const articles = [
+    {
+      title: "How to Optimize Your Profile for Maximum Visibility",
+      excerpt:
+        "Learn the essential elements of a standout professional profile that attracts employers and increases your chances of landing interviews.",
+      author: "Career Team",
+      date: "Dec 15, 2024",
+      readTime: "5 min read",
+      category: "Profile Tips",
+      image: "bg-gradient-to-br from-blue-500 to-purple-600",
+    },
+    {
+      title: "Mastering Virtual Interview Skills",
+      excerpt:
+        "Essential tips and techniques for excelling in video interviews, from technical setup to building rapport with interviewers remotely.",
+      author: "Interview Experts",
+      date: "Dec 12, 2024",
+      readTime: "7 min read",
+      category: "Interview Prep",
+      image: "bg-gradient-to-br from-green-500 to-teal-600",
+    },
+    {
+      title: "2024 Salary Negotiation Strategies",
+      excerpt:
+        "Data-driven approaches to salary negotiation, including market research, timing strategies, and conversation frameworks for maximum success.",
+      author: "Salary Specialists",
+      date: "Dec 10, 2024",
+      readTime: "8 min read",
+      category: "Career Growth",
+      image: "bg-gradient-to-br from-orange-500 to-red-600",
+    },
+  ];
 
-    const handleSearchClick = () => {
-    const isLoggedIn = localStorage.getItem("User"); // Or however you check auth
+  const seals = [
+    {
+      icon: Shield,
+      title: "SOC 2 Compliant",
+      description: "Your data is protected with enterprise-grade security",
+      color: "from-blue-500 to-blue-600",
+    },
+    {
+      icon: Award,
+      title: "ISO 27001 Certified",
+      description: "International information security standards",
+      color: "from-green-500 to-green-600",
+    },
+    {
+      icon: Clock,
+      title: "24/7 Support",
+      description: "Round-the-clock career assistance",
+      color: "from-purple-500 to-purple-600",
+    },
+    {
+      icon: CheckCircle,
+      title: "GDPR Compliant",
+      description: "Your privacy rights are fully protected",
+      color: "from-orange-500 to-orange-600",
+    },
+  ];
 
-    if (isLoggedIn) {
-      navigate("/jobs");
-    } else {
-      showErrorToast("Please SignIn");
-    }
-  };
+  const footerSections = [
+    {
+      title: "Find Jobs",
+      links: [
+        "Browse All Jobs",
+        "Remote Jobs",
+        "Entry Level",
+        "Senior Roles",
+        "Salary Search",
+      ],
+      href: "jobs"
+    },
+    {
+      title: "Support",
+      links: [
+        "Help Center",
+        "Contact Us",
+        "Live Chat",
+        "Career Advice",
+        "Success Stories",
+      ],
+      href: "contact-us"
+    },
+    {
+      title: "Company",
+      links: ["About Us", "Careers", "Press", "Partners"],
+      href: "about-us"
+    },
+  ];
+
+  const socialLinks = [
+    { icon: Twitter, href: "#", label: "Twitter" },
+    { icon: Linkedin, href: "#", label: "LinkedIn" },
+    { icon: Facebook, href: "#", label: "Facebook" },
+    { icon: Instagram, href: "#", label: "Instagram" },
+  ];
 
   return (
-    <div className="min-h-screen bg-white relative overflow-x-hidden">
-      {/* Floating Particles Background */}
-      <div className="fixed inset-0 pointer-events-none z-0">
-        <div className="absolute inset-0">
-          {particles.map((particle) => (
-            <motion.div
-              key={particle.id}
-              className="absolute w-2 h-2 bg-blue-200 rounded-full opacity-30"
-              style={{
-                left: `${particle.x}%`,
-                top: `${particle.y}%`,
-              }}
-              animate={{
-                y: [-20, 20],
-                opacity: [0.3, 0.8, 0.3],
-              }}
-              transition={{
-                duration: particle.duration,
-                delay: particle.delay,
-                repeat: Infinity,
-                repeatType: "reverse",
-              }}
-            />
-          ))}
-        </div>
-      </div>
-
+    <>
       {/* Header */}
-     
+      
+        {/* Animated background gradient */}
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 via-purple-600/10 to-teal-600/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+       
+
+        {/* Enhanced Mobile Menu */}
+      
 
       {/* Hero Section */}
-      <section
-        ref={heroRef}
-        className="relative py-20 lg:py-32 bg-gradient-to-br from-blue-50 via-white to-purple-50"
-      >
-        {/* Background Elements */}
-        <div className="absolute inset-0 overflow-hidden">
-          <motion.div
-            className="absolute top-20 left-10 text-blue-200"
-            animate={{ y: [0, -20, 0], rotate: [0, 10, 0] }}
-            transition={{ duration: 4, repeat: Infinity }}
-          >
-            <Code className="w-8 h-8" />
-          </motion.div>
-          <motion.div
-            className="absolute top-40 right-20 text-purple-200"
-            animate={{ y: [0, 20, 0], rotate: [0, -10, 0] }}
-            transition={{ duration: 3, repeat: Infinity, delay: 1 }}
-          >
-            <Rocket className="w-10 h-10" />
-          </motion.div>
+      <section className="relative min-h-screen pt-4 w-full flex items-center justify-center overflow-hidden bg-gradient-to-br from-blue-900 via-purple-900 to-indigo-900">
+        {/* Enhanced Background Pattern */}
+        <div className="absolute inset-0 opacity-20">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,rgba(255,255,255,0.15)_1px,transparent_0)] bg-[size:50px_50px]" />
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 via-purple-500/10 to-teal-500/10" />
         </div>
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="text-center">
+        {/* Floating Elements */}
+        {floatingElements.map((element, index) => (
+          <motion.div
+            key={index}
+            initial={{ opacity: 0, scale: 0 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: element.delay, duration: 1 }}
+            className={`absolute z-10 text-white/20 transform translate-x-${element.x} translate-y-${element.y}`}
+            style={{
+              left: `${20 + index * 20}%`,
+              top: `${20 + index * 15}%`,
+            }}
+          >
             <motion.div
-              className="space-y-8"
-              initial={{ opacity: 0, y: 20 }}
-              animate={heroInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.8 }}
+              animate={{
+                y: [0, -20, 0],
+                rotate: [0, 10, -10, 0],
+              }}
+              transition={{
+                duration: 4,
+                repeat: Infinity,
+                delay: element.delay,
+              }}
             >
-              <motion.h1
-                className="text-4xl md:text-6xl lg:text-7xl font-bold text-gray-900 leading-tight"
-                onMouseEnter={() => setIsHovered(true)}
-                onMouseLeave={() => setIsHovered(false)}
+              <element.icon className="w-8 h-8" />
+            </motion.div>
+          </motion.div>
+        ))}
+
+        <div className="container mx-auto px-6 relative z-20">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            {/* Enhanced Left Content */}
+            <motion.div
+              initial={{ opacity: 0, x: -50 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8 }}
+              className="text-white"
+            >
+              {/* Animated Badge */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+                className="inline-flex items-center space-x-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-full px-6 py-3 mb-8"
               >
-                Find your{" "}
-                <motion.span
-                  className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent relative"
-                  animate={{ scale: isHovered ? 1.05 : 1 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  dream job
-                </motion.span>{" "}
-                now
+                <Sparkles className="w-5 h-5 text-yellow-400" />
+                <span className="text-sm font-semibold">
+                  🎯 #1 Job Platform for Professionals
+                </span>
+              </motion.div>
+
+              <motion.h1
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 }}
+                className="text-5xl lg:text-7xl font-bold leading-tight mb-6"
+              >
+                Find Your Dream Job <br />
+                <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+                  Faster Than Ever
+                </span>
               </motion.h1>
 
               <motion.p
-                className="text-xl md:text-2xl text-gray-600 max-w-3xl mx-auto"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.3 }}
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4 }}
+                className="text-xl lg:text-2xl text-white/80 mb-8 max-w-2xl leading-relaxed"
               >
-                5 lakh+{" "}
-                <span className="font-semibold text-blue-600">
-                  jobs for you to explore
-                </span>
+                Discover perfect opportunities with our{" "}
+                <span className="text-blue-400 font-semibold">
+                  AI-powered platform
+                </span>{" "}
+                that matches your skills and career goals with the right
+                employers.
               </motion.p>
 
-              {/* Search Bar */}
               <motion.div
-                className="max-w-5xl mx-auto"
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.5 }}
+                className="flex flex-col sm:flex-row gap-4 mb-12"
               >
-                <Card className="p-2 shadow-2xl border-0 bg-white/90 backdrop-blur">
-                  <CardContent className="p-0">
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-2">
-                      {/* Skills Input */}
-                      <div className="relative">
-                        <div className="absolute left-4 top-1/2 transform -translate-y-1/2 z-10">
-                          <Search className="w-5 h-5 text-gray-400" />
-                        </div>
-                        <input
-                          type="text"
-                          placeholder="Skills, designations, companies"
-                          className="w-full pl-12 pr-4 py-4 border-0 text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-blue-500 rounded-lg bg-gray-50 transition-all duration-300"
-                        />
-                      </div>
+                <motion.button
+                  whileHover={{
+                    scale: 1.05,
+                    boxShadow: "0 25px 50px rgba(59, 130, 246, 0.4)",
+                  }}
+                  whileTap={{ scale: 0.95 }}
+                  className="px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl font-bold text-lg shadow-2xl hover:shadow-blue-500/25 transition-all duration-300"
+                >
+                  Find Jobs Now
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="px-8 py-4 border-2 border-white/30 text-white rounded-xl font-bold text-lg hover:bg-white/10 backdrop-blur-sm transition-all duration-300 flex items-center justify-center space-x-2"
+                >
+                  <Play className="w-5 h-5" />
+                  <span>Watch Success Stories</span>
+                </motion.button>
+              </motion.div>
 
-                      {/* Experience Dropdown */}
-                      <div className="relative">
-                        <select
-                          value={selectedExperience}
-                          onChange={(e) =>
-                            setSelectedExperience(e.target.value)
-                          }
-                          className="w-full px-4 py-4 border-0 text-gray-900 focus:ring-2 focus:ring-blue-500 rounded-lg bg-gray-50 appearance-none cursor-pointer transition-all duration-300"
-                        >
-                          <option value="Select experience" disabled>
-                            Select experience
-                          </option>
-                          {experienceOptions.map((exp) => (
-                            <option key={exp} value={exp}>
-                              {exp}
-                            </option>
-                          ))}
-                        </select>
-                        <ChevronDown className="absolute right-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
-                      </div>
-
-                      {/* Location Input */}
-                      <div className="relative">
-                        <div className="absolute left-4 top-1/2 transform -translate-y-1/2 z-10">
-                          <MapPin className="w-5 h-5 text-gray-400" />
-                        </div>
-                        <input
-                          type="text"
-                          placeholder="Enter location"
-                          value={selectedLocation}
-                          onChange={(e) => setSelectedLocation(e.target.value)}
-                          className="w-full pl-12 pr-4 py-4 border-0 text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-blue-500 rounded-lg bg-gray-50 transition-all duration-300"
-                        />
-                      </div>
-
-                      {/* Search Button */}
-                      <motion.div
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                      >
-                        <Button className="w-full h-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold text-lg shadow-lg"
-                          onClick={handleSearchClick}>
-                          <Search className="w-5 h-5 mr-2" />
-                          Search
-                        </Button>
-                      </motion.div>
+              {/* Enhanced Stats */}
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.6 }}
+                className="grid grid-cols-3 gap-6"
+              >
+                {[
+                  {
+                    icon: Users,
+                    value: "1M+",
+                    label: "Job Seekers",
+                    color: "from-blue-400 to-blue-600",
+                  },
+                  {
+                    icon: Briefcase,
+                    value: "250K+",
+                    label: "Jobs Found",
+                    color: "from-purple-400 to-purple-600",
+                  },
+                  {
+                    icon: TrendingUp,
+                    value: "40%",
+                    label: "Salary Increase",
+                    color: "from-green-400 to-green-600",
+                  },
+                ].map((stat, index) => (
+                  <motion.div
+                    key={stat.label}
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 0.7 + index * 0.1 }}
+                    className="text-center"
+                  >
+                    <div
+                      className={`w-12 h-12 bg-gradient-to-br ${stat.color} rounded-xl flex items-center justify-center mx-auto mb-3 shadow-lg`}
+                    >
+                      <stat.icon className="w-6 h-6 text-white" />
                     </div>
-                  </CardContent>
-                </Card>
+                    <div className="text-2xl font-bold">{stat.value}</div>
+                    <div className="text-white/60 text-sm">{stat.label}</div>
+                  </motion.div>
+                ))}
               </motion.div>
             </motion.div>
 
-            {/* Stats */}
+            {/* Enhanced Right Content - Interactive Dashboard */}
             <motion.div
-              ref={statsRef}
-              className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-16"
-              initial={{ opacity: 0, y: 40 }}
-              animate={statsInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ delay: 0.7 }}
+              initial={{ opacity: 0, x: 50 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              className="relative"
             >
-              {stats.map((stat, index) => (
+              {/* Main Dashboard Card */}
+              <div className="relative bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-8 shadow-2xl">
+                {/* Dashboard Header */}
+                <div className="flex items-center justify-between mb-6">
+                  <h3 className="text-white text-xl font-bold">Job Matches</h3>
+                  <span className="text-green-400 text-sm font-semibold">
+                    98% compatibility found
+                  </span>
+                  <div className="flex space-x-2">
+                    {["red", "yellow", "green"].map((color, i) => (
+                      <div
+                        key={i}
+                        className={`w-3 h-3 rounded-full bg-${color}-400`}
+                      />
+                    ))}
+                  </div>
+                </div>
+
+                {/* Job Matches */}
+                <div className="space-y-4 mb-6">
+                  {[
+                    {
+                      role: "Senior Software Engineer",
+                      company: "TechCorp",
+                      match: "98%",
+                      color: "green",
+                      salary: "$120K-$150K",
+                    },
+                    {
+                      role: "Product Designer",
+                      company: "InnovateLab",
+                      match: "95%",
+                      color: "blue",
+                      salary: "$90K-$120K",
+                    },
+                    {
+                      role: "Data Scientist",
+                      company: "DataFlow",
+                      match: "92%",
+                      color: "purple",
+                      salary: "$110K-$140K",
+                    },
+                  ].map((job, index) => (
+                    <motion.div
+                      key={job.role}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.8 + index * 0.2 }}
+                      className="bg-white/10 rounded-2xl p-4 border border-white/10 hover:bg-white/20 transition-all duration-300 cursor-pointer"
+                    >
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <h4 className="text-white font-semibold">
+                            {job.role}
+                          </h4>
+                          <p className="text-white/60 text-sm">{job.company}</p>
+                          <p className="text-green-400 text-sm font-medium">
+                            {job.salary}
+                          </p>
+                        </div>
+                        <div
+                          className={`px-3 py-1 bg-${job.color}-500/20 text-${job.color}-400 rounded-full text-sm font-semibold`}
+                        >
+                          {job.match}
+                        </div>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+
+                {/* Enhanced Floating Elements */}
                 <motion.div
-                  key={stat.label}
-                  className="text-center p-6 bg-white/50 backdrop-blur rounded-2xl border border-white/20 shadow-lg"
                   initial={{ opacity: 0, scale: 0.8 }}
-                  animate={statsInView ? { opacity: 1, scale: 1 } : {}}
-                  transition={{ delay: 0.8 + index * 0.1 }}
-                  whileHover={{ scale: 1.05 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 1.2 }}
+                  className="absolute -top-6 -right-6 bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl p-4 shadow-xl border border-white/20"
                 >
-                  <motion.div
-                    className="mx-auto mb-4 text-blue-600"
-                    animate={
-                      currentStatIndex === index
-                        ? { scale: [1, 1.2, 1], rotate: [0, 10, 0] }
-                        : {}
-                    }
-                    transition={{ duration: 0.5 }}
+                  <div className="text-white text-center">
+                    <Users className="w-6 h-6 mx-auto mb-2" />
+                    <div className="text-sm font-bold">Active Employers</div>
+                    <div className="text-xs opacity-80">2,847 hiring now</div>
+                  </div>
+                </motion.div>
+
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 1.4 }}
+                  className="absolute -bottom-6 -left-6 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl p-4 shadow-xl border border-white/20"
+                >
+                  <div className="text-white text-center">
+                    <Clock className="w-6 h-6 mx-auto mb-2" />
+                    <div className="text-lg font-bold">2.5 weeks</div>
+                    <div className="text-xs opacity-80">Avg. Job Search</div>
+                  </div>
+                </motion.div>
+
+                {/* Background Pattern */}
+                <div className="absolute inset-0 opacity-10">
+                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,rgba(255,255,255,0.3)_1px,transparent_0)] bg-[size:20px_20px]" />
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* Companies Section */}
+      <section className="py-20 bg-gradient-to-br from-gray-50 w-full to-white relative overflow-hidden">
+        <div className="container mx-auto px-6 text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+          >
+            <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
+              Trusted Worldwide
+            </h2>
+            <p className="text-xl text-gray-600 mb-16 max-w-3xl mx-auto">
+              Join{" "}
+              <span className="text-blue-600 font-semibold">
+                1M+ professionals
+              </span>{" "}
+              who found their dream jobs with top companies
+            </p>
+          </motion.div>
+
+          {/* Enhanced Company Grid */}
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-16"
+          >
+            {companies.map((company, index) => (
+              <motion.div
+                key={company.name}
+                initial={{ opacity: 0, scale: 0.8 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.1 }}
+                whileHover={{ scale: 1.05, y: -5 }}
+                className="group relative bg-white rounded-2xl p-6 shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100"
+              >
+                <div
+                  className={`w-16 h-16 bg-gradient-to-br ${company.color} rounded-xl flex items-center justify-center mx-auto mb-4 text-white font-bold text-xl shadow-lg group-hover:shadow-xl transition-shadow duration-300`}
+                >
+                  {company.logo}
+                </div>
+                {/* Hover effect overlay */}
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-purple-500/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+
+                <h3 className="font-semibold text-gray-900 group-hover:text-blue-600 transition-colors duration-300">
+                  {company.name}
+                </h3>
+                {/* Floating particles on hover */}
+                <div className="absolute -top-2 -right-2 w-4 h-4 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 animate-bounce" />
+              </motion.div>
+            ))}
+          </motion.div>
+
+          {/* Enhanced Stats Section */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, delay: 0.4 }}
+            className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-3xl p-8 text-white relative overflow-hidden"
+          >
+            <div className="relative z-10">
+              <div className="flex items-center justify-center space-x-4 mb-4">
+                {[1, 2, 3, 4, 5].map((i) => (
+                  <Star
+                    key={i}
+                    className="w-8 h-8 text-yellow-400 fill-current"
+                  />
+                ))}
+              </div>
+              <h3 className="text-3xl font-bold mb-2">
+                1,000,000+ Professionals
+              </h3>
+              <p className="text-xl text-blue-100">
+                Successfully matched with their dream careers
+              </p>
+            </div>
+            {/* Enhanced Background Pattern */}
+            <div className="absolute inset-0 opacity-10">
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,rgba(255,255,255,0.3)_1px,transparent_0)] bg-[size:30px_30px]" />
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Features Section */}
+      <section className="py-24 w-full bg-white relative overflow-hidden">
+        <div className="container mx-auto px-6">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+            className="text-center mb-20"
+          >
+            <h2 className="text-4xl lg:text-6xl font-bold text-gray-900 mb-6">
+              Why Choose TalentHire
+            </h2>
+            <p className="text-xl lg:text-2xl text-gray-600 max-w-4xl mx-auto">
+              The Future of{" "}
+              <span className="text-blue-600 font-semibold">
+                Smart Job Search
+              </span>
+            </p>
+            <p className="text-lg text-gray-600 mt-4 max-w-3xl mx-auto">
+              Experience the next generation of career advancement with
+              AI-driven features designed to match you with perfect
+              opportunities faster than ever before.
+            </p>
+          </motion.div>
+
+          <div className="grid lg:grid-cols-3 gap-8">
+            {features.map((feature, index) => (
+              <motion.div
+                key={feature.title}
+                initial={{ opacity: 0, y: 50 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: feature.delay, duration: 0.8 }}
+                whileHover={{ y: -10 }}
+                className="group relative bg-white rounded-3xl p-8 shadow-lg hover:shadow-2xl transition-all duration-500 border border-gray-100"
+              >
+                {/* Background gradient on hover */}
+                <div
+                  className={`absolute inset-0 bg-gradient-to-br ${feature.color} opacity-0 group-hover:opacity-5 rounded-3xl transition-opacity duration-500`}
+                />
+
+                {/* Floating icon */}
+                <div className="relative mb-6">
+                  <div
+                    className={`w-16 h-16 bg-gradient-to-br ${feature.color} rounded-2xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300`}
                   >
-                    {stat.icon}
-                  </motion.div>
-                  <motion.div
-                    className="text-3xl font-bold text-gray-900 mb-2"
-                    animate={
-                      currentStatIndex === index ? { scale: [1, 1.1, 1] } : {}
-                    }
+                    <feature.icon className="w-8 h-8 text-white" />
+                  </div>
+                  {/* Pulsing ring */}
+                  <div
+                    className={`absolute inset-0 bg-gradient-to-br ${feature.color} rounded-2xl opacity-20 scale-110 group-hover:scale-125 transition-transform duration-300`}
+                  />
+                </div>
+
+                <h3 className="text-2xl font-bold text-gray-900 mb-4 group-hover:text-blue-600 transition-colors duration-300">
+                  {feature.title}
+                </h3>
+                <p className="text-gray-600 mb-6 leading-relaxed">
+                  {feature.description}
+                </p>
+
+                {/* Stats badge */}
+                <div className="flex items-center justify-between">
+                  <span
+                    className={`px-4 py-2 bg-gradient-to-r ${feature.color} text-white rounded-full text-sm font-semibold shadow-lg`}
                   >
-                    {stat.value}
+                    {feature.stats}
+                  </span>
+                  {/* Animated progress bar */}
+                  <div className="flex-1 ml-4">
+                    <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+                      <motion.div
+                        initial={{ width: 0 }}
+                        whileInView={{ width: "85%" }}
+                        viewport={{ once: true }}
+                        transition={{ delay: 0.5 + index * 0.1, duration: 1 }}
+                        className={`h-full bg-gradient-to-r ${feature.color} rounded-full`}
+                      />
+                    </div>
+                  </div>
+                </div>
+                {/* Hover arrow */}
+                <ArrowRight className="w-6 h-6 text-gray-400 group-hover:text-blue-600 group-hover:translate-x-2 transition-all duration-300 mt-4 opacity-0 group-hover:opacity-100" />
+              </motion.div>
+            ))}
+          </div>
+
+          {/* Enhanced CTA Section */}
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, delay: 0.6 }}
+            className="text-center mt-20 relative"
+          >
+            {/* Background pattern */}
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-50 to-purple-50 rounded-3xl" />
+            <div className="relative bg-gradient-to-r from-blue-600 to-purple-600 rounded-3xl p-12 text-white overflow-hidden">
+              <h3 className="text-3xl lg:text-4xl font-bold mb-4">
+                Ready to Transform Your Career?
+              </h3>
+              <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
+                Join millions of professionals who have found their dream jobs
+                through our platform
+              </p>
+              <motion.button
+                whileHover={{
+                  scale: 1.05,
+                  boxShadow: "0 25px 50px rgba(255, 255, 255, 0.3)",
+                }}
+                whileTap={{ scale: 0.95 }}
+                className="px-8 py-4 bg-white text-blue-600 rounded-xl font-bold text-lg shadow-xl hover:shadow-2xl transition-all duration-300"
+              >
+                Start Your Job Search
+              </motion.button>
+
+              {/* Enhanced Background Elements */}
+              <div className="absolute -top-10 -left-10 w-40 h-40 bg-white/10 rounded-full blur-3xl" />
+              <div className="absolute -bottom-10 -right-10 w-32 h-32 bg-yellow-400/20 rounded-full blur-2xl" />
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Dashboard Section */}
+      <section className="py-24 bg-gradient-to-br w-full from-gray-50 to-blue-50 relative overflow-hidden">
+        <div className="container mx-auto px-6">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
+              Everything You Need to{" "}
+              <span className="text-blue-600">Succeed</span>
+            </h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              Powerful tools and intelligent insights to track your job search
+              progress and accelerate your career growth
+            </p>
+          </motion.div>
+
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            {/* Enhanced Dashboard Preview */}
+            <motion.div
+              initial={{ opacity: 0, x: -50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8 }}
+              className="relative"
+            >
+              {/* Dashboard Header */}
+              <div className="bg-white rounded-t-3xl p-6 shadow-lg border-b border-gray-200">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-xl font-bold text-gray-900">
+                    Career Dashboard
+                  </h3>
+                  <span className="text-sm text-gray-500">
+                    Real-time insights
+                  </span>
+                  <div className="flex space-x-2">
+                    {["red", "yellow", "green"].map((color, i) => (
+                      <div
+                        key={i}
+                        className={`w-3 h-3 rounded-full bg-${color}-400`}
+                      />
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Enhanced Stats Grid */}
+              <div className="bg-white p-6 grid grid-cols-2 gap-4">
+                {dashboardFeatures.map((stat, index) => (
+                  <motion.div
+                    key={stat.label}
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: index * 0.1 }}
+                    className="bg-gray-50 rounded-2xl p-4 hover:bg-gray-100 transition-colors duration-300"
+                  >
+                    <div className="flex items-center justify-between mb-2">
+                      <stat.icon className={`w-6 h-6 text-${stat.color}-600`} />
+                      <span className="text-green-600 text-xs font-semibold bg-green-100 px-2 py-1 rounded-full">
+                        {stat.trend}
+                      </span>
+                    </div>
+                    <div className="text-2xl font-bold text-gray-900 mb-1">
+                      {stat.value}
+                    </div>
+                    <div className="text-sm text-gray-600">{stat.label}</div>
                   </motion.div>
-                  <div className="text-gray-600 font-medium">{stat.label}</div>
+                ))}
+              </div>
+
+              {/* Enhanced Activity Feed */}
+              <div className="bg-white rounded-b-3xl p-6 shadow-lg">
+                <h4 className="font-semibold text-gray-900 mb-4">
+                  Live Activity Feed
+                </h4>
+                <div className="space-y-3">
+                  {activities.map((activity, index) => (
+                    <motion.div
+                      key={activity.name}
+                      initial={{ opacity: 0, x: -20 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: index * 0.1 }}
+                      className="flex items-center space-x-3 p-3 rounded-xl hover:bg-gray-50 transition-colors duration-200"
+                    >
+                      <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold text-sm">
+                        {activity.avatar}
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-sm text-gray-900">
+                          <span className="font-semibold">{activity.name}</span>
+                        </p>
+                        <p className="text-xs text-gray-600">
+                          {activity.action}
+                        </p>
+                        <p className="text-xs text-gray-400">{activity.time}</p>
+                      </div>
+                      <div
+                        className={`w-2 h-2 rounded-full ${
+                          activity.status === "interview"
+                            ? "bg-green-400"
+                            : activity.status === "accepted"
+                              ? "bg-blue-400"
+                              : activity.status === "match"
+                                ? "bg-purple-400"
+                                : "bg-gray-400"
+                        }`}
+                      />
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Enhanced Floating Elements */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.5 }}
+                className="absolute -top-6 -right-6 bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl p-4 shadow-xl text-white"
+              >
+                <div className="text-center">
+                  <CheckCircle className="w-6 h-6 mx-auto mb-2" />
+                  <div className="text-lg font-bold">98% Match</div>
+                  <div className="text-xs opacity-80">Perfect job found</div>
+                </div>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.7 }}
+                className="absolute -bottom-6 -left-6 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl p-4 shadow-xl text-white"
+              >
+                <div className="text-center">
+                  <TrendingUp className="w-6 h-6 mx-auto mb-2" />
+                  <div className="text-lg font-bold">+47%</div>
+                  <div className="text-xs opacity-80">Career Growth</div>
+                </div>
+              </motion.div>
+            </motion.div>
+
+            {/* Enhanced Benefits List */}
+            <motion.div
+              initial={{ opacity: 0, x: 50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              className="space-y-8"
+            >
+              {benefits.map((benefit, index) => (
+                <motion.div
+                  key={benefit.title}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.2 }}
+                  className="group"
+                >
+                  <div className="flex items-start space-x-4">
+                    <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-purple-600 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
+                      <benefit.icon className="w-6 h-6 text-white" />
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-blue-600 transition-colors duration-300">
+                        {benefit.title}
+                      </h3>
+                      <p className="text-gray-600 mb-4">
+                        {benefit.description}
+                      </p>
+                      <ul className="space-y-2">
+                        {benefit.features.map((feature, idx) => (
+                          <li key={idx} className="flex items-center space-x-3">
+                            <CheckCircle className="w-5 h-5 text-green-500" />
+                            <span className="text-gray-700">{feature}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
                 </motion.div>
               ))}
             </motion.div>
@@ -727,774 +1177,383 @@ const JobPlatformLandingPage = () => {
         </div>
       </section>
 
-      {/* Categories Section */}
-      <section
-        ref={categoriesContainerRef}
-        className="py-20 bg-gradient-to-br from-gray-50 to-blue-50"
-      >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            className="text-center mb-16"
-            initial={{ opacity: 0, y: 20 }}
-            animate={categoriesInView ? { opacity: 1, y: 0 } : {}}
-          >
-            <motion.h2
-              className="text-4xl md:text-5xl font-bold text-gray-900 mb-4"
-              whileHover={{ scale: 1.02 }}
-            >
-              🔥 Trending on JobPortal today
-            </motion.h2>
-            <motion.p
-              className="text-xl text-gray-600 max-w-2xl mx-auto"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.2 }}
-            >
-              Explore the hottest job categories with amazing growth
-            </motion.p>
-          </motion.div>
+  
 
-          <div className="relative">
-            <div className="embla overflow-hidden" ref={categoriesRef}>
-              <div className="embla__container flex">
-                {jobCategories.map((category, index) => (
-                  <motion.div
-                    key={category.name}
-                    className="embla__slide flex-[0_0_300px] min-w-0 mr-6"
-                    initial={{ opacity: 0, x: 50 }}
-                    animate={categoriesInView ? { opacity: 1, x: 0 } : {}}
-                    transition={{ delay: index * 0.1 }}
-                  >
-                    <motion.div
-                      className="relative group cursor-pointer"
-                      whileHover={{ scale: 1.05, y: -5 }}
-                      transition={{ duration: 0.3 }}
-                    >
-                      <Card className="p-6 h-full bg-white shadow-lg hover:shadow-2xl transition-all duration-300 border-0 group-hover:border-blue-200">
-                        <CardContent className="p-0 text-center">
-                          <motion.div
-                            className={`inline-flex items-center justify-center w-16 h-16 rounded-2xl mb-4 ${category.color}`}
-                            whileHover={{ rotate: 360 }}
-                            transition={{ duration: 0.6 }}
-                          >
-                            {category.icon}
-                          </motion.div>
-                          <motion.h3
-                            className="text-xl font-semibold text-gray-900 mb-2"
-                            whileHover={{ scale: 1.05 }}
-                          >
-                            {category.name}
-                          </motion.h3>
-                          <motion.p
-                            className="text-2xl font-bold text-blue-600 mb-2"
-                            whileHover={{ scale: 1.1 }}
-                          >
-                            {category.count}
-                          </motion.p>
-                          <motion.p
-                            className="text-sm text-green-600 font-medium"
-                            whileHover={{ scale: 1.05 }}
-                          >
-                            <TrendingUp className="w-4 h-4 inline mr-1" />
-                            {category.growth} this month
-                          </motion.p>
-                        </CardContent>
-                      </Card>
-                    </motion.div>
-                  </motion.div>
-                ))}
-              </div>
-            </div>
-
-            <div className="flex justify-center mt-8 space-x-4">
-              <motion.button
-                onClick={() => categoriesApi?.scrollPrev()}
-                className="w-12 h-12 bg-white shadow-lg rounded-full flex items-center justify-center hover:bg-blue-50 transition-colors"
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-              >
-                <ChevronLeft className="w-6 h-6 text-blue-600" />
-              </motion.button>
-              <motion.button
-                onClick={() => categoriesApi?.scrollNext()}
-                className="w-12 h-12 bg-white shadow-lg rounded-full flex items-center justify-center hover:bg-blue-50 transition-colors"
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-              >
-                <ChevronRight className="w-6 h-6 text-blue-600" />
-              </motion.button>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Top Companies Section */}
-      <section ref={companiesContainerRef} className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            className="text-center mb-16"
-            initial={{ opacity: 0, y: 20 }}
-            animate={companiesInView ? { opacity: 1, y: 0 } : {}}
-          >
-            <motion.h2
-              className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-4"
-              whileHover={{ scale: 1.02 }}
-            >
-              🏆 Top companies hiring now
-            </motion.h2>
-            <motion.p
-              className="text-base sm:text-lg md:text-xl text-gray-600 max-w-2xl mx-auto"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.2 }}
-            >
-              Join thousands of professionals at industry leaders
-            </motion.p>
-          </motion.div>
-
-          <div className="relative">
-            <div className="embla overflow-x-auto" ref={companiesRef}>
-              <div className="embla__container flex space-x-4">
-                {topCompanies.map((company, index) => (
-                  <motion.div
-                    key={company.id}
-                    className="embla__slide flex-[0_0_90%] sm:flex-[0_0_400px] min-w-0"
-                    initial={{ opacity: 0, x: 50 }}
-                    animate={companiesInView ? { opacity: 1, x: 0 } : {}}
-                    transition={{ delay: index * 0.1 }}
-                  >
-                    <motion.div
-                      className="group cursor-pointer"
-                      whileHover={{ scale: 1.02, y: -5 }}
-                      transition={{ duration: 0.3 }}
-                    >
-                      <Card className="h-full bg-white shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 group-hover:border-blue-200 overflow-hidden relative">
-                        {company.featured && (
-                          <Badge className="absolute top-4 left-4 z-10 bg-yellow-500 text-white">
-                            ⭐ Featured
-                          </Badge>
-                        )}
-                        {company.trending && (
-                          <Badge className="absolute top-4 right-4 z-10 bg-red-500 text-white">
-                            🔥 Trending
-                          </Badge>
-                        )}
-
-                        <CardContent className="p-6">
-                          <div className="flex items-start justify-between mb-6">
-                            <div className="flex items-center space-x-4">
-                              <motion.div
-                                className="relative"
-                                whileHover={{ scale: 1.1, rotate: 5 }}
-                              >
-                                <div className="w-16 h-16 bg-gradient-to-br from-blue-100 to-purple-100 rounded-2xl flex items-center justify-center text-2xl">
-                                  {company.logo}
-                                  {company.verified && (
-                                    <motion.div
-                                      className="absolute -bottom-1 -right-1 w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center"
-                                      animate={{ scale: [1, 1.2, 1] }}
-                                      transition={{
-                                        duration: 2,
-                                        repeat: Infinity,
-                                      }}
-                                    >
-                                      <CheckCircle className="w-4 h-4 text-white" />
-                                    </motion.div>
-                                  )}
-                                </div>
-                              </motion.div>
-                              <div>
-                                <motion.h3
-                                  className="text-lg sm:text-xl font-bold text-gray-900 mb-1"
-                                  whileHover={{ scale: 1.05 }}
-                                >
-                                  {company.name}
-                                </motion.h3>
-                                <motion.p
-                                  className="text-gray-600 font-medium text-sm sm:text-base"
-                                  whileHover={{ scale: 1.05 }}
-                                >
-                                  {company.category}
-                                </motion.p>
-                              </div>
-                            </div>
-                          </div>
-
-                          <div className="space-y-4 mb-6">
-                            <motion.div
-                              className="flex items-center space-x-2 text-green-600 font-semibold"
-                              whileHover={{ scale: 1.05 }}
-                            >
-                              <Users className="w-5 h-5" />
-                              <span>
-                                🚀 {company.hiringCount} actively hiring
-                              </span>
-                            </motion.div>
-                            <motion.div
-                              className="flex items-center space-x-2"
-                              whileHover={{ scale: 1.05 }}
-                            >
-                              <div className="flex items-center space-x-1">
-                                <Star className="w-5 h-5 text-yellow-400 fill-current" />
-                                <span className="font-semibold text-gray-900">
-                                  {company.rating}
-                                </span>
-                                <span className="text-gray-600 text-sm">
-                                  ({company.reviews} reviews)
-                                </span>
-                              </div>
-                            </motion.div>
-                          </div>
-
-                          <motion.p
-                            className="text-gray-700 mb-4 leading-relaxed text-sm sm:text-base"
-                            whileHover={{ scale: 1.02 }}
-                          >
-                            {company.description}
-                          </motion.p>
-
-                          <div className="flex flex-wrap gap-2 mb-6">
-                            {company.tags.map((tag) => (
-                              <Badge
-                                key={tag}
-                                variant="secondary"
-                                className="bg-blue-50 text-blue-700 hover:bg-blue-100 text-xs"
-                              >
-                                {tag}
-                              </Badge>
-                            ))}
-                          </div>
-
-                          <Button className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold text-sm sm:text-base">
-                            <Building2 className="w-5 h-5 mr-2" />
-                            View Jobs
-                            <ArrowRight className="w-5 h-5 ml-2" />
-                          </Button>
-                        </CardContent>
-                      </Card>
-                    </motion.div>
-                  </motion.div>
-                ))}
-              </div>
-            </div>
-
-            <div className="flex justify-center mt-8 space-x-4">
-              <motion.button
-                onClick={() => companiesApi?.scrollPrev()}
-                className="w-10 h-10 sm:w-12 sm:h-12 bg-blue-500 text-white rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all"
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-              >
-                <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" />
-              </motion.button>
-              <motion.button
-                onClick={() => companiesApi?.scrollNext()}
-                className="w-10 h-10 sm:w-12 sm:h-12 bg-blue-500 text-white rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all"
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-              >
-                <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6" />
-              </motion.button>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Featured Jobs Section */}
-      <section
-        ref={jobsContainerRef}
-        className="py-20 bg-gradient-to-br from-[#e8f1ff] to-[#eef2ff]"
-      >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            className="text-center mb-16"
-            initial={{ opacity: 0, y: 20 }}
-            animate={jobsInView ? { opacity: 1, y: 0 } : {}}
-          >
-            <motion.h2
-              className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#1E3A8A] mb-4"
-              whileHover={{ scale: 1.02 }}
-            >
-              💼 Featured jobs for you
-            </motion.h2>
-            <motion.p
-              className="text-base sm:text-lg md:text-xl text-[#475569] max-w-2xl mx-auto"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.2 }}
-            >
-              Handpicked opportunities from top employers
-            </motion.p>
-          </motion.div>
-
-          <div className="relative">
-            <div
-              className="embla overflow-x-auto sm:overflow-hidden"
-              ref={jobsRef}
-            >
-              <div
-                className="embla__container flex gap-4 sm:gap-6"
-                style={{
-                  scrollSnapType: "x mandatory",
-                  WebkitOverflowScrolling: "touch",
-                }}
-              >
-                {featuredJobs.map((job, index) => (
-                  <motion.div
-                    key={job.id}
-                    className="embla__slide flex-[0_0_90%] sm:flex-[0_0_420px] min-w-0"
-                    style={{ scrollSnapAlign: "start" }}
-                    initial={{ opacity: 0, x: 50 }}
-                    animate={jobsInView ? { opacity: 1, x: 0 } : {}}
-                    transition={{ delay: index * 0.1 }}
-                  >
-                    <motion.div
-                      className="group cursor-pointer h-full"
-                      whileHover={{ scale: 1.02, y: -5 }}
-                      transition={{ duration: 0.3 }}
-                    >
-                      <Card className="h-full bg-white/90 shadow-xl hover:shadow-2xl border border-blue-100 hover:border-blue-300 transition-all duration-300 rounded-2xl overflow-hidden">
-                        <CardContent className="p-4 sm:p-6">
-                          <div className="flex flex-col">
-                            <div className="mb-6">
-                              <div className="flex flex-wrap gap-2 mb-3">
-                                {job.urgent && (
-                                  <Badge className="bg-[#EF4444] text-white text-xs">
-                                    <Zap className="w-3 h-3 mr-1" />
-                                    🔥 Urgent
-                                  </Badge>
-                                )}
-                                {job.trending && (
-                                  <Badge className="bg-[#10B981] text-white text-xs">
-                                    📈 Trending
-                                  </Badge>
-                                )}
-                                <Badge
-                                  variant="outline"
-                                  className="text-blue-600 border-blue-200"
-                                >
-                                  {job.type}
-                                </Badge>
-                              </div>
-                              <motion.h3
-                                className="text-lg sm:text-xl font-bold text-gray-900 mb-3"
-                                whileHover={{ scale: 1.02 }}
-                              >
-                                {job.title}
-                              </motion.h3>
-                              <div className="flex items-center space-x-3 mb-4">
-                                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-blue-100 to-purple-100 rounded-xl flex items-center justify-center text-lg">
-                                  {job.companyLogo}
-                                </div>
-                                <div className="flex-1">
-                                  <motion.p
-                                    className="font-semibold text-gray-900"
-                                    whileHover={{ scale: 1.02 }}
-                                  >
-                                    {job.company}
-                                  </motion.p>
-                                </div>
-                                {job.verified && (
-                                  <CheckCircle className="w-5 h-5 text-blue-500" />
-                                )}
-                              </div>
-                              <hr className="my-4 border-gray-100" />
-                            </div>
-
-                            <div className="space-y-3 mb-6">
-                              <motion.div className="flex items-center text-[#334155] text-sm sm:text-base">
-                                <MapPin className="w-5 h-5 mr-2 text-blue-500" />
-                                {job.location}
-                              </motion.div>
-                              <motion.div className="flex items-center text-[#334155] text-sm sm:text-base">
-                                <DollarSign className="w-5 h-5 mr-2 text-green-500" />
-                                {job.salary}
-                              </motion.div>
-                              <motion.div className="flex items-center text-[#334155] text-sm sm:text-base">
-                                <Award className="w-5 h-5 mr-2 text-purple-500" />
-                                {job.experience}
-                              </motion.div>
-                              <motion.div className="flex items-center text-[#334155] text-sm sm:text-base">
-                                <Clock className="w-5 h-5 mr-2 text-orange-500" />
-                                Posted {job.posted}
-                              </motion.div>
-                            </div>
-
-                            <motion.p
-                              className="text-gray-700 mb-4 text-sm sm:text-base leading-relaxed"
-                              whileHover={{ scale: 1.01 }}
-                            >
-                              {job.description}
-                            </motion.p>
-
-                            <div className="mb-4 flex flex-wrap gap-2">
-                              {job.skills.map((skill, skillIndex) => (
-                                <Badge
-                                  key={skillIndex}
-                                  variant="secondary"
-                                  className="bg-[#eff6ff] text-[#2563eb] hover:bg-[#dbeafe]"
-                                >
-                                  {skill}
-                                </Badge>
-                              ))}
-                            </div>
-
-                            <div className="mb-6 p-4 bg-[#f8fafc] rounded-lg">
-                              <motion.p className="text-sm font-semibold text-[#0f172a] mb-2">
-                                Key Benefits:
-                              </motion.p>
-                              <div className="space-y-1">
-                                {job.perks.map((perk, perkIndex) => (
-                                  <motion.p
-                                    key={perkIndex}
-                                    className="text-sm text-[#475569] flex items-center"
-                                    whileHover={{ scale: 1.01, x: 5 }}
-                                  >
-                                    ✓ {perk}
-                                  </motion.p>
-                                ))}
-                              </div>
-                            </div>
-
-                            <div className="flex flex-wrap justify-between items-center mb-6 text-sm text-[#64748b]">
-                              <div className="flex items-center space-x-4">
-                                <motion.span className="flex items-center">
-                                  <Users className="w-4 h-4 mr-1" />
-                                  {job.applicants}
-                                </motion.span>
-                                <motion.span className="flex items-center">
-                                  <Eye className="w-4 h-4 mr-1" />
-                                  {job.views}
-                                </motion.span>
-                              </div>
-                              <Badge
-                                variant="outline"
-                                className="text-purple-600 border-purple-200 mt-2 sm:mt-0"
-                              >
-                                {job.experience.split(" ")[0]} exp
-                              </Badge>
-                            </div>
-
-                            <div className="flex flex-col sm:flex-row gap-3">
-                              <Button className="flex-1 bg-gradient-to-r from-[#3B82F6] to-[#6366F1] hover:from-[#2563EB] hover:to-[#4F46E5] text-white font-semibold">
-                                <Briefcase className="w-5 h-5 mr-2" />
-                                Apply Now
-                                <ArrowRight className="w-5 h-5 ml-2" />
-                              </Button>
-                              <Button
-                                variant="outline"
-                                size="icon"
-                                className="border-pink-200 text-pink-600 hover:bg-pink-50"
-                              >
-                                <Heart className="w-5 h-5" />
-                              </Button>
-                            </div>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    </motion.div>
-                  </motion.div>
-                ))}
-              </div>
-            </div>
-
-            <div className="flex justify-center mt-8 space-x-4">
-              <motion.button
-                onClick={() => jobsApi?.scrollPrev()}
-                className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r from-[#3B82F6] to-[#6366F1] text-white rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all"
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-              >
-                <ChevronLeft className="w-5 h-5" />
-              </motion.button>
-              <motion.button
-                onClick={() => jobsApi?.scrollNext()}
-                className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r from-[#3B82F6] to-[#6366F1] text-white rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all"
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-              >
-                <ChevronRight className="w-5 h-5" />
-              </motion.button>
-            </div>
-
-            <motion.div
-              className="text-center mt-12"
-              initial={{ opacity: 0, y: 20 }}
-              animate={jobsInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ delay: 0.8 }}
-            >
-              <Button
-                size="lg"
-                 onClick={handleSearchClick}
-                className="bg-gradient-to-r from-[#10B981] to-[#3B82F6] hover:from-[#059669] hover:to-[#2563EB] text-white px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg font-semibold shadow-lg hover:shadow-xl transition-all"
-              >
-                View All 50,000+ Jobs
-                <ArrowRight className="w-6 h-6 ml-2" />
-              </Button>
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
-      {/* Success Stories / Testimonials Section */}
-      <section
-        ref={testimonialsContainerRef}
-        className="py-20 bg-gradient-to-br from-purple-50 to-blue-50"
-      >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            className="text-center mb-16"
-            initial={{ opacity: 0, y: 20 }}
-            animate={testimonialsInView ? { opacity: 1, y: 0 } : {}}
-          >
-            <motion.h2
-              className="text-4xl md:text-5xl font-bold text-gray-900 mb-4"
-              whileHover={{ scale: 1.02 }}
-            >
-              🌟 Success stories from our community
-            </motion.h2>
-            <motion.p
-              className="text-xl text-gray-600 max-w-2xl mx-auto"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.2 }}
-            >
-              Real experiences from job seekers who found their dream careers
-            </motion.p>
-          </motion.div>
-
-          <div className="relative">
-            <div className="embla overflow-hidden" ref={testimonialsRef}>
-              <div className="embla__container flex">
-                {testimonials.map((testimonial, index) => (
-                  <motion.div
-                    key={testimonial.id}
-                    className="embla__slide flex-[0_0_400px] min-w-0 mr-6"
-                    initial={{ opacity: 0, x: 50 }}
-                    animate={testimonialsInView ? { opacity: 1, x: 0 } : {}}
-                    transition={{ delay: index * 0.1 }}
-                  >
-                    <motion.div
-                      className="group cursor-pointer h-full"
-                      whileHover={{ scale: 1.02, y: -5 }}
-                      transition={{ duration: 0.3 }}
-                    >
-                      <Card className="h-full bg-white shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 group-hover:border-purple-200 overflow-hidden">
-                        <CardContent className="p-6">
-                          <motion.div
-                            className="mb-4"
-                            whileHover={{ scale: 1.05 }}
-                          >
-                            <Badge className="bg-purple-100 text-purple-700 mb-4 text-sm font-semibold">
-                              ✨ {testimonial.experience}
-                            </Badge>
-
-                            <div className="flex items-center justify-between mb-4">
-                              <motion.div
-                                className="flex items-center space-x-2"
-                                whileHover={{ scale: 1.05 }}
-                              >
-                                <Star className="w-5 h-5 text-yellow-400 fill-current" />
-                                <span className="text-sm font-semibold text-gray-700">
-                                  5.0
-                                </span>
-                                {testimonial.verified && (
-                                  <Badge
-                                    variant="outline"
-                                    className="text-green-600 border-green-200 text-xs"
-                                  >
-                                    ✓ Verified
-                                  </Badge>
-                                )}
-                              </motion.div>
-                            </div>
-
-                            <motion.blockquote
-                              className="text-gray-700 leading-relaxed mb-6 italic"
-                              whileHover={{ scale: 1.01 }}
-                            >
-                              "{testimonial.content}"
-                            </motion.blockquote>
-
-                            <motion.div
-                              className="flex mb-4"
-                              whileHover={{ scale: 1.05 }}
-                            >
-                              {[...Array(testimonial.rating)].map((_, i) => (
-                                <Star
-                                  key={i}
-                                  className="w-5 h-5 text-yellow-400 fill-current"
-                                />
-                              ))}
-                            </motion.div>
-
-                            <motion.div
-                              className="flex items-center space-x-4"
-                              whileHover={{ scale: 1.02 }}
-                            >
-                              <div className="text-3xl">
-                                {testimonial.avatar}
-                              </div>
-                              <div className="flex-1">
-                                <motion.h4
-                                  className="font-semibold text-gray-900"
-                                  whileHover={{ scale: 1.05 }}
-                                >
-                                  {testimonial.name}
-                                </motion.h4>
-                                <motion.p
-                                  className="text-gray-600 text-sm"
-                                  whileHover={{ scale: 1.05 }}
-                                >
-                                  {testimonial.role}
-                                </motion.p>
-                                <motion.p
-                                  className="text-blue-600 text-sm font-medium"
-                                  whileHover={{ scale: 1.05 }}
-                                >
-                                  {testimonial.company}
-                                </motion.p>
-                                <motion.p
-                                  className="text-gray-500 text-xs flex items-center mt-1"
-                                  whileHover={{ scale: 1.05 }}
-                                >
-                                  <MapPin className="w-3 h-3 mr-1" />
-                                  {testimonial.location}
-                                  <span className="mx-1">•</span>
-                                  {testimonial.joinedDate}
-                                </motion.p>
-                              </div>
-                            </motion.div>
-                          </motion.div>
-                        </CardContent>
-                      </Card>
-                    </motion.div>
-                  </motion.div>
-                ))}
-              </div>
-            </div>
-
-            <div className="flex justify-center mt-8 space-x-4">
-              <motion.button
-                onClick={() => testimonialsApi?.scrollPrev()}
-                className="w-12 h-12 bg-white shadow-lg rounded-full flex items-center justify-center hover:shadow-xl transition-all"
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-              >
-                <ChevronLeft className="w-6 h-6 text-purple-600" />
-              </motion.button>
-              <motion.button
-                onClick={() => testimonialsApi?.scrollNext()}
-                className="w-12 h-12 bg-white shadow-lg rounded-full flex items-center justify-center hover:shadow-xl transition-all"
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-              >
-                <ChevronRight className="w-6 h-6 text-purple-600" />
-              </motion.button>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section
-        ref={ctaRef}
-        className="py-20 bg-gradient-to-r from-blue-900 via-indigo-900 to-purple-900 relative overflow-hidden"
-      >
-        <div className="absolute inset-0">
-          <motion.div
-            className="absolute inset-0 bg-gradient-to-r from-blue-600/20 to-purple-700/20"
-            animate={{
-              background: [
-                "linear-gradient(45deg, rgba(59, 130, 246, 0.2) 0%, rgba(147, 51, 234, 0.2) 100%)",
-                "linear-gradient(225deg, rgba(59, 130, 246, 0.2) 0%, rgba(147, 51, 234, 0.2) 100%)",
-                "linear-gradient(45deg, rgba(59, 130, 246, 0.2) 0%, rgba(147, 51, 234, 0.2) 100%)",
-              ],
-            }}
-            transition={{ duration: 8, repeat: Infinity }}
-          />
-        </div>
-
-        <motion.div
-          className="absolute top-20 left-20 text-white/20"
-          animate={{ y: [0, -20, 0], rotate: [0, 180, 360] }}
-          transition={{ duration: 6, repeat: Infinity }}
-        >
-          <Rocket className="w-16 h-16" />
-        </motion.div>
-        <motion.div
-          className="absolute bottom-20 right-20 text-white/20"
-          animate={{ y: [0, 20, 0], rotate: [0, -180, -360] }}
-          transition={{ duration: 8, repeat: Infinity, delay: 2 }}
-        >
-          <Sparkles className="w-12 h-12" />
-        </motion.div>
-
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+      {/* Stats Section */}
+      <section className="py-24 w-full bg-gradient-to-br from-blue-900 via-purple-900 to-indigo-900 text-white relative overflow-hidden">
+        <div className="container mx-auto px-6">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
-            animate={ctaInView ? { opacity: 1, y: 0 } : {}}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
             transition={{ duration: 0.8 }}
+            className="text-center mb-16"
           >
-            <motion.h2
-              className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight"
-              whileHover={{ scale: 1.02 }}
-            >
-              🚀 Ready to take the next step in your career?
-            </motion.h2>
-            <motion.p
-              className="text-xl md:text-2xl text-blue-100 mb-10 leading-relaxed max-w-3xl mx-auto"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.3 }}
-            >
-              Join millions of job seekers and employers who trust JobPortal for
-              their career journey
-            </motion.p>
+            <h2 className="text-4xl lg:text-5xl font-bold mb-4">
+              Trusted by Professionals{" "}
+              <span className="text-blue-400">Worldwide</span>
+            </h2>
+            <p className="text-xl text-white/80 max-w-3xl mx-auto">
+              Our numbers speak for themselves. Join millions of professionals
+              who have transformed their careers with TalentHire.
+            </p>
+          </motion.div>
 
-            <motion.div
-              className="flex flex-col sm:flex-row gap-6 justify-center"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5 }}
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+            {stats.map((stat, index) => (
+              <motion.div
+                key={stat.label}
+                initial={{ opacity: 0, y: 50 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: stat.delay, duration: 0.8 }}
+                whileHover={{ scale: 1.05, y: -10 }}
+                className="group text-center bg-white/10 backdrop-blur-md rounded-3xl p-8 border border-white/20 hover:bg-white/20 transition-all duration-300"
+              >
+                <div
+                  className={`w-16 h-16 bg-gradient-to-br ${stat.color} rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg group-hover:shadow-xl group-hover:scale-110 transition-all duration-300`}
+                >
+                  <stat.icon className="w-8 h-8 text-white" />
+                </div>
+                <div className="text-4xl lg:text-5xl font-bold mb-2 group-hover:text-blue-400 transition-colors duration-300">
+                  {stat.value}
+                </div>
+                <div className="text-xl font-semibold mb-2">{stat.label}</div>
+                <div className="text-white/60 text-sm">{stat.description}</div>
+              </motion.div>
+            ))}
+          </div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, delay: 0.6 }}
+            className="text-center"
+          >
+            <p className="text-xl text-white/80 mb-8">
+              Join the growing community of successful professionals
+            </p>
+            <motion.button
+              whileHover={{
+                scale: 1.05,
+                boxShadow: "0 25px 50px rgba(255, 255, 255, 0.2)",
+              }}
+              whileTap={{ scale: 0.95 }}
+              className="px-8 py-4 bg-white text-blue-600 rounded-xl font-bold text-lg shadow-xl hover:shadow-2xl transition-all duration-300"
             >
+              Start Your Career Journey
+            </motion.button>
+          </motion.div>
+        </div>
+
+        {/* Background Pattern */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,rgba(255,255,255,0.2)_1px,transparent_0)] bg-[size:50px_50px]" />
+        </div>
+      </section>
+
+      {/* FAQ Section */}
+      <section className="py-24 w-full bg-gradient-to-br from-gray-50 to-white">
+        <div className="container mx-auto px-6">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
+              Frequently Asked <span className="text-blue-600">Questions</span>
+            </h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              Everything you need to know about advancing your career with
+              TalentHire
+            </p>
+          </motion.div>
+
+          <div className="max-w-4xl mx-auto">
+            {faqs.map((faq, index) => (
               <motion.div
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.1 }}
+                className="mb-4"
               >
-                <Button
-                  size="lg"
-                  className="border-2 border-white text-white hover:bg-white hover:text-blue-600 font-bold text-lg px-8 py-4 shadow-2xl"
-                   onClick={handleSearchClick}
+                <motion.button
+                  onClick={() => setOpenIndex(openIndex === index ? -1 : index)}
+                  className="w-full px-6 py-6 text-left flex items-center justify-between hover:bg-gray-100 transition-colors duration-300 bg-white rounded-2xl shadow-lg border border-gray-100"
+                  whileHover={{ backgroundColor: "rgba(243, 244, 246, 0.8)" }}
                 >
-                  <Search className="w-6 h-6 mr-2" />
-                  Find Dream Job
-                  <ArrowRight className="w-6 h-6 ml-2" />
-                </Button>
+                  <span className="text-lg font-semibold text-gray-900 pr-4">
+                    {faq.question}
+                  </span>
+                  <ChevronDown
+                    className={`w-6 h-6 text-gray-500 transition-transform duration-300 ${
+                      openIndex === index ? "rotate-180" : ""
+                    }`}
+                  />
+                </motion.button>
+
+                <AnimatePresence>
+                  {openIndex === index && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                      exit={{ opacity: 0, height: 0 }}
+                      transition={{ duration: 0.3 }}
+                      className="bg-white border-t border-gray-100 rounded-b-2xl overflow-hidden"
+                    >
+                      <p className="px-6 py-6 text-gray-600 leading-relaxed">
+                        {faq.answer}
+                      </p>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </motion.div>
+            ))}
+          </div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, delay: 0.4 }}
+            className="text-center mt-16"
+          >
+            <p className="text-lg text-gray-600 mb-6">Still have questions?</p>
+            <p className="text-gray-500 mb-8">
+              Our career support team is here to help you succeed with your job
+              search goals.
+            </p>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
+            >
+              Contact Career Support
+            </motion.button>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Blog Section */}
+      <section className="py-24 w-full bg-white">
+        <div className="container mx-auto px-6">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
+              Career <span className="text-blue-600">Resources</span>
+            </h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              Expert insights and practical guides to help you advance your
+              career, master interviews, and negotiate better offers
+            </p>
+          </motion.div>
+
+          <div className="grid lg:grid-cols-3 gap-8 mb-12">
+            {articles.map((article, index) => (
+              <motion.article
+                key={article.title}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.1 }}
+                whileHover={{ y: -10 }}
+                className="group bg-white rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden border border-gray-100"
+              >
+                {/* Article Image */}
+                <div
+                  className={`h-48 ${article.image} relative overflow-hidden`}
+                >
+                  <div className="absolute inset-0 bg-black/20" />
+                  <div className="absolute top-4 left-4">
+                    <span className="px-3 py-1 bg-white/90 text-gray-900 rounded-full text-sm font-semibold">
+                      {article.category}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Article Content */}
+                <div className="p-6">
+                  <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-blue-600 transition-colors duration-300">
+                    {article.title}
+                  </h3>
+                  <p className="text-gray-600 mb-6 leading-relaxed">
+                    {article.excerpt}
+                  </p>
+
+                  {/* Article Meta */}
+                  <div className="flex items-center justify-between text-sm text-gray-500">
+                    <span className="font-medium text-gray-700">
+                      {article.author}
+                    </span>
+                    <span>{article.date}</span>
+                    <span className="font-medium">{article.readTime}</span>
+                  </div>
+                </div>
+              </motion.article>
+            ))}
+          </div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, delay: 0.3 }}
+            className="text-center"
+          >
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
+            >
+              View All Career Resources
+            </motion.button>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Security Section */}
+      <section className="py-20 w-full bg-gradient-to-br from-gray-50 to-blue-50">
+        <div className="container mx-auto px-6">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">
+              Trusted &amp; Secure Platform
+            </h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              Your career data and personal information are protected by
+              industry-leading security standards
+            </p>
+          </motion.div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
+            {seals.map((seal, index) => (
               <motion.div
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+                key={seal.title}
+                initial={{ opacity: 0, scale: 0.9 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.1 }}
+                whileHover={{ scale: 1.05, y: -5 }}
+                className="text-center bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100"
               >
-                {/* <Button
-                  size="lg"
-                  variant="outline"
-                  className="border-2 border-white text-white hover:bg-white hover:text-blue-600 font-bold text-lg px-8 py-4 shadow-2xl"
+                <div
+                  className={`w-16 h-16 bg-gradient-to-br ${seal.color} rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg`}
                 >
-                  <Building2 className="w-6 h-6 mr-2" />
-                  Hire Top Talent
-                  <ArrowRight className="w-6 h-6 ml-2" />
-                </Button> */}
+                  <seal.icon className="w-8 h-8 text-white" />
+                </div>
+                <h3 className="text-lg font-bold text-gray-900 mb-2">
+                  {seal.title}
+                </h3>
+                <p className="text-gray-600 text-sm">{seal.description}</p>
               </motion.div>
-            </motion.div>
+            ))}
+          </div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, delay: 0.4 }}
+            className="text-center"
+          >
+            <p className="text-gray-600">
+              Bank-level encryption • 99.9% uptime • Regular security audits
+            </p>
           </motion.div>
         </div>
       </section>
 
       {/* Footer */}
-      
-    </div>
+      <footer className="bg-gray-900 w-full text-white py-20">
+        <div className="container mx-auto px-6">
+          {/* Main Footer Content */}
+          <div className="grid lg:grid-cols-5 gap-12 mb-12">
+            {/* Company Info */}
+            <div className="lg:col-span-2">
+              <div className="flex items-center space-x-3 mb-6">
+               <img src="./unigrowLogo.png" width={200} height={80} />
+              </div>
+              <p className="text-gray-400 mb-6 leading-relaxed">
+                The world's leading career advancement platform, connecting
+                exceptional professionals with dream opportunities since 2020.
+              </p>
+              <div className="space-y-3">
+                <div className="flex items-center space-x-3">
+                  <Mail className="w-5 h-5 text-gray-400" />
+                  <span className="text-gray-400">info@unigrowTalent.com</span>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <Phone className="w-5 h-5 text-gray-400" />
+                  <span className="text-gray-400">+91 120-4178-702</span>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <MapPin className="w-5 h-5 text-gray-400" />
+                  <span className="text-gray-400">Crossing Republic, Ghaziabad, U.P</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Footer Links */}
+            {footerSections.map((section, index) => (
+              <div key={section.title}>
+                <h4 className="text-lg font-semibold mb-6">{section.title}</h4>
+                <ul className="space-y-3">
+                  {section.links.map((link) => (
+                    <li key={link}>
+                      <a
+                        href={section.href}
+                        className="text-gray-400 hover:text-white transition-colors duration-200"
+                      >
+                        {link}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+
+            
+          </div>
+
+          {/* Bottom Footer */}
+          <div className="border-t border-gray-800 pt-8">
+            <div className="flex flex-col lg:flex-row justify-between items-center">
+              <p className="text-gray-400 mb-4 lg:mb-0">
+                © 2025 UnigrowTalent. All rights reserved.
+              </p>
+              <div className="flex space-x-6">
+                {socialLinks.map((social) => (
+                  <a
+                    key={social.label}
+                    href={social.href}
+                    className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center text-gray-400 hover:text-white hover:bg-blue-600 transition-all duration-300"
+                    aria-label={social.label}
+                  >
+                    <social.icon className="w-5 h-5" />
+                  </a>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </footer>
+    </>
   );
 };
 
-export default JobPlatformLandingPage;
+export default EmployeeLandingPage;

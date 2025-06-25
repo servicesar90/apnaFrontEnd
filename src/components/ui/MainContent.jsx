@@ -11,7 +11,6 @@ import {
   getCertificationSuggestions,
   getCities,
   getEducationSuggestions,
-  getJobRolesuggestions,
   getSkillSuggestions,
   updateProfileFunc,
   updateSkils,
@@ -20,6 +19,7 @@ import EditExperienceModal from "../modals/profileUpdateModals/experienceModal";
 import UserForm from "../modals/profileUpdateModals/resumeUpload";
 import { uploadResumeApi } from "../../API/APIs";
 import Skeleton from "@mui/material/Skeleton";
+import Box from "@mui/material/Box";
 import { Delete, PictureAsPdf } from "@mui/icons-material";
 import { showSuccessToast } from "./toast";
 import { showErrorToast } from "./toast";
@@ -83,88 +83,74 @@ export default function MainContent({ employee, showContent, sectionRefs }) {
   const [experienceIndex, setExperienceIndex] = useState(null);
   const [selectedEducation, setSelectedEducation] = useState(null);
   const [prefferedCitySuggestions, setPrefferedCitySuggestions] = useState([]);
-  const [specializationSuggestions, setSpecializationSuggestions] = useState([]);
+  const [specializationSuggestions, setSpecializationSuggestions] = useState(
+    [],
+  );
   const [educationvalue, setEducationValue] = useState(null);
   const [skillsSuggestions, setSkillsSuggestions] = useState([]);
   const [certificationSuggestions, setCertificationSuggestions] = useState([]);
-  const [preferredJobRoleduggestions, setPreferredJobRolesSuggestions] = useState([]);
 
-    const inputChange = async (value) => {
-
+  const inputChange = async (value) => {
     const response = await getCities(value);
     if (response) {
-      setPrefferedCitySuggestions(response.data)
+      setPrefferedCitySuggestions(response.data);
     }
-  }
+  };
 
-  const inputRolechange = async (value) =>{
-    const response = await getJobRolesuggestions(value);
-    if(response){
-      setPreferredJobRolesSuggestions(response.data.data)
+  const handleCertificationSuggestions = async (value) => {
+    const response = await getCertificationSuggestions(value);
+    if (response) {
+      setCertificationSuggestions(response.data.data);
+    } else {
+      showErrorToast("Could not fetch suggestions");
     }
-  }
+  };
 
-
-
-   const handleCertificationSuggestions = async (value) =>{
-
-    const response = await getCertificationSuggestions(value)
-    if(response){
-      
-      setCertificationSuggestions(response.data.data)
-    }else{
-      showErrorToast("Could not fetch suggestions")
-    }
-  }
-
-
-    const inputEducationChange = async (value) => {
+  const inputEducationChange = async (value) => {
     const response = await getEducationSuggestions(value);
     if (response) {
-      console.log(response.data)
-      setSpecializationSuggestions(response.data)
-      setEducationValue(value)
+      console.log(response.data);
+      setSpecializationSuggestions(response.data);
+      setEducationValue(value);
     }
-  }
+  };
 
-   const handleEditEducation = (edu) => {
+  const handleEditEducation = (edu) => {
     setSelectedEducation(edu);
     setModalName("education");
   };
 
-  const inputSkillsChange = async(value) =>{
-    console.log(value)
+  const inputSkillsChange = async (value) => {
+    console.log(value);
     const response = await getSkillSuggestions(value);
-    if(response){
+    if (response) {
       setSkillsSuggestions(response.data.data);
-
-    }else{
-      showErrorToast("Couldn't fetch suggestions")
+    } else {
+      showErrorToast("Couldn't fetch suggestions");
     }
-  }
+  };
 
   const user = JSON.parse(localStorage.getItem("User"));
 
   const deleteEducation = async (id) => {
     const response = await deleteEducationfunc(id);
     if (response) {
-      showSuccessToast("successfully Deleted")
-      isDataChange()
+      showSuccessToast("successfully Deleted");
+      isDataChange();
     } else {
-      showErrorToast("Couldn't Delete")
+      showErrorToast("Couldn't Delete");
     }
-  }
+  };
 
   const deleteExperience = async (id) => {
     const response = await deleteExperiencefunc(id);
     if (response) {
-      showSuccessToast("successfully Deleted")
-      isDataChange()
+      showSuccessToast("successfully Deleted");
+      isDataChange();
     } else {
-      showErrorToast("Couldn't Delete")
+      showErrorToast("Couldn't Delete");
     }
-  }
-
+  };
 
   function SkeletonCard() {
     return (
@@ -196,14 +182,14 @@ export default function MainContent({ employee, showContent, sectionRefs }) {
   }
 
   return (
-    <div className="max-w-4xl mx-auto p-4 space-y-6  max-h-[80vh] overflow-scroll" style={{scrollbarWidth: "none"}}>
+    <div className="max-w-4xl mx-auto p-4 space-y-6 bg-gradient-to-br from-[#dff3f9] to-white min-h-screen">
       {/* Work Experience Section */}
       <div className="bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden">
         <div className=" px-6 py-4" style={{ backgroundColor: "#0784C9" }}>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Building2 className="w-5 h-5 text-white" />
-              <h2 className="text-lg font-semibold text-white"  ref={sectionRefs.Employment}>
+              <h2 className="text-lg font-semibold text-white">
                 Work Experience
               </h2>
             </div>
@@ -420,7 +406,7 @@ export default function MainContent({ employee, showContent, sectionRefs }) {
       <div className="bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden">
         <div className=" px-6 py-4" style={{ backgroundColor: "#0784C9" }}>
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2" ref={sectionRefs.Education}>
+            <div className="flex items-center gap-2">
               <GraduationCap className="w-5 h-5 text-white" />
               <h2 className="text-lg font-semibold text-white">Education</h2>
             </div>
@@ -508,7 +494,7 @@ export default function MainContent({ employee, showContent, sectionRefs }) {
       {/* Skills Section */}
       <div className="bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden">
         <div className=" px-6 py-4" style={{ backgroundColor: "#0784C9" }}>
-          <div className="flex items-center justify-between" ref={sectionRefs.Skills}>
+          <div className="flex items-center justify-between">
             <h2 className="text-lg font-semibold text-white">Skills</h2>
             <button
               onClick={() => setModalName("skills")}
@@ -662,7 +648,7 @@ export default function MainContent({ employee, showContent, sectionRefs }) {
       <div className="bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden">
         <div className=" px-6 py-4" style={{ backgroundColor: "#0784C9" }}>
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-white"  ref={sectionRefs.Resume}>Resume</h2>
+            <h2 className="text-lg font-semibold text-white">Resume</h2>
             <button
               onClick={() => setModalName("editResume")}
               className="text-white hover:text-gray-200 transition-colors p-1.5 rounded-md hover:bg-white/10"
@@ -875,7 +861,7 @@ export default function MainContent({ employee, showContent, sectionRefs }) {
           {/* Basic Details */}
           <div>
             <div className="flex items-center justify-between mb-3">
-              <h3 className="text-sm font-semibold text-[#1e40af]" ref={sectionRefs["Basic Details"]}>
+              <h3 className="text-sm font-semibold text-[#1e40af]">
                 Basic Details
               </h3>
               <button
@@ -953,10 +939,9 @@ export default function MainContent({ employee, showContent, sectionRefs }) {
         </div>
       </div>
 
-       {modalName === "editResume" && (
+      {/* All Modals */}
+      {modalName === "editResume" && (
         <UserForm
-          open={modalName === "editResume"}
-          label={"Upload Resume"}
           onClose={() => setModalName("")}
           metaData={{
             field: "resume",
@@ -968,7 +953,6 @@ export default function MainContent({ employee, showContent, sectionRefs }) {
 
       {modalName === "skills" && (
         <UpdateProfileModal
-          open={modalName === "skills"}
           onClose={() => setModalName("")}
           fields={{
             skills: Array.isArray(employee?.skills)
@@ -980,41 +964,37 @@ export default function MainContent({ employee, showContent, sectionRefs }) {
             skills: "multi",
           }}
           suggestions={{
-            skills: skillsSuggestions
+            skills: skillsSuggestions,
           }}
           metaData={{
             title: "  Edit skills",
             onSubmitFunc: updateSkils,
             id: null,
-            inputChange: inputSkillsChange
+            inputChange: inputSkillsChange,
           }}
         />
       )}
 
-
-
       {modalName === "editExperience" && (
         <EditExperienceModal
-          Open={modalName === "editExperience"}
-          close={() => setModalName("")}
+          onClose={() => setModalName("")}
           data={employee?.EmployeeExperiences[experienceIndex]}
           setInitials={() => setExperienceIndex(null)}
           suggestions={{
-            skills: skillsSuggestions
+            skills: skillsSuggestions,
           }}
-          metaData={
-            {
-              onSubmitFunc: (addEmpExp),
-              id: employee?.EmployeeExperiences[experienceIndex] ? employee?.EmployeeExperiences[experienceIndex]?.id : null,
-              inputChange: inputSkillsChange
-            }
-          }
+          metaData={{
+            onSubmitFunc: addEmpExp,
+            id: employee?.EmployeeExperiences[experienceIndex]
+              ? employee?.EmployeeExperiences[experienceIndex]?.id
+              : null,
+            inputChange: inputSkillsChange,
+          }}
         />
       )}
 
       {modalName === "salary" && (
         <UpdateProfileModal
-          open={modalName === "salary"}
           onClose={() => setModalName("")}
           fields={{
             salary: employee?.salary || "",
@@ -1033,21 +1013,25 @@ export default function MainContent({ employee, showContent, sectionRefs }) {
 
       {modalName === "preferredJobs" && (
         <UpdateProfileModal
-          open={modalName === "preferredJobs"}
           onClose={() => setModalName("")}
           fields={{
             preferredJobRoles: Array.isArray(employee?.preferredJobRoles)
               ? employee?.preferredJobRoles
               : (employee?.preferredJobRoles &&
-                JSON.parse(employee?.preferredJobRoles)) ||
-              [],
+                  JSON.parse(employee?.preferredJobRoles)) ||
+                [],
           }}
           label={{ preferredJobRoles: "Add Your Job Preference" }}
           type={{
             preferredJobRoles: "multi",
           }}
           suggestions={{
-            preferredJobRoles: preferredJobRoleduggestions
+            preferredJobRoles: [
+              "Software Backend Development",
+              "Website Development",
+              "DevOps",
+              "UI / UX Design",
+            ],
           }}
           limits={{
             preferredJobs: 5,
@@ -1056,21 +1040,19 @@ export default function MainContent({ employee, showContent, sectionRefs }) {
             title: "preferredJobs",
             onSubmitFunc: updateProfileFunc,
             id: null,
-            inputChange: inputRolechange
           }}
         />
       )}
 
       {modalName === "preferredJobCity" && (
         <UpdateProfileModal
-          open={modalName === "preferredJobCity"}
           onClose={() => setModalName("")}
           fields={{
             preferredJobCity: Array.isArray(employee?.preferredJobCity)
               ? employee?.preferredJobCity
               : (employee?.preferredJobCity &&
-                JSON.parse(employee?.preferredJobCity)) ||
-              [],
+                  JSON.parse(employee?.preferredJobCity)) ||
+                [],
           }}
           label={{
             preferredJobCity: "Add Your Prefered Job City",
@@ -1080,28 +1062,27 @@ export default function MainContent({ employee, showContent, sectionRefs }) {
           }}
           suggestions={{
             preferredJobCity: prefferedCitySuggestions,
-          }} // optional: you can provide city name suggestions if needed
+          }}
           limits={{ preferredJobCity: 3 }}
           metaData={{
             title: "Preferred job city",
             onSubmitFunc: updateProfileFunc,
             id: null,
-            inputChange: inputChange
-          }} // to enforce a max of 3 cities
+            inputChange: inputChange,
+          }}
         />
       )}
 
       {modalName === "languageKnown" && (
         <UpdateProfileModal
-          open={modalName === "languageKnown"}
           onClose={() => setModalName("")}
           fields={{
             englishProficiency: employee?.englishProficiency || "",
             otherLanguages: Array.isArray(employee?.otherLanguages)
               ? employee?.otherLanguages
               : (employee?.otherLanguages &&
-                JSON.parse(employee?.otherLanguages)) ||
-              [],
+                  JSON.parse(employee?.otherLanguages)) ||
+                [],
           }}
           label={{
             englishProficiency: "What is your englsih speaking level",
@@ -1117,8 +1098,30 @@ export default function MainContent({ employee, showContent, sectionRefs }) {
               { Intermediate: "Intermediate" },
               { Advanced: "Advanced" },
             ],
-            otherLanguages: ["Assamese", "Bengali", "Bodo", "Dogri", "Gujarati", "Hindi", "Kannada", "Kashmiri", "Konkani", "Maithili",
-              "Malayalam", "Manipuri", "Marathi", "Nepali", "Odia", "Punjabi", "Sanskrit", "Santali", "Sindhi", "Tamil", "Telugu", "Urdu"],
+            otherLanguages: [
+              "Assamese",
+              "Bengali",
+              "Bodo",
+              "Dogri",
+              "Gujarati",
+              "Hindi",
+              "Kannada",
+              "Kashmiri",
+              "Konkani",
+              "Maithili",
+              "Malayalam",
+              "Manipuri",
+              "Marathi",
+              "Nepali",
+              "Odia",
+              "Punjabi",
+              "Sanskrit",
+              "Santali",
+              "Sindhi",
+              "Tamil",
+              "Telugu",
+              "Urdu",
+            ],
           }}
           metaData={{
             title: "language Known",
@@ -1130,28 +1133,27 @@ export default function MainContent({ employee, showContent, sectionRefs }) {
 
       {modalName === "jobPreference" && (
         <UpdateProfileModal
-          open={modalName === "jobPreference"}
           onClose={() => setModalName("")}
           fields={{
             prefferedEmploymentTypes: Array.isArray(
-              employee?.prefferedEmploymentTypes
+              employee?.prefferedEmploymentTypes,
             )
               ? employee?.prefferedEmploymentTypes
               : (employee?.prefferedEmploymentTypes &&
-                JSON.parse(employee?.prefferedEmploymentTypes)) ||
-              [],
+                  JSON.parse(employee?.prefferedEmploymentTypes)) ||
+                [],
             preferredLocationTypes: Array.isArray(
-              employee?.preferredLocationTypes
+              employee?.preferredLocationTypes,
             )
               ? employee?.preferredLocationTypes
               : (employee?.preferredLocationTypes &&
-                JSON.parse(employee?.preferredLocationTypes)) ||
-              [],
+                  JSON.parse(employee?.preferredLocationTypes)) ||
+                [],
             preferredShifts: Array.isArray(employee?.preferredShifts)
               ? employee?.preferredShifts
               : (employee?.preferredShifts &&
-                JSON.parse(employee?.preferredShifts)) ||
-              [],
+                  JSON.parse(employee?.preferredShifts)) ||
+                [],
           }}
           label={{
             prefferedEmploymentTypes: "Preferred employement type",
@@ -1188,7 +1190,6 @@ export default function MainContent({ employee, showContent, sectionRefs }) {
 
       {modalName === "yearExperience" && (
         <UpdateProfileModal
-          open={modalName === "yearExperience"}
           onClose={() => setModalName("")}
           fields={{
             years: employee?.TotalExperience?.years || 0,
@@ -1213,7 +1214,6 @@ export default function MainContent({ employee, showContent, sectionRefs }) {
 
       {modalName === "education" && (
         <UpdateProfileModal
-          open={modalName === "education"}
           onClose={() => setModalName("")}
           setInitials={() => setSelectedEducation(null)}
           fields={{
@@ -1221,7 +1221,8 @@ export default function MainContent({ employee, showContent, sectionRefs }) {
             isHighestQualification: false,
             schoolMedium: "Hindi",
             instituteName: selectedEducation?.instituteName || "",
-            ...(educationvalue === "Graduate" || educationvalue === "Postgraduate"
+            ...(educationvalue === "Graduate" ||
+            educationvalue === "Postgraduate"
               ? { degree: selectedEducation?.degree || "" }
               : {}),
             specialization: selectedEducation?.specialisation || "",
@@ -1229,7 +1230,6 @@ export default function MainContent({ employee, showContent, sectionRefs }) {
             startDate: selectedEducation?.startDate || "",
             endDate: selectedEducation?.endDate || "",
           }}
-
           label={{
             qualification: "Education Level",
             instituteName: "College/School Name",
@@ -1275,46 +1275,43 @@ export default function MainContent({ employee, showContent, sectionRefs }) {
               { Correspondence: "c" },
             ],
           }}
-
           metaData={{
             title: " Edit Education",
             onSubmitFunc: selectedEducation ? editEducation : createEducation,
             id: selectedEducation?.id,
-            inputChange: inputEducationChange
+            inputChange: inputEducationChange,
           }}
         />
       )}
 
       {modalName === "certification" && (
         <UpdateProfileModal
-          open={modalName === "certification"}
           onClose={() => setModalName("")}
           fields={{
             certification: Array.isArray(employee?.certification)
               ? employee?.certification
               : (employee?.certification &&
-                JSON.parse(employee?.certification)) ||
-              [],
+                  JSON.parse(employee?.certification)) ||
+                [],
           }}
           label={{ certification: "Add Your Certification Name" }}
           type={{
             certification: "multi",
           }}
           suggestions={{
-            certification: certificationSuggestions
+            certification: certificationSuggestions,
           }}
           metaData={{
             title: " Add Certification",
             onSubmitFunc: updateProfileFunc,
             id: null,
-            inputChange: handleCertificationSuggestions
+            inputChange: handleCertificationSuggestions,
           }}
         />
       )}
 
       {modalName === "basicDetails" && (
         <UpdateProfileModal
-          open={modalName === "basicDetails"}
           onClose={() => setModalName("")}
           fields={{
             fullName: employee?.fullName || "",
